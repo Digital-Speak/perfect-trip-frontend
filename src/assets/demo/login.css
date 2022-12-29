@@ -1,0 +1,20 @@
+.loginPage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.sideImage {
+  background-size: 100%;
+  width: 60%;
+  height: 100%;
+  background-image: url("assets/img/side-bar-img.jpeg");
+  background-position: center center; 
+  background-repeat: no-repeat no-repeat;
+}
+
+.LoginForm {
+  background-color: lightgray;
+  width: 100%;
+  height: 100%;
+}

@@ -1,226 +1,281 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.3.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/main/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-import React from "react";
-// react plugin used to create charts
-import { Line, Pie } from "react-chartjs-2";
-// reactstrap components
+import React, { useState } from "react";
 import {
+  Button,
   Card,
   CardHeader,
   CardBody,
   CardFooter,
   CardTitle,
+  FormGroup,
+  Form,
+  Input,
   Row,
   Col
 } from "reactstrap";
-// core components
-import {
-  dashboard24HoursPerformanceChart,
-  dashboardEmailStatisticsChart,
-  dashboardNASDAQChart
-} from "variables/charts.js";
-
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import agences from "../assets/data/agences.json";
+import circuits from "../assets/data/circuits.json";
+import cats from "../assets/data/cats.json";
+import typesHAB from "../assets/data/typesHAB.json";
+import image_place_holder_male from "../assets/img/image_place_holder_male.jpeg";
+import image_place_holder_female from "../assets/img/image_place_holder_female.jpeg";
+import HomeTable from "../components/Tables/home-table";
+import { useTranslation } from 'react-i18next'; 
 function Dashboard() {
+  const [newClient, setNewClient] = useState({
+    folderNumber: "32893",
+    refClient: "D2291",
+    fullName: "Jhon Doe",
+    agency: "",
+    circuit: "",
+    cat: "",
+    typeHAB: "",
+    nbrPax: "",
+    startDate: new Date(),
+    endDate: new Date(),
+  });
+
+  const { t } = useTranslation();
   return (
     <>
-      <div className="content">
+      <div className="content" style={{ "width": "90%", "justifyContent": "center", "marginLeft": "auto", "marginRight": "auto" }}>
         <Row>
-          <Col lg="3" md="6" sm="6">
-            <Card className="card-stats">
+          {/* <Col md="4">
+            <Card className="card-user">
+              <div className="image">
+                <img alt="..." src={require("assets/img/travel-to-morocco.jpeg")} />
+              </div>
               <CardBody>
-                <Row>
-                  <Col md="4" xs="5">
-                    <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-globe text-warning" />
-                    </div>
-                  </Col>
-                  <Col md="8" xs="7">
-                    <div className="numbers">
-                      <p className="card-category">Capacity</p>
-                      <CardTitle tag="p">150GB</CardTitle>
-                      <p />
-                    </div>
-                  </Col>
-                </Row>
+                <div className="author">
+                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
+                    <img
+                      alt="..."
+                      className="avatar border-gray"
+                      src={newClient.sexe === "Femme" ? image_place_holder_female : image_place_holder_male}
+                    />
+                    <h5 className="title">{newClient.firstName} {newClient.lastName}</h5>
+                  </a>
+                  <p className="description">{newClient.emailAddress}</p>
+                </div>
               </CardBody>
               <CardFooter>
                 <hr />
-                <div className="stats">
-                  <i className="fas fa-sync-alt" /> Update Now
+                <div className="button-container">
+                  <Row>
+                    <Col className="ml-auto" lg="3" md="6" xs="6">
+                      <h5>
+                        Placeholder
+                      </h5>
+                    </Col>
+                    <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
+                      <h5>
+                        Placeholder
+                      </h5>
+                    </Col>
+                    <Col className="mr-auto" lg="3">
+                      <h5>
+                        Placeholder
+                      </h5>
+                    </Col>
+                  </Row>
                 </div>
               </CardFooter>
             </Card>
-          </Col>
-          <Col lg="3" md="6" sm="6">
-            <Card className="card-stats">
-              <CardBody>
-                <Row>
-                  <Col md="4" xs="5">
-                    <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-money-coins text-success" />
-                    </div>
-                  </Col>
-                  <Col md="8" xs="7">
-                    <div className="numbers">
-                      <p className="card-category">Revenue</p>
-                      <CardTitle tag="p">$ 1,345</CardTitle>
-                      <p />
-                    </div>
-                  </Col>
-                </Row>
-              </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="far fa-calendar" /> Last day
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
-          <Col lg="3" md="6" sm="6">
-            <Card className="card-stats">
-              <CardBody>
-                <Row>
-                  <Col md="4" xs="5">
-                    <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-vector text-danger" />
-                    </div>
-                  </Col>
-                  <Col md="8" xs="7">
-                    <div className="numbers">
-                      <p className="card-category">Errors</p>
-                      <CardTitle tag="p">23</CardTitle>
-                      <p />
-                    </div>
-                  </Col>
-                </Row>
-              </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="far fa-clock" /> In the last hour
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
-          <Col lg="3" md="6" sm="6">
-            <Card className="card-stats">
-              <CardBody>
-                <Row>
-                  <Col md="4" xs="5">
-                    <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-favourite-28 text-primary" />
-                    </div>
-                  </Col>
-                  <Col md="8" xs="7">
-                    <div className="numbers">
-                      <p className="card-category">Followers</p>
-                      <CardTitle tag="p">+45K</CardTitle>
-                      <p />
-                    </div>
-                  </Col>
-                </Row>
-              </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="fas fa-sync-alt" /> Update now
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
+          </Col> */}
           <Col md="12">
-            <Card>
+            <Card className="card-user">
               <CardHeader>
-                <CardTitle tag="h5">Users Behavior</CardTitle>
-                <p className="card-category">24 Hours performance</p>
+                <CardTitle tag="h5">{t("New-Folder")}</CardTitle>
               </CardHeader>
               <CardBody>
-                <Line
-                  data={dashboard24HoursPerformanceChart.data}
-                  options={dashboard24HoursPerformanceChart.options}
-                  width={400}
-                  height={100}
-                />
+                <Form>
+                  <Row>
+                    <Col className="" md="4">
+                      <FormGroup>
+                        <label>{t("Folder-Number")}</label>
+                        <Input
+                          defaultValue=""
+                          value={newClient.folderNumber}
+                          style={{ "height": "55px" }}
+                          id="firstname"
+                          type="text"
+                          onChange={(event) => { setNewClient({ ...newClient, folderNumber: event.target.value }) }}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col className="" md="4">
+                      <FormGroup>
+                        <label>{t("Agency")}</label>
+                        <Autocomplete
+                          disablePortal
+                          options={agences}
+                          sx={{ width: "auto" }}
+                          inputValue={newClient.agency}
+                          renderInput={(params) => <TextField {...params} label={t("Select")} />}
+                          onInputChange={(event, newInputValue) => {
+                            setNewClient({ ...newClient, agency: newInputValue })
+                          }}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col className="" md="4">
+                      <FormGroup>
+                        <label>{t("Client-Ref")}</label>
+                        <Input
+                          defaultValue=""
+                          value={newClient.refClient}
+                          id="refClient"
+                          style={{ "height": "55px" }}
+                          type="text"
+                          onChange={(event) => { setNewClient({ ...newClient, refClient: event.target.value }) }}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col className="" md="4">
+                      <FormGroup>
+                        <label>{t("Circuit")}</label>
+                        <Autocomplete
+                          disablePortal
+                          id="circuit"
+                          options={circuits}
+                          sx={{ width: "auto" }}
+                          inputValue={newClient.circuit}
+                          renderInput={(params) => <TextField {...params} label={t("Select")} />}
+                          onInputChange={(event, newInputValue) => {
+                            setNewClient({ ...newClient, circuit: newInputValue })
+                          }}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col className="" md="4">
+                      <FormGroup>
+                        <label>{t("Cat")}</label>
+                        <Autocomplete
+                          disablePortal
+                          id="cat"
+                          options={cats}
+                          sx={{ width: "auto" }}
+                          inputValue={newClient.cat}
+                          renderInput={(params) => <TextField {...params} label={t("Select")} />}
+                          onInputChange={(event, newInputValue) => {
+                            setNewClient({ ...newClient, cat: newInputValue })
+                          }}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col className="" md="4">
+                      <FormGroup>
+                        <label>{t("FullName")}</label>
+                        <Input
+                          value={newClient.fullName}
+                          style={{ "height": "55px" }}
+                          id="fullName"
+                          type="text"
+                          onChange={(event) => { setNewClient({ ...newClient, fullName: event.target.value }) }}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col className="" md="4">
+                      <FormGroup>
+                        <label>{t("Type-HB")}</label>
+                        <Autocomplete
+                          disablePortal
+                          id="typeHAB"
+                          options={typesHAB}
+                          sx={{ width: "auto" }}
+                          inputValue={newClient.typeHAB}
+                          renderInput={(params) => <TextField {...params} label={t("Select")} />}
+                          onInputChange={(event, newInputValue) => {
+                            setNewClient({ ...newClient, typeHAB: newInputValue })
+                          }}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col className="" md="4">
+                      <label> {t("Period")}</label>
+                      <Row>
+                        <Col className="" md="6">
+                          <FormGroup>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                              <DatePicker
+                                label={t("From")}
+                                value={newClient.startDate}
+                                onChange={(newValue) => {
+                                  setNewClient({ ...newClient, startDate: newValue })
+                                }}
+                                renderInput={(params) => <TextField {...params} />}
+                              />
+                            </LocalizationProvider>
+                          </FormGroup>
+                        </Col>
+                        <Col className="" md="6">
+                          <FormGroup>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                              <DatePicker
+                                label={t("To")}
+                                value={newClient.endDate}
+                                onChange={(newValue) => {
+                                  setNewClient({ ...newClient, startDate: newValue })
+                                }}
+                                renderInput={(params) => <TextField {...params} />}
+                              />
+                            </LocalizationProvider>
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col className="" md="4">
+                      <FormGroup>
+                        <label> {t("Pax-Number")}</label>
+                        <Input
+                          value={newClient.nbrPax}
+                          style={{ "height": "55px" }}
+                          id="nbrPax"
+                          type="text"
+                          onChange={(event) => { setNewClient({ ...newClient, nbrPax: event.target.value }) }}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md="12">
+                      <HomeTable t={t} data={[
+
+                      ]}/>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <div className="update ml-auto mr-auto d-flex">
+                      <Button
+                        className="btn-round"
+                        color="primary"
+                        onClick={() => {
+                          
+                        }}
+                      >
+                        {t("Save")}
+                      </Button>
+                      <Button
+                        className="btn-round"
+                        color="danger"
+                        onClick={() => {
+
+                        }}
+                      >
+                        {t("Cancel")}
+                      </Button>
+                    </div>
+                  </Row>
+                </Form>
               </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="fa fa-history" /> Updated 3 minutes ago
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col md="4">
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h5">Email Statistics</CardTitle>
-                <p className="card-category">Last Campaign Performance</p>
-              </CardHeader>
-              <CardBody style={{ height: "266px" }}>
-                <Pie
-                  data={dashboardEmailStatisticsChart.data}
-                  options={dashboardEmailStatisticsChart.options}
-                />
-              </CardBody>
-              <CardFooter>
-                <div className="legend">
-                  <i className="fa fa-circle text-primary" /> Opened{" "}
-                  <i className="fa fa-circle text-warning" /> Read{" "}
-                  <i className="fa fa-circle text-danger" /> Deleted{" "}
-                  <i className="fa fa-circle text-gray" /> Unopened
-                </div>
-                <hr />
-                <div className="stats">
-                  <i className="fa fa-calendar" /> Number of emails sent
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
-          <Col md="8">
-            <Card className="card-chart">
-              <CardHeader>
-                <CardTitle tag="h5">NASDAQ: AAPL</CardTitle>
-                <p className="card-category">Line Chart with Points</p>
-              </CardHeader>
-              <CardBody>
-                <Line
-                  data={dashboardNASDAQChart.data}
-                  options={dashboardNASDAQChart.options}
-                  width={400}
-                  height={100}
-                />
-              </CardBody>
-              <CardFooter>
-                <div className="chart-legend">
-                  <i className="fa fa-circle text-info" /> Tesla Model S{" "}
-                  <i className="fa fa-circle text-warning" /> BMW 5 Series
-                </div>
-                <hr />
-                <div className="card-stats">
-                  <i className="fa fa-check" /> Data information certified
-                </div>
-              </CardFooter>
             </Card>
           </Col>
         </Row>

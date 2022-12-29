@@ -1,24 +1,4 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.3.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/main/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-import React from "react";
-
-// reactstrap components
+import React, { useState } from "react";
 import {
   Button,
   Card,
@@ -32,8 +12,24 @@ import {
   Row,
   Col
 } from "reactstrap";
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import countries from "../assets/data/countries.json";
+import image_place_holder_male from "../assets/img/image_place_holder_male.jpeg";
+import image_place_holder_female from "../assets/img/image_place_holder_female.jpeg";
 
 function User() {
+  const [newClient, setNewClient] = useState({
+    folderNumber: "32893",
+    firstName: "Jhon",
+    lastName: "Doe",
+    emailAddress: "jhon.doe@gmail.com",
+    phoneNumber: "+33 30299320239",
+    sexe: "homme",
+    nationality: "",
+    memo: "Cette personne a des besoins particuliers..."
+  });
+
   return (
     <>
       <div className="content">
@@ -41,7 +37,7 @@ function User() {
           <Col md="4">
             <Card className="card-user">
               <div className="image">
-                <img alt="..." src={require("assets/img/damir-bosnjak.jpg")} />
+                <img alt="..." src={require("assets/img/travel-to-morocco.jpeg")} />
               </div>
               <CardBody>
                 <div className="author">
@@ -49,16 +45,12 @@ function User() {
                     <img
                       alt="..."
                       className="avatar border-gray"
-                      src={require("assets/img/mike.jpg")}
+                      src={newClient.sexe === "Femme" ? image_place_holder_female : image_place_holder_male}
                     />
-                    <h5 className="title">Chet Faker</h5>
+                    <h5 className="title">{newClient.firstName} {newClient.lastName}</h5>
                   </a>
-                  <p className="description">@chetfaker</p>
+                  <p className="description">{newClient.emailAddress}</p>
                 </div>
-                <p className="description text-center">
-                  "I like the way you work it <br />
-                  No diggity <br />I wanna bag it up"
-                </p>
               </CardBody>
               <CardFooter>
                 <hr />
@@ -66,179 +58,140 @@ function User() {
                   <Row>
                     <Col className="ml-auto" lg="3" md="6" xs="6">
                       <h5>
-                        12 <br />
-                        <small>Files</small>
+                        Placeholder
                       </h5>
                     </Col>
                     <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
                       <h5>
-                        2GB <br />
-                        <small>Used</small>
+                        Placeholder
                       </h5>
                     </Col>
                     <Col className="mr-auto" lg="3">
                       <h5>
-                        24,6$ <br />
-                        <small>Spent</small>
+                        Placeholder
                       </h5>
                     </Col>
                   </Row>
                 </div>
               </CardFooter>
             </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h4">Team Members</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <ul className="list-unstyled team-members">
-                  <li>
-                    <Row>
-                      <Col md="2" xs="2">
-                        <div className="avatar">
-                          <img
-                            alt="..."
-                            className="img-circle img-no-padding img-responsive"
-                            src={require("assets/img/faces/ayo-ogunseinde-2.jpg")}
-                          />
-                        </div>
-                      </Col>
-                      <Col md="7" xs="7">
-                        DJ Khaled <br />
-                        <span className="text-muted">
-                          <small>Offline</small>
-                        </span>
-                      </Col>
-                      <Col className="text-right" md="3" xs="3">
-                        <Button
-                          className="btn-round btn-icon"
-                          color="success"
-                          outline
-                          size="sm"
-                        >
-                          <i className="fa fa-envelope" />
-                        </Button>
-                      </Col>
-                    </Row>
-                  </li>
-                  <li>
-                    <Row>
-                      <Col md="2" xs="2">
-                        <div className="avatar">
-                          <img
-                            alt="..."
-                            className="img-circle img-no-padding img-responsive"
-                            src={require("assets/img/faces/joe-gardner-2.jpg")}
-                          />
-                        </div>
-                      </Col>
-                      <Col md="7" xs="7">
-                        Creative Tim <br />
-                        <span className="text-success">
-                          <small>Available</small>
-                        </span>
-                      </Col>
-                      <Col className="text-right" md="3" xs="3">
-                        <Button
-                          className="btn-round btn-icon"
-                          color="success"
-                          outline
-                          size="sm"
-                        >
-                          <i className="fa fa-envelope" />
-                        </Button>
-                      </Col>
-                    </Row>
-                  </li>
-                  <li>
-                    <Row>
-                      <Col md="2" xs="2">
-                        <div className="avatar">
-                          <img
-                            alt="..."
-                            className="img-circle img-no-padding img-responsive"
-                            src={require("assets/img/faces/clem-onojeghuo-2.jpg")}
-                          />
-                        </div>
-                      </Col>
-                      <Col className="col-ms-7" xs="7">
-                        Flume <br />
-                        <span className="text-danger">
-                          <small>Busy</small>
-                        </span>
-                      </Col>
-                      <Col className="text-right" md="3" xs="3">
-                        <Button
-                          className="btn-round btn-icon"
-                          color="success"
-                          outline
-                          size="sm"
-                        >
-                          <i className="fa fa-envelope" />
-                        </Button>
-                      </Col>
-                    </Row>
-                  </li>
-                </ul>
-              </CardBody>
-            </Card>
           </Col>
           <Col md="8">
             <Card className="card-user">
               <CardHeader>
-                <CardTitle tag="h5">Edit Profile</CardTitle>
+                <CardTitle tag="h5">Nouveau dossier</CardTitle>
               </CardHeader>
               <CardBody>
                 <Form>
                   <Row>
-                    <Col className="pr-1" md="5">
+                    <Col className="" md="4">
                       <FormGroup>
-                        <label>Company (disabled)</label>
+                        <label>Dossier N°</label>
                         <Input
-                          defaultValue="Creative Code Inc."
-                          disabled
-                          placeholder="Company"
+                          defaultValue=""
+                          value={newClient.folderNumber}
+                          placeholder="Dossier N°"
+                          id="firstname"
                           type="text"
+                          onChange={(event) => { setNewClient({ ...newClient, folderNumber: event.target.value }) }}
                         />
                       </FormGroup>
                     </Col>
-                    <Col className="px-1" md="3">
+                    <Col className="pr-1" md="4">
                       <FormGroup>
-                        <label>Username</label>
-                        <Input
-                          defaultValue="michael23"
-                          placeholder="Username"
-                          type="text"
+                        <Autocomplete
+                          disablePortal
+                          id="Nationality"
+                          options={countries}
+                          sx={{ width: "auto" }}
+                          inputValue={newClient.nationality}
+                          renderInput={(params) => <TextField {...params} label="Nationnalité" />}
+                          onInputChange={(event, newInputValue) => {
+                            setNewClient({ ...newClient, nationality: newInputValue })
+                          }}
                         />
                       </FormGroup>
                     </Col>
-                    <Col className="pl-1" md="4">
+                    <Col className="" md="4">
                       <FormGroup>
-                        <label htmlFor="exampleInputEmail1">
-                          Email address
-                        </label>
-                        <Input placeholder="Email" type="email" />
+                        <label>Ref client</label>
+                        <Input
+                          defaultValue=""
+                          value={newClient.refClient}
+                          placeholder="Ref client"
+                          id="refClient"
+                          type="text"
+                          onChange={(event) => { setNewClient({ ...newClient, refClient: event.target.value }) }}
+                        />
                       </FormGroup>
                     </Col>
                   </Row>
                   <Row>
-                    <Col className="pr-1" md="6">
+                    <Col className="" md="2">
                       <FormGroup>
-                        <label>First Name</label>
+                        <label>Dossier N°</label>
                         <Input
-                          defaultValue="Chet"
-                          placeholder="Company"
+                          defaultValue=""
+                          value={newClient.folderNumber}
+                          placeholder="Dossier N°"
+                          id="firstname"
                           type="text"
+                          onChange={(event) => { setNewClient({ ...newClient, folderNumber: event.target.value }) }}
                         />
                       </FormGroup>
                     </Col>
-                    <Col className="pl-1" md="6">
+                    <Col className="" md="2">
                       <FormGroup>
-                        <label>Last Name</label>
+                        <label>Nom</label>
                         <Input
-                          defaultValue="Faker"
-                          placeholder="Last Name"
+                          defaultValue="Jhon"
+                          value={newClient.firstName}
+                          placeholder="Nom"
+                          id="firstname"
                           type="text"
+                          onChange={(event) => { setNewClient({ ...newClient, firstName: event.target.value }) }}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col className="px-1" md="2">
+                      <FormGroup>
+                        <label>Prénom</label>
+                        <Input
+                          defaultValue="Doe"
+                          placeholder="Prénom"
+                          value={newClient.lastName}
+                          id="lastname"
+                          type="text"
+                          onChange={(event) => { setNewClient({ ...newClient, lastName: event.target.value }) }}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col className="" md="4">
+                      <FormGroup>
+                        <label htmlFor="email">
+                          Adrress Mail
+                        </label>
+                        <Input
+                          placeholder="@example.com"
+                          id="email"
+                          value={newClient.emailAddress}
+                          type="email"
+                          defaultValue="jhon.doe@gmail.com"
+                          onChange={(event) => { setNewClient({ ...newClient, emailAddress: event.target.value }) }}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col className="" md="4">
+                      <FormGroup>
+                        <label htmlFor="email">
+                          Numéro De Déléphone
+                        </label>
+                        <Input
+                          id="phonenumber"
+                          value={newClient.phoneNumber}
+                          type="text"
+                          defaultValue="+33 30299320239"
+                          onChange={(event) => { setNewClient({ ...newClient, phoneNumber: event.target.value }) }}
                         />
                       </FormGroup>
                     </Col>
@@ -248,48 +201,60 @@ function User() {
                       <FormGroup>
                         <label>Address</label>
                         <Input
-                          defaultValue="Melbourne, Australia"
-                          placeholder="Home Address"
+                          defaultValue="Paris, France"
+                          placeholder="Adrress"
                           type="text"
+                          onChange={(event) => {
+                            setNewClient({
+                              ...newClient,
+                              address: event.target.value
+                            })
+                          }}
                         />
                       </FormGroup>
                     </Col>
                   </Row>
                   <Row>
-                    <Col className="pr-1" md="4">
+                    <Col className="pr-1" md="6">
                       <FormGroup>
-                        <label>City</label>
-                        <Input
-                          defaultValue="Melbourne"
-                          placeholder="City"
-                          type="text"
+                        <Autocomplete
+                          disablePortal
+                          id="Nationality"
+                          options={countries}
+                          sx={{ width: "auto" }}
+                          inputValue={newClient.nationality}
+                          renderInput={(params) => <TextField {...params} label="Nationnalité" />}
+                          onInputChange={(event, newInputValue) => {
+                            setNewClient({ ...newClient, nationality: newInputValue })
+                          }}
                         />
                       </FormGroup>
                     </Col>
-                    <Col className="px-1" md="4">
+                    <Col className="pr-1" md="6">
                       <FormGroup>
-                        <label>Country</label>
-                        <Input
-                          defaultValue="Australia"
-                          placeholder="Country"
-                          type="text"
+                        <Autocomplete
+                          disablePortal
+                          id="combo-box-demo"
+                          defaultValue={"Homme"}
+                          inputValue={newClient.sexe}
+                          options={[{ label: "Homme", value: "Homme" }, { label: "Femme", value: "Femme" }]}
+                          sx={{ width: "auto" }}
+                          onInputChange={(event, newInputValue) => {
+                            setNewClient({ ...newClient, sexe: newInputValue })
+                          }}
+                          renderInput={(params) => <TextField {...params} label="Sexe" />}
                         />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-1" md="4">
-                      <FormGroup>
-                        <label>Postal Code</label>
-                        <Input placeholder="ZIP Code" type="number" />
                       </FormGroup>
                     </Col>
                   </Row>
                   <Row>
                     <Col md="12">
                       <FormGroup>
-                        <label>About Me</label>
+                        <label>Memo</label>
                         <Input
                           type="textarea"
-                          defaultValue="Oh so, your weak rhyme You doubt I'll bother, reading into it"
+                          value={newClient.memo}
+                          onChange={(event) => { setNewClient({ ...newClient, memo: event.target.value }) }}
                         />
                       </FormGroup>
                     </Col>
@@ -299,9 +264,11 @@ function User() {
                       <Button
                         className="btn-round"
                         color="primary"
-                        type="submit"
+                        onClick={() => {
+                          console.log("hello wordl")
+                        }}
                       >
-                        Update Profile
+                        Ajouter
                       </Button>
                     </div>
                   </Row>

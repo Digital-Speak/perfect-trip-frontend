@@ -205,3 +205,9 @@
   outline: none;
   display: none;
 }
+
+.onhverlang:hover {
+  color: lightskyblue;
+  cursor: pointer;
+  font-weight: bolder;
+}
