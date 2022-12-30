@@ -25,78 +25,67 @@ import image_place_holder_male from "../assets/img/image_place_holder_male.jpeg"
 import image_place_holder_female from "../assets/img/image_place_holder_female.jpeg";
 import HomeTable from "../components/Tables/Home-table";
 import { useTranslation } from 'react-i18next';
-import { fetchData } from "../api/dashboard"
+import { fetchData, postData } from "../api/dashboard"
 
 
 function Dashboard() {
-
-  useEffect(() => {
-    fetchData("circuit/").then((data)=> {
-      console.log(data.body);
-    }).catch((err)=> console.error(err))
-  }, [])
-  
-
+  const [circuitsServerData, setCircuitsServerData] = useState([]);
+  const [circuits, setCircuits] = useState([]);
+  const [hotels, setHotels] = useState([]);
   const [newClient, setNewClient] = useState({
     folderNumber: Date.now(),
     refClient: "D2291",
     fullName: "Jhon Doe",
     agency: "",
     circuit: "",
-    cat: "",
+    cat: "L",
     typeHAB: "",
     nbrPax: "",
     startDate: new Date(),
     endDate: new Date(),
   });
 
+  const loadData = async () => {
+    const payload = await fetchData("circuit/");
+    if (!payload.success) return;
+    setCircuitsServerData(payload.circuits);
+    const newData = [];
+
+    payload.circuits.forEach((item)=> {
+      newData.push({
+        label: item.name
+      })
+    });
+
+    setCircuits(newData);
+  }
+
+  const fetchHotels = async (circ, cat) => {
+    const payload = await postData("hotel/circuit_city_hotels", "POST", {
+      id: circ,
+      cat
+    });
+
+    if(!payload.success) return;
+    setHotels(payload.hotels)
+  }
+
+  useEffect(() => {
+    if (circuits.length === 0) loadData();
+  }, [circuits]);
+
+  useEffect(() => {
+    if (newClient.circuit !== "" && newClient.cat !== ""){
+      fetchHotels(circuitsServerData.filter((item) => item.name === newClient.circuit)[0].id, newClient.cat);
+      
+    } 
+  }, [newClient.circuit, newClient.cat]);
+
   const { t } = useTranslation();
   return (
     <>
       <div className="content" style={{ "width": "90%", "justifyContent": "center", "marginLeft": "auto", "marginRight": "auto" }}>
         <Row>
-          {/* <Col md="4">
-            <Card className="card-user">
-              <div className="image">
-                <img alt="..." src={require("assets/img/travel-to-morocco.jpeg")} />
-              </div>
-              <CardBody>
-                <div className="author">
-                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                    <img
-                      alt="..."
-                      className="avatar border-gray"
-                      src={newClient.sexe === "Femme" ? image_place_holder_female : image_place_holder_male}
-                    />
-                    <h5 className="title">{newClient.firstName} {newClient.lastName}</h5>
-                  </a>
-                  <p className="description">{newClient.emailAddress}</p>
-                </div>
-              </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="button-container">
-                  <Row>
-                    <Col className="ml-auto" lg="3" md="6" xs="6">
-                      <h5>
-                        Placeholder
-                      </h5>
-                    </Col>
-                    <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
-                      <h5>
-                        Placeholder
-                      </h5>
-                    </Col>
-                    <Col className="mr-auto" lg="3">
-                      <h5>
-                        Placeholder
-                      </h5>
-                    </Col>
-                  </Row>
-                </div>
-              </CardFooter>
-            </Card>
-          </Col> */}
           <Col md="12">
             <Card className="card-user">
               <CardHeader>
@@ -159,7 +148,7 @@ function Dashboard() {
                           sx={{ width: "auto" }}
                           inputValue={newClient.circuit}
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
-                          onInputChange={(event, newInputValue) => {
+                          onInputChange={async (event, newInputValue) => {
                             setNewClient({ ...newClient, circuit: newInputValue });
                           }}
                         />
@@ -223,7 +212,8 @@ function Dashboard() {
                                 inputFormat={"DD/MM/YYYY"}
                                 onChange={(newValue) => {
                                   const newDate = new Date(newValue.$d);
-                                  setNewClient({ ...newClient, startDate: newDate, endDate: newDate.setDate(newDate.getDate() + 1) })
+                                  console.log(newDate);
+                                  setNewClient({ ...newClient, startDate: newDate })
                                 }}
                                 renderInput={(params) => <TextField {...params} />}
                               />
@@ -260,7 +250,7 @@ function Dashboard() {
                   </Row>
                   <Row>
                     <Col md="12">
-                      <HomeTable circuitDates={{ start: newClient.startDate, end: newClient.endDate }} selectedCircuit={newClient.circuit} t={t} />
+                      <HomeTable circuitDates={{ start: newClient.startDate, end: newClient.endDate }} setNewClient={setNewClient} newClient={newClient} selectedCircuit={newClient.circuit} t={t} hotels={hotels} />
                     </Col>
                   </Row>
                   <Row>

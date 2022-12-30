@@ -1,17 +1,29 @@
-const fetchData = async (path = "", method = "get") => {
+const fetchData = async (path = "", method = "GET") => {
  const payload = await fetch(`http://localhost:8000/${path}`, {
-   method: method,
-   credentials: "include",
-   headers: {
-    "content-Type": "application/json",
-    origin: `http://localhost:3000`,
-    authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdvdXphbC5zYWlkM0BnbWFpbC5jb20iLCJ1c2VySWQiOjEsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2NzI0MDE4MDMsImV4cCI6MTY3MjQwNTQwM30.ZF3I_Qn_-qUmMkmTnruuqb0WeUNrnY5nQjPPLDsNJ8o"}`
-   }
+  method: method,
+  headers: {
+   "content-Type": "application/json",
+   origin: `http://localhost:8000`,
+   authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdvdXphbC5zYWlkM0BnbWFpbC5jb20iLCJ1c2VySWQiOjEsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2NzI0MTY2MDIsImV4cCI6MTY3MjQyMDIwMn0.0gjTH7FlQGZK_ifoG6WdGmN-dVbPsw0xGRI7zyimdys"}`
+  }
  });
- console.log(await payload.json());
+ return await payload.json();
+}
+
+const postData = async (path = "", method = "POST", body) => {
+ const payload = await fetch(`http://localhost:8000/${path}`, {
+  method: method,
+  headers: {
+   "content-Type": "application/json",
+   origin: `http://localhost:8000`,
+   authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdvdXphbC5zYWlkM0BnbWFpbC5jb20iLCJ1c2VySWQiOjEsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2NzI0MTY2MDIsImV4cCI6MTY3MjQyMDIwMn0.0gjTH7FlQGZK_ifoG6WdGmN-dVbPsw0xGRI7zyimdys"}`
+  },
+  body: JSON.stringify(body)
+ });
  return await payload.json();
 }
 
 export {
- fetchData
+ fetchData, 
+ postData
 }

@@ -10,7 +10,7 @@ function EditableInput({ t, text = "ssss", cb }) {
  return (
   <span style={{"cursor": "pointer"}} onBlur={()=> {
    setEditMode(false);
-  }} onDoubleClick={() => {
+  }} onClick={() => {
    setEditMode(!editMode);
   }}>
    {editMode ? <Input autoFocus value={inputValue} onChange={(event) => {
