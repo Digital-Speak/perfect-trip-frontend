@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Card,
@@ -23,11 +23,22 @@ import cats from "../assets/data/cats.json";
 import typesHAB from "../assets/data/typesHAB.json";
 import image_place_holder_male from "../assets/img/image_place_holder_male.jpeg";
 import image_place_holder_female from "../assets/img/image_place_holder_female.jpeg";
-import HomeTable from "../components/Tables/home-table";
-import { useTranslation } from 'react-i18next'; 
+import HomeTable from "../components/Tables/Home-table";
+import { useTranslation } from 'react-i18next';
+import { fetchData } from "../api/dashboard"
+
+
 function Dashboard() {
+
+  useEffect(() => {
+    fetchData("circuit/").then((data)=> {
+      console.log(data.body);
+    }).catch((err)=> console.error(err))
+  }, [])
+  
+
   const [newClient, setNewClient] = useState({
-    folderNumber: "32893",
+    folderNumber: Date.now(),
     refClient: "D2291",
     fullName: "Jhon Doe",
     agency: "",
@@ -100,6 +111,7 @@ function Dashboard() {
                         <Input
                           defaultValue=""
                           value={newClient.folderNumber}
+                          disabled
                           style={{ "height": "55px" }}
                           id="firstname"
                           type="text"
@@ -148,7 +160,7 @@ function Dashboard() {
                           inputValue={newClient.circuit}
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={(event, newInputValue) => {
-                            setNewClient({ ...newClient, circuit: newInputValue })
+                            setNewClient({ ...newClient, circuit: newInputValue });
                           }}
                         />
                       </FormGroup>
@@ -208,8 +220,10 @@ function Dashboard() {
                               <DatePicker
                                 label={t("From")}
                                 value={newClient.startDate}
+                                inputFormat={"DD/MM/YYYY"}
                                 onChange={(newValue) => {
-                                  setNewClient({ ...newClient, startDate: newValue })
+                                  const newDate = new Date(newValue.$d);
+                                  setNewClient({ ...newClient, startDate: newDate, endDate: newDate.setDate(newDate.getDate() + 1) })
                                 }}
                                 renderInput={(params) => <TextField {...params} />}
                               />
@@ -221,10 +235,9 @@ function Dashboard() {
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                               <DatePicker
                                 label={t("To")}
+                                disabled
                                 value={newClient.endDate}
-                                onChange={(newValue) => {
-                                  setNewClient({ ...newClient, startDate: newValue })
-                                }}
+                                inputFormat={"DD/MM/YYYY"}
                                 renderInput={(params) => <TextField {...params} />}
                               />
                             </LocalizationProvider>
@@ -247,9 +260,7 @@ function Dashboard() {
                   </Row>
                   <Row>
                     <Col md="12">
-                      <HomeTable t={t} data={[
-
-                      ]}/>
+                      <HomeTable circuitDates={{ start: newClient.startDate, end: newClient.endDate }} selectedCircuit={newClient.circuit} t={t} />
                     </Col>
                   </Row>
                   <Row>
@@ -258,7 +269,7 @@ function Dashboard() {
                         className="btn-round"
                         color="primary"
                         onClick={() => {
-                          
+
                         }}
                       >
                         {t("Save")}
