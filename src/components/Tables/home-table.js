@@ -8,7 +8,7 @@ import {
  Row,
  Col
 } from "reactstrap";
-import EditableInput from "../../components/Inputs/EditableInput"
+import EditableInput from "../Inputs/EditableInput"
 import _ from "lodash"
 import EditableSelect from "../Inputs/EditableSelect";
 
