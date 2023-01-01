@@ -3,7 +3,8 @@ import { Container, Row, Col, Form, FormGroup, Label, Input, Button } from 'reac
 import logo from '../assets/img/apple-icon.png'; // import your logo image
 import sideImage from '../assets/img/bg5.jpg'; // import your side image
 import { login } from "../api/login"
-import { useHistory } from 'react-router-dom';
+import { useHistory,push } from 'react-router-dom';
+import { setAccessToken } from 'helpers/accessToken';
 
 const LoginComponent= () => {
   const {push}=useHistory()
@@ -47,11 +48,11 @@ const LoginComponent= () => {
         setGlobalError("Email or assword incorrect.")
       } else {
         setGlobalError('')
-        await sessionStorage.setItem('jwt', payload?.token);
-        // push('/dashboard')
+        setAccessToken(payload?.token)
       }
     }
   };
+
 
   return <Container>
       <Row>

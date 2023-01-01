@@ -1,16 +1,29 @@
-import React,{ useEffect, useRef} from "react";
+import React,{ useEffect, useRef, useState} from "react";
 import PerfectScrollbar from "perfect-scrollbar";
 import { Route, Switch, useLocation } from "react-router-dom";
 import Navbar from "components/Navbars/Navbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import routes from "routes.js";
+import { checkAuth } from "api/login";
 
 var ps;
+
 
 function Dashboard(props) {
   const mainPanel = useRef();
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
+
+  const refreshToken = async() => {
+    const result =  await checkAuth();
+    console.log(result)
+  }
+  useEffect(() => {
+    refreshToken();
+    setIsLoading(false);
+  }, [])
+  
   useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(mainPanel.current);
@@ -27,6 +40,8 @@ function Dashboard(props) {
     mainPanel.current.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
   }, [location]);
+
+
   return (
     <div className="wrapper">
       <Sidebar

@@ -8,7 +8,7 @@ var routes = [
     icon: "nc-icon nc-bank",
     component: Dashboard,
     layout: "/admin",
-    protected : true ,
+    protected : true,
   },
   {
     path: "/login",
@@ -16,7 +16,7 @@ var routes = [
     icon: "nc-icon nc-bank",
     component: Login,
     layout: "/auth",
-    protected : false ,
+    protected : false,
   }
 ];
 export default routes;
