@@ -25,7 +25,7 @@ import image_place_holder_male from "../assets/img/image_place_holder_male.jpeg"
 import image_place_holder_female from "../assets/img/image_place_holder_female.jpeg";
 import HomeTable from "../components/Tables/Home-table";
 import { useTranslation } from 'react-i18next';
-import { fetchData, postData } from "../api/dashboard"
+import { getCircuit, postData } from "../api/dashboard"
 
 
 function Dashboard() {
@@ -46,7 +46,7 @@ function Dashboard() {
   });
 
   const loadData = async () => {
-    const payload = await fetchData("circuit/");
+    const payload = await getCircuit("circuit/");
     if (!payload.success) return;
     setCircuitsServerData(payload.circuits);
     const newData = [];

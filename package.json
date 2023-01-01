@@ -13,6 +13,7 @@
     "@mui/x-date-pickers-pro": "^5.0.12",
     "bootstrap": "4.6.0",
     "dayjs": "^1.11.7",
+    "dotenv": "^16.0.3",
     "i18next": "^22.4.6",
     "jquery": "3.6.0",
     "lodash": "^4.17.21",

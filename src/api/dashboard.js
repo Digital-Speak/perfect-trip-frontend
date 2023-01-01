@@ -1,4 +1,4 @@
-const fetchData = async (path = "", method = "GET") => {
+const getCircuit = async (path = "", method = "GET") => {
  const payload = await fetch(`http://localhost:8000/${path}`, {
   method: method,
   headers: {
@@ -24,6 +24,6 @@ const postData = async (path = "", method = "POST", body) => {
 }
 
 export {
- fetchData, 
+  getCircuit, 
  postData
 }

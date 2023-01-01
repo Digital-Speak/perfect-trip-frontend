@@ -1,4 +1,5 @@
 import Dashboard from "views/Dashboard.js";
+import Login from "views/Login";
 
 var routes = [
   {
@@ -6,7 +7,16 @@ var routes = [
     name: "Accueil",
     icon: "nc-icon nc-bank",
     component: Dashboard,
-    layout: "/admin"
+    layout: "/admin",
+    protected : true ,
+  },
+  {
+    path: "/login",
+    name: "Login",
+    icon: "nc-icon nc-bank",
+    component: Login,
+    layout: "/auth",
+    protected : false ,
   }
 ];
 export default routes;
