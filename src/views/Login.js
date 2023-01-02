@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
-import logo from '../assets/img/apple-icon.png'; // import your logo image
-import sideImage from '../assets/img/bg5.jpg'; // import your side image
+import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
+import logo from '../assets/img/logo.png'; // import your logo image
+import sideImage from '../assets/img/login-page.jpg'; // import your side image
 import { login } from "../api/login"
-import { useHistory, push } from 'react-router-dom';
-import { setAccessToken } from 'helpers/accessToken';
+import { useHistory } from 'react-router-dom';
 
 const LoginComponent = () => {
   const { push } = useHistory()
@@ -49,11 +48,13 @@ const LoginComponent = () => {
     }
   };
 
-  return <Container>
-    <Row>
-      <Col xs="12" sm="6">
-        <img src={logo} alt="Logo" />
-        <Form onSubmit={handleSubmit}>
+  return <div>
+   <Row>
+      <Col xs="12" md="6" className='p-5' style={{display:"flex",flexDirection:"column",  alignItems:"center"}}>
+        <img style={{
+          width:"200px"
+        }} src={logo} alt="Logo" />
+        <Form className='w-100' onSubmit={handleSubmit}>
           <FormGroup>
             <Label for="email">Email</Label>
             <Input
@@ -81,11 +82,11 @@ const LoginComponent = () => {
           <Button color="primary">Login</Button>
         </Form>
       </Col>
-      <Col xs="12" sm="6">
-        <img src={sideImage} alt="Side image" />
+      <Col xs="12" md="6" style={{height:"100vh"}}>
+        <img className='d-none d-md-block'   style={{height:"100%",objectFit:'cover',borderTopLeftRadius:"20%", borderBottomLeftRadius:"20%"}} src={sideImage} alt="Side image" />
       </Col>
     </Row>
-  </Container>
+  </div>
 }
 
 export default LoginComponent;
