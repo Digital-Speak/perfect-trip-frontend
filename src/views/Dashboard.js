@@ -4,7 +4,6 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   CardTitle,
   FormGroup,
   Form,
@@ -18,14 +17,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import agences from "../assets/data/agences.json";
-import circuits from "../assets/data/circuits.json";
 import cats from "../assets/data/cats.json";
 import typesHAB from "../assets/data/typesHAB.json";
-import image_place_holder_male from "../assets/img/image_place_holder_male.jpeg";
-import image_place_holder_female from "../assets/img/image_place_holder_female.jpeg";
 import HomeTable from "../components/Tables/Home-table";
 import { useTranslation } from 'react-i18next';
-import { getCircuit, postData } from "../api/dashboard"
+import { getCircuit, postData } from "../api/dashboard";
 
 
 function Dashboard() {
@@ -46,11 +42,10 @@ function Dashboard() {
   });
 
   const loadData = async () => {
-    const payload = await getCircuit("circuit/");
+    const payload = await getCircuit();
     if (!payload.success) return;
     setCircuitsServerData(payload.circuits);
     const newData = [];
-
     payload.circuits.forEach((item)=> {
       newData.push({
         label: item.name

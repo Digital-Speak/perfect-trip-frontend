@@ -16,7 +16,7 @@ function Header(props) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [color, setColor] = React.useState("transparent");
-  const {t, i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const sidebarToggle = React.useRef();
   const location = useLocation();
   const toggle = () => {
@@ -77,7 +77,7 @@ function Header(props) {
         props.location.pathname.indexOf("full-screen-maps") !== -1
           ? "navbar-absolute fixed-top"
           : "navbar-absolute fixed-top " +
-            (color === "transparent" ? "navbar-transparent " : "")
+          (color === "transparent" ? "navbar-transparent " : "")
       }
     >
       <Container fluid>
@@ -103,6 +103,20 @@ function Header(props) {
         </NavbarToggler>
         <Collapse isOpen={isOpen} navbar className="justify-content-end">
           <Nav navbar>
+          <NavItem>
+              <Link onClick={() => {
+                if (t("lang") === "Fr") {
+                  i18n.changeLanguage("es")
+                } else {
+                  i18n.changeLanguage("fr")
+                }
+              }} className="nav-link btn-rotate">
+                <i className="nc-icon nc-globe" />
+                <p>
+                  <span className="d-lg-block d-md-block">{t("lang-selected")}</span>
+                </p>
+              </Link>
+            </NavItem>
             <NavItem>
               <Link to="#pablo" className="nav-link btn-rotate">
                 <i className="nc-icon nc-settings-gear-65" />
@@ -113,13 +127,7 @@ function Header(props) {
             </NavItem>
           </Nav>
         </Collapse>
-        <span className="onhverlang" onClick={()=> {
-          if (t("lang") === "Fr") {
-            i18n.changeLanguage("es")
-          }else {
-            i18n.changeLanguage("fr")
-          }
-        }}>{t("lang-selected")}</span>
+
       </Container>
     </Navbar>
   );
