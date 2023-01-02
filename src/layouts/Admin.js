@@ -22,6 +22,7 @@ function Admin(props) {
       push('/auth/login');
     }
   }
+  
   useEffect(() => {
     refreshToken();
     setIsLoading(false);
