@@ -5,7 +5,6 @@ import TextField from '@mui/material/TextField';
 function EditableSelect({ t, text, data = [], cb }) {
  const [editMode, setEditMode] = useState(false)
  const [inputValue, setInputValue] = useState(text)
-
  return (
   <span style={{ "cursor": "pointer" }} onBlur={() => {
    setEditMode(false);
@@ -19,7 +18,8 @@ function EditableSelect({ t, text, data = [], cb }) {
      options={data}
      sx={{ width: "auto" }}
      inputValue={inputValue}
-     renderInput={(params) => <TextField {...params} label={t("Select")} />}
+     value={inputValue}
+     renderInput={(params) => <TextField {...params} label={text} />}
      onInputChange={(event, newInputValue) => {
       setInputValue(newInputValue);
       cb(newInputValue);
