@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import logo from '../assets/img/logo.png'; // import your logo image
 import sideImage from '../assets/img/login-page.jpg'; // import your side image
-import { login } from "../api/login"
+import { login } from "../api/auth"
 import { useHistory } from 'react-router-dom';
 import styles from '../assets/css/views/login.module.scss';
 const LoginComponent = () => {

@@ -8,7 +8,7 @@ import "assets/scss/paper-dashboard.scss?v=1.3.0";
 import "assets/demo/demo.css";
 
 import "perfect-scrollbar/css/perfect-scrollbar.css";
-
+import '../node_modules/font-awesome/css/font-awesome.min.css'; 
 import AdminLayout from "layouts/Admin.js";
 import AuthLayout from "layouts/Auth";
 

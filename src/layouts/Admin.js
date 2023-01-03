@@ -5,7 +5,7 @@ import Navbar from "components/Navbars/Navbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import routes from "routes.js";
-import { checkAuth } from "api/login";
+import { checkAuth } from "api/auth";
 import { useHistory } from 'react-router-dom';
 
 var ps;
@@ -50,7 +50,6 @@ function Admin(props) {
 
   return (
     <div>
-
       {
         isLoading ? null :
           (

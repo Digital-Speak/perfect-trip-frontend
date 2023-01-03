@@ -39,7 +39,27 @@ const checkAuth = async () => {
   }
 }
 
+const logout = async (body) => {
+  try {
+    const payload = await fetch(`${process.env.REACT_APP_API_URL}user/logout`, {
+      method: "POST",
+      origin: `${process.env.REACT_APP_CLIENT_URL}`,
+      headers: {
+        "content-Type": "application/json",
+      authorization: `Bearer ${sessionStorage.getItem('jat')}`
+      },
+      credentials: "include",
+      body: JSON.stringify(body)
+    });
+    return await payload.json();
+  } catch (error) {
+    return error;
+  }
+
+}
+
 export {
   login,
-  checkAuth
+  checkAuth,
+  logout
 }

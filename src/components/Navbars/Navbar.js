@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation,useHistory } from "react-router-dom";
 import {
   Collapse,
   Navbar,
@@ -11,14 +11,23 @@ import {
 } from "reactstrap";
 import routes from "routes.js";
 import { useTranslation } from "react-i18next";
+import { logout } from "api/auth";
 
 function Header(props) {
+  const {push} = useHistory();
   const [isOpen, setIsOpen] = React.useState(false);
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [color, setColor] = React.useState("transparent");
   const { t, i18n } = useTranslation()
   const sidebarToggle = React.useRef();
   const location = useLocation();
+
+  const handlelogout = async() =>{
+    const loggedOut = await logout();
+    if(loggedOut?.success){
+      push('/auth/login');
+    }
+  }
+
   const toggle = () => {
     if (isOpen) {
       setColor("transparent");
@@ -27,9 +36,7 @@ function Header(props) {
     }
     setIsOpen(!isOpen);
   };
-  const dropdownToggle = (e) => {
-    setDropdownOpen(!dropdownOpen);
-  };
+
   const getBrand = () => {
     let brandName = "Default Brand";
     routes.map((prop, key) => {
@@ -64,6 +71,7 @@ function Header(props) {
       sidebarToggle.current.classList.toggle("toggled");
     }
   }, [location]);
+
   return (
     // add or remove classes depending if we are on full-screen-maps page or not
     <Navbar
@@ -103,7 +111,7 @@ function Header(props) {
         </NavbarToggler>
         <Collapse isOpen={isOpen} navbar className="justify-content-end">
           <Nav navbar>
-          <NavItem>
+            <NavItem>
               <Link onClick={() => {
                 if (t("lang") === "Fr") {
                   i18n.changeLanguage("es")
@@ -111,20 +119,18 @@ function Header(props) {
                   i18n.changeLanguage("fr")
                 }
               }} className="nav-link btn-rotate">
-                <i className="nc-icon nc-globe" />
+                <i className="fa fa-solid fa-globe" />
                 <p>
                   <span className="d-lg-block d-md-block">{t("lang-selected")}</span>
                 </p>
               </Link>
             </NavItem>
             <NavItem>
-              <Link to="#pablo" className="nav-link btn-rotate">
-                <i className="nc-icon nc-settings-gear-65" />
-                <p>
-                  <span className="d-lg-none d-md-block">Account</span>
-                </p>
+              <Link onClick={handlelogout} className="nav-link btn-rotate">
+                <i className="fa fa-solid fa-sign-out"/>
+                  <span className="d-lg-none d-md-block">{t("sign-out")}</span>
               </Link>
-            </NavItem>
+            </NavItem>         
           </Nav>
         </Collapse>
 

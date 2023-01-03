@@ -40,7 +40,7 @@ function Sidebar(props) {
           Perfect Trips
         </a>
       </div>
-      <div className="sidebar-wrapper" ref={sidebar}>
+      <div className="sidebar-wrapper position-relative" ref={sidebar}>
         <Nav>
           {props.routes.map((prop, key) => {
             return (
@@ -62,6 +62,20 @@ function Sidebar(props) {
               </li>
             );
           })}
+        </Nav>
+        <Nav className="position-absolute fixed-bottom">
+        <li
+             
+              >
+                <NavLink
+                  to={'/admin/settings'}
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  
+                  <p>settings</p>
+                </NavLink>
+              </li>
         </Nav>
       </div>
     </div>
