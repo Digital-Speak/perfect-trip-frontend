@@ -1,5 +1,5 @@
-const getCities = async () => {
-  const payload = await fetch(`${process.env.REACT_APP_API_URL}city`, {
+const getAgencies = async () => {
+  const payload = await fetch(`${process.env.REACT_APP_API_URL}agency`, {
     headers: {
       "content-Type": "application/json",
       origin: `${process.env.REACT_APP_CLIENT_URL}`,
@@ -10,8 +10,8 @@ const getCities = async () => {
   return await payload.json();
 }
 
-const editCityApi = async (body) => {
-  const payload = await fetch(`${process.env.REACT_APP_API_URL}city/edit`, {
+const editAgencyApi = async (body) => {
+  const payload = await fetch(`${process.env.REACT_APP_API_URL}agency/edit`, {
     method: "PUT",
     headers: {
       "content-Type": "application/json",
@@ -23,8 +23,8 @@ const editCityApi = async (body) => {
   return await payload.json();
 }
 
-const deleteCityApi = async (body) => {
-  const payload = await fetch(`${process.env.REACT_APP_API_URL}city/delete`, {
+const deleteAgencyApi = async (body) => {
+  const payload = await fetch(`${process.env.REACT_APP_API_URL}agency/delete`, {
     method: "DELETE",
     headers: {
       "content-Type": "application/json",
@@ -36,8 +36,8 @@ const deleteCityApi = async (body) => {
   return await payload.json();
 }
 
-const addCityApi = async (body) => {
-  const payload = await fetch(`${process.env.REACT_APP_API_URL}city/add`, {
+const addAgencyApi = async (body) => {
+  const payload = await fetch(`${process.env.REACT_APP_API_URL}agency/add`, {
     method: "POST",
     headers: {
       "content-Type": "application/json",
@@ -50,8 +50,8 @@ const addCityApi = async (body) => {
 }
 
 export {
-  getCities,
-  editCityApi,
-  addCityApi,
-  deleteCityApi
+  getAgencies,
+  editAgencyApi,
+  addAgencyApi,
+  deleteAgencyApi
 }

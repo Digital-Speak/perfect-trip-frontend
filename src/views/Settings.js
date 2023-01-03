@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { getCircuit, postData } from "../api/dashboard";
 import AdminSettingsCard from "components/cards/AdminSettingsCard";
 import CitySettingsCard from "components/cards/CitySettingsCard";
+import AgencySettingsCard from "components/cards/AgencySettingsCard";
 
 
 function Settings() {
@@ -76,6 +77,8 @@ function Settings() {
         return <AdminSettingsCard action={action} />
       case "city":
         return <CitySettingsCard action={action} />
+        case "agency":
+          return <AgencySettingsCard action={action} />
       default:
         break;
     }

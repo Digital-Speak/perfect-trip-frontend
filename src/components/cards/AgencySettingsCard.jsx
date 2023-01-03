@@ -12,11 +12,13 @@ import {
   Form
 } from "reactstrap";
 import { useTranslation } from 'react-i18next';
-import { getCities } from "api/city";
-import { editCityApi, addCityApi } from "api/city";
-import { deleteCityApi } from "api/city";
+import { getAgencies } from "api/agency";
+import { editAgencyApi } from "api/agency";
+import { deleteAgencyApi } from "api/agency";
+import { addAgencyApi } from "api/agency";
 
-function CitySettingsCard({ action }) {
+
+function AgencySettingsCard({ action }) {
 
   const { t } = useTranslation();
   const [error, setError] = useState({
@@ -24,13 +26,14 @@ function CitySettingsCard({ action }) {
     edit: null,
     delete: null
   });
-  const [cities, setCities] = useState([]);
-  const [addCity, setAddCity] = useState('');
-  const [deleteCity, setDeleteCity] = useState(null);
-  const [editCity, setEditCity] = useState({
+  const [agencies, setAgencies] = useState([]);
+  const [addAgency, setAddAgency] = useState('');
+  const [deleteAgency, setDeleteAgency] = useState(null);
+  const [editAgency, setEditAgency] = useState({
     id: null,
     name: null,
   });
+
 
   const resetStates = () => {
     setError({
@@ -38,46 +41,46 @@ function CitySettingsCard({ action }) {
       edit: null,
       delete: null
     });
-    setEditCity({
+    setEditAgency({
       id: null,
       name: "",
     });
-    setAddCity('');
+    setAddAgency('');
   }
-
   const loadData = async () => {
-    const data = await getCities();
+    const data = await getAgencies();
+    console.log(data)
     if (data?.success) {
-      setEditCity({
+      setEditAgency({
         name: "",
-        id: data?.cities[0]?.id
+        id: data?.agencies[0]?.id
       });
-      setDeleteCity(data?.cities[0]?.id);
-      setCities(data?.cities);
+      setDeleteAgency(data?.agencies[0]?.id);
+      setAgencies(data?.agencies);
     }
   }
 
   const handleEdit = async () => {
-    if (editCity?.name && editCity?.name !== "") {
-      const data = await editCityApi(editCity);
+    if (editAgency?.name && editAgency?.name !== "") {
+      const data = await editAgencyApi(editAgency);
       if (data?.success) {
-        alert("City updated successfully.");
+        alert("Agency updated successfully.");
         resetStates();
         loadData();
       }
     } else {
       setError({
         ...error,
-        edit: "Please provide a correct city name."
+        edit: "Please provide a correct Agency name."
       })
     }
   }
 
   const handleDelete = async () => {
-    if (deleteCity) {
-      const data = await deleteCityApi({id: deleteCity});
+    if (deleteAgency) {
+      const data = await deleteAgencyApi({id: deleteAgency});
       if (data?.success) {
-        alert("City deleted successfully.");
+        alert("Agency deleted successfully.");
         resetStates();
         loadData();
       }
@@ -90,22 +93,22 @@ function CitySettingsCard({ action }) {
   }
 
   const handleAdd = async () => {
-    if (addCity && addCity !== "") {
-      const data = await addCityApi({name:addCity});
+    if (addAgency && addAgency !== "") {
+      const data = await addAgencyApi({name:addAgency});
       if (data?.success) {
-        alert("City added successfully.");
+        alert("Agency added successfully.");
         resetStates();
         loadData();
       }else{
         setError({
           ...error,
-          add: "Please provide a correct city name."
+          add: "Please provide a correct agency name."
         })
       }
     } else {
       setError({
         ...error,
-        add: "Please provide a correct city name."
+        add: "Please provide a correct agency name."
       })
     }
   }
@@ -120,20 +123,20 @@ function CitySettingsCard({ action }) {
         action === "add" ?
           <Card >
             <CardHeader>
-              <CardTitle tag="h5">{t("add-city")}</CardTitle>
+              <CardTitle tag="h5">{t("add-agency")}</CardTitle>
             </CardHeader>
             <CardBody>
               <Form>
                 <Row>
                   <Col className="" md="8">
                     <FormGroup>
-                      <label>{t("city-name")}</label>
+                      <label>{t("agency-name")}</label>
                       <Input
-                        value={addCity}
+                        value={addAgency}
                         id="refClient"
                         style={{ "height": "55px" }}
                         type="text"
-                        onChange={(event) => { setAddCity(event.target.value) }}
+                        onChange={(event) => { setAddAgency(event.target.value) }}
                       />
                       {error?.add && <label>{error?.add}</label>}
 
@@ -164,25 +167,25 @@ function CitySettingsCard({ action }) {
           action === "edit" ?
             <Card >
               <CardHeader>
-                <CardTitle tag="h5">{t("edit-city-name")}</CardTitle>
+                <CardTitle tag="h5">{t("edit-agency-name")}</CardTitle>
               </CardHeader>
               <CardBody>
                 <Form>
                   <Row>
                     <Col className="" md="6">
                       <FormGroup>
-                        <label>{t("choose-city")}</label>
+                        <label>{t("choose-agency")}</label>
                         <select
                           className="form-control form-select"
                           style={{ "height": "55px" }}
                           onChange={(event) => {
-                            setEditCity({
-                              ...editCity,
+                            setEditAgency({
+                              ...editAgency,
                               id: event.target.value
                             });
                           }}
                           aria-label="Default select example">
-                          {cities?.length !== 0 && cities.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
+                          {agencies?.length !== 0 && agencies.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
                         </select>
                         {error?.edit && <label className="text-danger">{error?.edit}</label>}
 
@@ -190,17 +193,17 @@ function CitySettingsCard({ action }) {
                     </Col>
                     <Col className="" md="6">
                       <FormGroup>
-                        <label>{t("change-city-name")}</label>
-                        {console.log(editCity.name)}
+                        <label>{t("change-agency-name")}</label>
+                        {console.log(editAgency.name)}
                         <Input
-                          defaultValue={editCity.name}
-                          value={editCity.name}
+                          defaultValue={editAgency.name}
+                          value={editAgency.name}
                           id="refClienst"
                           style={{ "height": "55px" }}
                           type="text"
                           onChange={(event) => {
-                            setEditCity({
-                              ...editCity,
+                            setEditAgency({
+                              ...editAgency,
                               name: event.target.value
                             })
                           }}
@@ -226,22 +229,22 @@ function CitySettingsCard({ action }) {
             </Card> :
             <Card >
             <CardHeader>
-              <CardTitle tag="h5">{t("delete-city")}</CardTitle>
+              <CardTitle tag="h5">{t("delete-agency")}</CardTitle>
             </CardHeader>
             <CardBody>
               <Form>
                 <Row>
                   <Col className="" md="8">
                     <FormGroup>
-                      <label>{t("choose-city")}</label>
+                      <label>{t("choose-agency")}</label>
                       <select
                         className="form-control form-select"
                         style={{ "height": "55px" }}
                         onChange={(event) => {
-                          setDeleteCity(event.target.value);
+                          setDeleteAgency(event.target.value);
                         }}
                         aria-label="Default select example">
-                        {cities?.length !== 0 && cities.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
+                        {agencies?.length !== 0 && agencies.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
                       </select>
                       {error?.delete && <label className="text-danger">{error?.delete}</label>}
 
@@ -272,4 +275,4 @@ function CitySettingsCard({ action }) {
   )
 }
 
-export default CitySettingsCard;
+export default AgencySettingsCard;
