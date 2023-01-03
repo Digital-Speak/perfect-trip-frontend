@@ -55,11 +55,29 @@ const logout = async (body) => {
   } catch (error) {
     return error;
   }
-
 }
+
+const getlastId = async () => {
+  try {
+    const payload = await fetch(`${process.env.REACT_APP_API_URL}dossier/getlast`, {
+      method: "GET",
+      origin: `${process.env.REACT_APP_CLIENT_URL}`,
+      headers: {
+        "content-Type": "application/json",
+        authorization: `Bearer ${sessionStorage.getItem('jat')}`
+      },
+      credentials: "include",
+    });
+    return await payload.json();
+  } catch (error) {
+    return error;
+  }
+}
+
 
 export {
   login,
   checkAuth,
-  logout
+  logout,
+  getlastId
 }

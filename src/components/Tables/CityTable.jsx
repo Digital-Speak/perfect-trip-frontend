@@ -75,7 +75,7 @@ function CityTable() {
                   cities?.length !== 0 &&
                   cities.map((city) => (
                     <tr>
-                      <td><EditableInput text={city?.name} cb={(text) => {
+                      <td><EditableInput text={city?.name} onTextChange={(text) => {
                         if (text !== city?.name) {
                           handleEdit({
                             id: city?.id,
@@ -98,7 +98,7 @@ function CityTable() {
                 }
                 <tr ><td></td></tr>
                 <tr style={{ marginTop: "30px" }}>
-                  <td><EditableInput style={newCity==="New city" ? {color: "#C0C0C0"} :{}} text={newCity} cb={(text) => {
+                  <td><EditableInput style={newCity==="New city" ? {color: "#C0C0C0"} :{}} text={newCity} onTextChange={(text) => {
                     setNewCity(text);
                    }} /></td>
                   <td style={{ backgroundColor: "	#F0F0F0" }}></td>

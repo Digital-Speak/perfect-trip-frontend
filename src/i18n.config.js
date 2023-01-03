@@ -31,6 +31,7 @@ const resources = {
    "City": "Ville",
    "lang-selected": "Es",
    "Flight": "Vol",
+   "Flights": "Vols",
    "Time": "Temps"
   }
  },
@@ -60,6 +61,7 @@ const resources = {
    "City": "Ciudad",
    "lang-selected": "Fr",
    "Flight": "Vuelo",
+   "Flights": "Vuelos",
    "Time": "Hore"
   }
  }

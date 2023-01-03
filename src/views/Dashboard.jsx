@@ -16,52 +16,86 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import agences from "../assets/data/agences.json";
 import cats from "../assets/data/cats.json";
-import typesHAB from "../assets/data/typesHAB.json";
+import PaxNumber from "../components/Tables/Pax-Number";
 import HomeTable from "../components/Tables/Home-table";
 import { useTranslation } from 'react-i18next';
 import { getCircuit, postData } from "../api/dashboard";
-
+import { getAgencies } from "../api/agency";
+import { getlastId } from "../api/auth";
+import { addNewDossier } from "../api/dossier";
 
 function Dashboard() {
   const [circuitsServerData, setCircuitsServerData] = useState([]);
+  const [agencesServerData, setAgencesServerData] = useState([]);
   const [circuits, setCircuits] = useState([]);
+  const [agences, setAgencies] = useState([]);
   const [hotels, setHotels] = useState([]);
+  const [circuit, setCircuit] = useState([]);
+  const [newHotelToDb, setNewHotelToDb] = useState([]);
+  const [typeOfHb, setTypeOfHb] = useState([]);
   const [newClient, setNewClient] = useState({
-    folderNumber: Date.now(),
-    refClient: "D2291",
+    folderNumber: 1,
+    refClient: "US-2031203420",
     fullName: "Jhon Doe",
-    agency: "",
-    circuit: "",
-    cat: "L",
+    agency: {
+      name: "",
+      id: ""
+    },
+    circuit: {
+      name: "",
+      id: ""
+    },
+    cat: {
+      name: "5 ⭐ L",
+      id: "L"
+    },
     typeHAB: "",
     nbrPax: "",
     startDate: new Date(),
     endDate: new Date(),
+    extraNights: 0
   });
 
   const loadData = async () => {
-    const payload = await getCircuit();
-    if (!payload.success) return;
-    setCircuitsServerData(payload.circuits);
-    const newData = [];
-    payload.circuits.forEach((item)=> {
-      newData.push({
+    // Get the folder Num:
+    const folderNumber = await getlastId();
+    setNewClient({ ...newClient, folderNumber: folderNumber.success ? folderNumber.dossier_num : "ERROR" })
+
+    const payload_1 = await getCircuit();
+    const payload_2 = await getAgencies();
+
+    if (!payload_1?.success) return;
+    if (!payload_2?.success) return;
+
+    setCircuitsServerData(payload_1?.circuits);
+    setAgencesServerData(payload_2?.agencies);
+
+    const newData = { "agenciesData": [], "circuitsData": [] };
+
+    payload_1.circuits.forEach((item) => {
+      newData.circuitsData.push({
         label: item.name
       })
     });
 
-    setCircuits(newData);
+    payload_2.agencies.forEach((item) => {
+      newData.agenciesData.push({
+        label: item.name
+      })
+    });
+
+    setAgencies(newData?.agenciesData);
+    setCircuits(newData?.circuitsData);
   }
 
   const fetchHotels = async (circ, cat) => {
     const payload = await postData("hotel/circuit_city_hotels", "POST", {
       id: circ,
-      cat
+      cat: cat
     });
 
-    if(!payload.success) return;
+    if (!payload.success) return;
     setHotels(payload.hotels)
   }
 
@@ -70,11 +104,16 @@ function Dashboard() {
   }, [circuits]);
 
   useEffect(() => {
-    if (newClient.circuit !== "" && newClient.cat !== ""){
-      fetchHotels(circuitsServerData.filter((item) => item.name === newClient.circuit)[0].id, newClient.cat);
-      
-    } 
+    if (newClient.circuit !== "" && newClient.cat !== "")
+      fetchHotels(newClient.circuit.id, newClient.cat.id);
   }, [newClient.circuit, newClient.cat]);
+
+
+  useEffect(() => {
+    let totalNbrPax = 0;
+    typeOfHb.forEach((item) => totalNbrPax = totalNbrPax + item.nbr)
+    setNewClient({ ...newClient, nbrPax: totalNbrPax })
+  }, [typeOfHb]);
 
   const { t } = useTranslation();
   return (
@@ -110,10 +149,13 @@ function Dashboard() {
                           disablePortal
                           options={agences}
                           sx={{ width: "auto" }}
-                          inputValue={newClient.agency}
+                          inputValue={newClient.agency.name}
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={(event, newInputValue) => {
-                            setNewClient({ ...newClient, agency: newInputValue })
+                            const agencyId = agencesServerData.filter((item) => item.name === newInputValue);
+                            if (agencyId.length !== 0)
+                              setNewClient({ ...newClient, agency: { name: newInputValue, id: agencyId[0].id } })
+
                           }}
                         />
                       </FormGroup>
@@ -141,10 +183,12 @@ function Dashboard() {
                           id="circuit"
                           options={circuits}
                           sx={{ width: "auto" }}
-                          inputValue={newClient.circuit}
+                          inputValue={newClient.circuit.name}
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={async (event, newInputValue) => {
-                            setNewClient({ ...newClient, circuit: newInputValue });
+                            const circuitId = circuitsServerData.filter((item) => item.name === newInputValue);
+                            if (circuitId.length !== 0)
+                              setNewClient({ ...newClient, circuit: { name: newInputValue, id: circuitId[0].id } });
                           }}
                         />
                       </FormGroup>
@@ -157,10 +201,20 @@ function Dashboard() {
                           id="cat"
                           options={cats}
                           sx={{ width: "auto" }}
-                          inputValue={newClient.cat}
+                          inputValue={newClient.cat.name}
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={(event, newInputValue) => {
-                            setNewClient({ ...newClient, cat: newInputValue })
+                            setNewClient({
+                              ...newClient,
+                              cat:
+                              {
+                                name: newInputValue,
+                                id: newInputValue === "5 ⭐ L" ? "L" :
+                                  newInputValue === "4 ⭐ A" ? "A" :
+                                    "4 ⭐ B" === "B" ? "B" :
+                                      "L"
+                              }
+                            })
                           }}
                         />
                       </FormGroup>
@@ -180,61 +234,40 @@ function Dashboard() {
                   </Row>
                   <Row>
                     <Col className="" md="4">
+                      <label>{t("From")}</label>
                       <FormGroup>
-                        <label>{t("Type-HB")}</label>
-                        <Autocomplete
-                          disablePortal
-                          id="typeHAB"
-                          options={typesHAB}
-                          sx={{ width: "auto" }}
-                          inputValue={newClient.typeHAB}
-                          renderInput={(params) => <TextField {...params} label={t("Select")} />}
-                          onInputChange={(event, newInputValue) => {
-                            setNewClient({ ...newClient, typeHAB: newInputValue })
-                          }}
-                        />
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            value={newClient.startDate}
+                            inputFormat={"DD/MM/YYYY"}
+                            onChange={(newValue) => {
+                              const newDate = new Date(newValue.$d);
+                              setNewClient({ ...newClient, startDate: newDate })
+                            }}
+                            renderInput={(params) => <TextField {...params} />}
+                          />
+                        </LocalizationProvider>
                       </FormGroup>
                     </Col>
                     <Col className="" md="4">
-                      <label> {t("Period")}</label>
-                      <Row>
-                        <Col className="" md="6">
-                          <FormGroup>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                              <DatePicker
-                                label={t("From")}
-                                value={newClient.startDate}
-                                inputFormat={"DD/MM/YYYY"}
-                                onChange={(newValue) => {
-                                  const newDate = new Date(newValue.$d);
-                                  console.log(newDate);
-                                  setNewClient({ ...newClient, startDate: newDate })
-                                }}
-                                renderInput={(params) => <TextField {...params} />}
-                              />
-                            </LocalizationProvider>
-                          </FormGroup>
-                        </Col>
-                        <Col className="" md="6">
-                          <FormGroup>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                              <DatePicker
-                                label={t("To")}
-                                disabled
-                                value={newClient.endDate}
-                                inputFormat={"DD/MM/YYYY"}
-                                renderInput={(params) => <TextField {...params} />}
-                              />
-                            </LocalizationProvider>
-                          </FormGroup>
-                        </Col>
-                      </Row>
+                      <label>{t("To")}</label>
+                      <FormGroup>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            disabled
+                            value={newClient.endDate}
+                            inputFormat={"DD/MM/YYYY"}
+                            renderInput={(params) => <TextField {...params} />}
+                          />
+                        </LocalizationProvider>
+                      </FormGroup>
                     </Col>
                     <Col className="" md="4">
                       <FormGroup>
                         <label> {t("Pax-Number")}</label>
                         <Input
                           value={newClient.nbrPax}
+                          disabled
                           style={{ "height": "55px" }}
                           id="nbrPax"
                           type="text"
@@ -244,8 +277,30 @@ function Dashboard() {
                     </Col>
                   </Row>
                   <Row>
+                    <Col className="" md="12">
+                      <FormGroup>
+                        <label>{t("Type-HB")}</label>
+                        <PaxNumber cb={(data) => {
+                          setTypeOfHb(data);
+                        }} />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
                     <Col md="12">
-                      <HomeTable circuitDates={{ start: newClient.startDate, end: newClient.endDate }} setNewClient={setNewClient} newClient={newClient} selectedCircuit={newClient.circuit} t={t} hotels={hotels} />
+                      <HomeTable
+                        circuitDates={{ start: newClient.startDate, end: newClient.endDate }}
+                        setNewClient={setNewClient}
+                        newClient={newClient}
+                        selectedCircuit={newClient.circuit}
+                        t={t}
+                        hotels={hotels}
+                        circuit={circuit}
+                        setCircuit={setCircuit}
+                        addNewHotel={(newHotel, cityId) => {
+                          setNewHotelToDb([...newHotelToDb, { newHotel }])
+                        }}
+                      />
                     </Col>
                   </Row>
                   <Row>
@@ -253,8 +308,31 @@ function Dashboard() {
                       <Button
                         className="btn-round"
                         color="primary"
-                        onClick={() => {
+                        onClick={async () => {
+                          const hotels_dossier = [];
+                          circuit.forEach((item) => {
+                            const hotels_dossier_item = hotels.filter((hotel) => hotel.cityName === item.city && hotel.hotelName === item.selectedHotel);
+                            hotels_dossier.push({
+                              dossier_num: newClient.folderNumber,
+                              hotel_id: hotels_dossier_item[0].hotelId,
+                              extra_nights: newClient.extraNights
+                            })
+                          })
 
+                          const clientObject = {
+                            dossier_num: newClient.folderNumber,
+                            ref_client: newClient.refClient,
+                            name: newClient.fullName,
+                            category: newClient.cat.id,
+                            starts_at: newClient.startDate,
+                            ends_at: newClient.endDate,
+                            agency_id: newClient.agency.id,
+                            circuit_id: newClient.circuit.id,
+                            hotels_dossier: hotels_dossier
+                          }
+
+                          const response = await addNewDossier(clientObject);
+                          console.log(response)
                         }}
                       >
                         {t("Save")}
@@ -263,7 +341,7 @@ function Dashboard() {
                         className="btn-round"
                         color="danger"
                         onClick={() => {
-
+                          console.log("Cancel")
                         }}
                       >
                         {t("Cancel")}

@@ -74,7 +74,7 @@ function AgencyTable() {
                   agencies?.length !== 0 &&
                   agencies.map((agency) => (
                     <tr>
-                      <td><EditableInput text={agency?.name} cb={(text) => {
+                      <td><EditableInput text={agency?.name} onTextChange={(text) => {
                         if (text !== agency?.name) {
                           handleEdit({
                             id: agency?.id,
@@ -97,7 +97,7 @@ function AgencyTable() {
                 }
                 <tr ><td></td></tr>
                 <tr style={{ marginTop: "30px" }}>
-                  <td><EditableInput style={newAgency==="New agency" ? {color: "#C0C0C0"} :{}} text={newAgency} cb={(text) => {
+                  <td><EditableInput style={newAgency==="New agency" ? {color: "#C0C0C0"} :{}} text={newAgency} onTextChange={(text) => {
                     setNewAgency(text);
                    }} /></td>
                   <td style={{ backgroundColor: "	#F0F0F0" }}></td>

@@ -84,7 +84,7 @@ function HotelTable() {
                   hotels?.length !== 0 &&
                   hotels.map((hotel) => (
                     <tr>
-                      <td><EditableInput text={hotel?.name} cb={(text) => {
+                      <td><EditableInput text={hotel?.name} onTextChange={(text) => {
                         if (text !== hotel?.name) {
                           handleEdit({
                             id: hotel?.id,
@@ -96,7 +96,7 @@ function HotelTable() {
                         <EditableSelect
                           data={[{ label: "5L" }, { label: "4A" }, { label: "4B" }]}
                           text={hotel?.stars}
-                          cb={(newStars) => {
+                          onTextChange={(newStars) => {
                             handleEdit({ id: hotel?.id, stars: newStars, name: hotel?.name, city_id: hotel?.city_id })
                           }}
                         /></td>
@@ -125,7 +125,7 @@ function HotelTable() {
                 }
                 <tr ><td></td></tr>
                 <tr style={{ marginTop: "30px" }}>
-                  <td><EditableInput style={newHotel === "New hotel" ? { color: "#C0C0C0" } : {}} text={newHotel} cb={(text) => {
+                  <td><EditableInput style={newHotel === "New hotel" ? { color: "#C0C0C0" } : {}} text={newHotel} onTextChange={(text) => {
                     setNewHotel(text);
                   }} /></td>
                   <td style={{ backgroundColor: "	#F0F0F0" }}></td>

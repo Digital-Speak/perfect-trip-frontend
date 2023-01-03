@@ -1,6 +1,7 @@
-import Dashboard from "views/Dashboard.js";
+import Dashboard from "views/Dashboard";
 import Login from "views/Login";
 import Settings from "views/Settings";
+import Filters from "views/Filters";
 
 var routes = [
   {
@@ -10,6 +11,14 @@ var routes = [
     component: Dashboard,
     layout: "/admin",
     protected : true,
+  },
+  {
+    path: "/filters",
+    name: "Filters",
+    icon: "nc-icon nc-settings",
+    component: Filters,
+    layout: "/admin",
+    protected: true,
   },
   {
     path: "/settings",
