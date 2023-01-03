@@ -4,7 +4,7 @@ import logo from '../assets/img/logo.png'; // import your logo image
 import sideImage from '../assets/img/login-page.jpg'; // import your side image
 import { login } from "../api/login"
 import { useHistory } from 'react-router-dom';
-
+import styles from '../assets/css/views/login.module.scss';
 const LoginComponent = () => {
   const { push } = useHistory()
   const [email, setEmail] = useState('');
@@ -48,7 +48,9 @@ const LoginComponent = () => {
     }
   };
 
-  return <div>
+  return <div 
+  // className={styles.wrapper}
+  >
    <Row>
       <Col xs="12" md="6" className='p-5' style={{display:"flex",flexDirection:"column",  alignItems:"center"}}>
         <img style={{
