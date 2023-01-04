@@ -109,9 +109,6 @@ return (
                     <button onClick={()=>{setSector("admin")}} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector==='admin' && 'active'}`}>Admin</button>
                   </Col>
                   <Col className="" md="12">
-                    <button onClick={()=>{setSector("partner")}} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector==='partner' && 'active'}`}>Partners</button>
-                  </Col>
-                  <Col className="" md="12">
                     <button onClick={()=>{setSector("agency")}} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector==='agency' && 'active'}`}>Agency</button>
                   </Col>
                   <Col className="" md="12">

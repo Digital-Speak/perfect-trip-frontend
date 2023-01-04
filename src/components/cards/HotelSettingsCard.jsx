@@ -59,7 +59,7 @@ function HotelSettingsCard({ action }) {
     const data = await getHotels();
     if (data?.success) {
       setEditHotel({
-        name: "",
+        name: data?.hotels[0]?.name,
         id: data?.hotels[0]?.id
       });
       setDeleteHotel(data?.hotels[0]?.id);
@@ -69,7 +69,7 @@ function HotelSettingsCard({ action }) {
 
   const handleEdit = async () => {
     if (editHotel?.name && editHotel?.name !== "") {
-      const data = await editHotelApi(editHotel);
+      const data = await editHotelApi({ id: editHotel?.id, name: editHotel?.name, city_id: cityId, });
       if (data?.success) {
         alert("Hotel updated successfully.");
         resetStates();
@@ -85,7 +85,7 @@ function HotelSettingsCard({ action }) {
 
   const handleDelete = async () => {
     if (deleteHotel) {
-      const data = await deleteHotelApi({id: deleteHotel});
+      const data = await deleteHotelApi({ id: deleteHotel });
       if (data?.success) {
         alert("Hotel deleted successfully.");
         resetStates();
@@ -102,12 +102,12 @@ function HotelSettingsCard({ action }) {
   const handleAdd = async () => {
     if (addHotel && addHotel !== "") {
       console.log(hotelStars);
-      const data = await addHotelApi({city_id:cityId, name:addHotel, stars: hotelStars});
+      const data = await addHotelApi({ city_id: cityId, name: addHotel, stars: hotelStars });
       if (data?.success) {
         alert("Hotel added successfully.");
         resetStates();
         loadData();
-      }else{
+      } else {
         setError({
           ...error,
           add: "Please provide a correct hotel name."
@@ -136,7 +136,6 @@ function HotelSettingsCard({ action }) {
             <CardBody>
               <Form>
                 <Row>
-
                   <Col className="" md="4">
                     <FormGroup>
                       <label>{t("hotel-name")}</label>
@@ -152,29 +151,29 @@ function HotelSettingsCard({ action }) {
                     </FormGroup>
                   </Col>
                   <Col className="" md="4">
-                      <FormGroup>
-                        <label>{t("choose-city")}</label>
-                        <select
-                          className="form-control form-select"
-                          style={{ "height": "55px" }}
-                          onChange={(event) => { setCityId(event.target.value);}}
-                          aria-label="Default select example">
-                          {cities?.length !== 0 && cities.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
-                        </select>
-                      </FormGroup>
-                    </Col>
-                    <Col className="" md="4">
-                      <FormGroup>
-                        <label>{t("hotel-stars")}</label>
-                        <select
-                          className="form-control form-select"
-                          style={{ "height": "55px" }}
-                          onChange={(event) => { setHotelStars(event.target.value);}}
-                          aria-label="Default select example">
-                          {['5L','4A','4B'].map((element, index) => <option value={element} className="form-check-input" key={index}>{element}</option>)}
-                        </select>
-                      </FormGroup>
-                    </Col>
+                    <FormGroup>
+                      <label>{t("choose-city")}</label>
+                      <select
+                        className="form-control form-select"
+                        style={{ "height": "55px" }}
+                        onChange={(event) => { setCityId(event.target.value); }}
+                        aria-label="Default select example">
+                        {cities?.length !== 0 && cities.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
+                      </select>
+                    </FormGroup>
+                  </Col>
+                  <Col className="" md="4">
+                    <FormGroup>
+                      <label>{t("hotel-stars")}</label>
+                      <select
+                        className="form-control form-select"
+                        style={{ "height": "55px" }}
+                        onChange={(event) => { setHotelStars(event.target.value); }}
+                        aria-label="Default select example">
+                        {['5L', '4A', '4B'].map((element, index) => <option value={element} className="form-check-input" key={index}>{element}</option>)}
+                      </select>
+                    </FormGroup>
+                  </Col>
                   <Col className="" md="4">
                     <FormGroup>
                       <label></label>
@@ -192,7 +191,6 @@ function HotelSettingsCard({ action }) {
                   </Col>
                 </Row>
                 <Row>
-
                 </Row>
               </Form>
             </CardBody>
@@ -200,16 +198,16 @@ function HotelSettingsCard({ action }) {
           action === "edit" ?
             <Card >
               <CardHeader>
-                <CardTitle tag="h5">{t("edit-hotel-name")}</CardTitle>
+                <CardTitle tag="h5">{t("edit-hotel")}</CardTitle>
               </CardHeader>
               <CardBody>
                 <Form>
                   <Row>
-                    <Col className="" md="6">
+                    <Col className="" md="4">
                       <FormGroup>
                         <label>{t("choose-hotel")}</label>
                         <select
-                          className="form-control form-select"
+                          className="form-control"
                           style={{ "height": "55px" }}
                           onChange={(event) => {
                             setEditHotel({
@@ -221,12 +219,11 @@ function HotelSettingsCard({ action }) {
                           {hotels?.length !== 0 && hotels.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
                         </select>
                         {error?.edit && <label className="text-danger">{error?.edit}</label>}
-
                       </FormGroup>
                     </Col>
-                    <Col className="" md="6">
+                    <Col className="" md="4">
                       <FormGroup>
-                        <label>{t("change-hotel-name")}</label>
+                        <label>{t("hotel-name")}</label>
                         {console.log(editHotel.name)}
                         <Input
                           defaultValue={editHotel.name}
@@ -241,6 +238,18 @@ function HotelSettingsCard({ action }) {
                             })
                           }}
                         />
+                      </FormGroup>
+                    </Col>
+                    <Col className="" md="4">
+                      <FormGroup>
+                        <label>{t("hotel-city")}</label>
+                        <select
+                          className="form-control form-select"
+                          style={{ "height": "55px" }}
+                          onChange={(event) => { setCityId(event.target.value); }}
+                          aria-label="Default select example">
+                          {cities?.length !== 0 && cities.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
+                        </select>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -261,46 +270,46 @@ function HotelSettingsCard({ action }) {
               </CardBody>
             </Card> :
             <Card >
-            <CardHeader>
-              <CardTitle tag="h5">{t("delete-hotel")}</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <Form>
-                <Row>
-                  <Col className="" md="8">
-                    <FormGroup>
-                      <label>{t("choose-hotel")}</label>
-                      <select
-                        className="form-control form-select"
-                        style={{ "height": "55px" }}
-                        onChange={(event) => {
-                          setDeleteHotel(event.target.value);
-                        }}
-                        aria-label="Default select example">
-                        {hotels?.length !== 0 && hotels.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
-                      </select>
-                      {error?.delete && <label className="text-danger">{error?.delete}</label>}
+              <CardHeader>
+                <CardTitle tag="h5">{t("delete-hotel")}</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Form>
+                  <Row>
+                    <Col className="" md="8">
+                      <FormGroup>
+                        <label>{t("choose-hotel")}</label>
+                        <select
+                          className="form-control form-select"
+                          style={{ "height": "55px" }}
+                          onChange={(event) => {
+                            setDeleteHotel(event.target.value);
+                          }}
+                          aria-label="Default select example">
+                          {hotels?.length !== 0 && hotels.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
+                        </select>
+                        {error?.delete && <label className="text-danger">{error?.delete}</label>}
 
-                    </FormGroup>
-                  </Col>
-                  <Col className="" md="4">
-                    <FormGroup>
-                      <label></label>
-                      <Button
-                        className="btn btn-block"
-                        color="danger"
-                        onClick={() => {
-                          handleDelete()
-                        }}
-                      >
-                        {t("delete")}
-                      </Button>
-                    </FormGroup>
-                  </Col>
-                </Row>
-              </Form>
-            </CardBody>
-          </Card>
+                      </FormGroup>
+                    </Col>
+                    <Col className="" md="4">
+                      <FormGroup>
+                        <label></label>
+                        <Button
+                          className="btn btn-block"
+                          color="danger"
+                          onClick={() => {
+                            handleDelete()
+                          }}
+                        >
+                          {t("delete")}
+                        </Button>
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                </Form>
+              </CardBody>
+            </Card>
       }
 
     </div>
