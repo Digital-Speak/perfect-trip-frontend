@@ -12,11 +12,13 @@ import {
   Form
 } from "reactstrap";
 import { useTranslation } from 'react-i18next';
+import { editHotelApi } from "api/hotel";
+import { deleteHotelApi } from "api/hotel";
+import { addHotelApi } from "api/hotel";
+import { getHotels } from "api/hotel";
 import { getCities } from "api/city";
-import { editCityApi, addCityApi } from "api/city";
-import { deleteCityApi } from "api/city";
 
-function CitySettingsCard({ action }) {
+function HotelSettingsCard({ action }) {
 
   const { t } = useTranslation();
   const [error, setError] = useState({
@@ -24,10 +26,13 @@ function CitySettingsCard({ action }) {
     edit: null,
     delete: null
   });
+  const [hotels, setHotels] = useState([]);
   const [cities, setCities] = useState([]);
-  const [addCity, setAddCity] = useState('');
-  const [deleteCity, setDeleteCity] = useState(null);
-  const [editCity, setEditCity] = useState({
+  const [addHotel, setAddHotel] = useState('');
+  const [deleteHotel, setDeleteHotel] = useState(null);
+  const [hotelStars, setHotelStars] = useState('5L');
+  const [cityId, setCityId] = useState(null);
+  const [editHotel, setEditHotel] = useState({
     id: null,
     name: null,
   });
@@ -38,46 +43,51 @@ function CitySettingsCard({ action }) {
       edit: null,
       delete: null
     });
-    setEditCity({
+    setEditHotel({
       id: null,
       name: "",
     });
-    setAddCity('');
+    setAddHotel('');
   }
 
   const loadData = async () => {
-    const data = await getCities();
+    const cities = await getCities();
+    if (cities?.success) {
+      setCityId(cities?.cities[0]?.id);
+      setCities(cities?.cities);
+    }
+    const data = await getHotels();
     if (data?.success) {
-      setEditCity({
+      setEditHotel({
         name: "",
-        id: data?.cities[0]?.id
+        id: data?.hotels[0]?.id
       });
-      setDeleteCity(data?.cities[0]?.id);
-      setCities(data?.cities);
+      setDeleteHotel(data?.hotels[0]?.id);
+      setHotels(data?.hotels);
     }
   }
 
   const handleEdit = async () => {
-    if (editCity?.name && editCity?.name !== "") {
-      const data = await editCityApi(editCity);
+    if (editHotel?.name && editHotel?.name !== "") {
+      const data = await editHotelApi(editHotel);
       if (data?.success) {
-        alert("City updated successfully.");
+        alert("Hotel updated successfully.");
         resetStates();
         loadData();
       }
     } else {
       setError({
         ...error,
-        edit: "Please provide a correct city name."
+        edit: "Please provide a correct hotel name."
       })
     }
   }
 
   const handleDelete = async () => {
-    if (deleteCity) {
-      const data = await deleteCityApi({id: deleteCity});
+    if (deleteHotel) {
+      const data = await deleteHotelApi({id: deleteHotel});
       if (data?.success) {
-        alert("City deleted successfully.");
+        alert("Hotel deleted successfully.");
         resetStates();
         loadData();
       }
@@ -90,22 +100,23 @@ function CitySettingsCard({ action }) {
   }
 
   const handleAdd = async () => {
-    if (addCity && addCity !== "") {
-      const data = await addCityApi({name:addCity});
+    if (addHotel && addHotel !== "") {
+      console.log(hotelStars);
+      const data = await addHotelApi({city_id:cityId, name:addHotel, stars: hotelStars});
       if (data?.success) {
-        alert("City added successfully.");
+        alert("Hotel added successfully.");
         resetStates();
         loadData();
       }else{
         setError({
           ...error,
-          add: "Please provide a correct city name."
+          add: "Please provide a correct hotel name."
         })
       }
     } else {
       setError({
         ...error,
-        add: "Please provide a correct city name."
+        add: "Please provide a correct hotel name."
       })
     }
   }
@@ -120,25 +131,50 @@ function CitySettingsCard({ action }) {
         action === "add" ?
           <Card >
             <CardHeader>
-              <CardTitle tag="h5">{t("add-city")}</CardTitle>
+              <CardTitle tag="h5">{t("add-hotel")}</CardTitle>
             </CardHeader>
             <CardBody>
               <Form>
                 <Row>
-                  <Col className="" md="8">
+
+                  <Col className="" md="4">
                     <FormGroup>
-                      <label>{t("city-name")}</label>
+                      <label>{t("hotel-name")}</label>
                       <Input
-                        value={addCity}
+                        value={addHotel}
                         id="refClient"
                         style={{ "height": "55px" }}
                         type="text"
-                        onChange={(event) => { setAddCity(event.target.value) }}
+                        onChange={(event) => { setAddHotel(event.target.value) }}
                       />
                       {error?.add && <label>{error?.add}</label>}
 
                     </FormGroup>
                   </Col>
+                  <Col className="" md="4">
+                      <FormGroup>
+                        <label>{t("choose-city")}</label>
+                        <select
+                          className="form-control form-select"
+                          style={{ "height": "55px" }}
+                          onChange={(event) => { setCityId(event.target.value);}}
+                          aria-label="Default select example">
+                          {cities?.length !== 0 && cities.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
+                        </select>
+                      </FormGroup>
+                    </Col>
+                    <Col className="" md="4">
+                      <FormGroup>
+                        <label>{t("hotel-stars")}</label>
+                        <select
+                          className="form-control form-select"
+                          style={{ "height": "55px" }}
+                          onChange={(event) => { setHotelStars(event.target.value);}}
+                          aria-label="Default select example">
+                          {['5L','4A','4B'].map((element, index) => <option value={element} className="form-check-input" key={index}>{element}</option>)}
+                        </select>
+                      </FormGroup>
+                    </Col>
                   <Col className="" md="4">
                     <FormGroup>
                       <label></label>
@@ -164,25 +200,25 @@ function CitySettingsCard({ action }) {
           action === "edit" ?
             <Card >
               <CardHeader>
-                <CardTitle tag="h5">{t("edit-city-name")}</CardTitle>
+                <CardTitle tag="h5">{t("edit-hotel-name")}</CardTitle>
               </CardHeader>
               <CardBody>
                 <Form>
                   <Row>
                     <Col className="" md="6">
                       <FormGroup>
-                        <label>{t("choose-city")}</label>
+                        <label>{t("choose-hotel")}</label>
                         <select
                           className="form-control form-select"
                           style={{ "height": "55px" }}
                           onChange={(event) => {
-                            setEditCity({
-                              ...editCity,
+                            setEditHotel({
+                              ...editHotel,
                               id: event.target.value
                             });
                           }}
                           aria-label="Default select example">
-                          {cities?.length !== 0 && cities.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
+                          {hotels?.length !== 0 && hotels.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
                         </select>
                         {error?.edit && <label className="text-danger">{error?.edit}</label>}
 
@@ -190,17 +226,17 @@ function CitySettingsCard({ action }) {
                     </Col>
                     <Col className="" md="6">
                       <FormGroup>
-                        <label>{t("change-city-name")}</label>
-                        {console.log(editCity.name)}
+                        <label>{t("change-hotel-name")}</label>
+                        {console.log(editHotel.name)}
                         <Input
-                          defaultValue={editCity.name}
-                          value={editCity.name}
+                          defaultValue={editHotel.name}
+                          value={editHotel.name}
                           id="refClienst"
                           style={{ "height": "55px" }}
                           type="text"
                           onChange={(event) => {
-                            setEditCity({
-                              ...editCity,
+                            setEditHotel({
+                              ...editHotel,
                               name: event.target.value
                             })
                           }}
@@ -226,22 +262,22 @@ function CitySettingsCard({ action }) {
             </Card> :
             <Card >
             <CardHeader>
-              <CardTitle tag="h5">{t("delete-city")}</CardTitle>
+              <CardTitle tag="h5">{t("delete-hotel")}</CardTitle>
             </CardHeader>
             <CardBody>
               <Form>
                 <Row>
                   <Col className="" md="8">
                     <FormGroup>
-                      <label>{t("choose-city")}</label>
+                      <label>{t("choose-hotel")}</label>
                       <select
                         className="form-control form-select"
                         style={{ "height": "55px" }}
                         onChange={(event) => {
-                          setDeleteCity(event.target.value);
+                          setDeleteHotel(event.target.value);
                         }}
                         aria-label="Default select example">
-                        {cities?.length !== 0 && cities.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
+                        {hotels?.length !== 0 && hotels.map((element, index) => <option value={element?.id} className="form-check-input" key={index}>{element?.name}</option>)}
                       </select>
                       {error?.delete && <label className="text-danger">{error?.delete}</label>}
 
@@ -272,4 +308,4 @@ function CitySettingsCard({ action }) {
   )
 }
 
-export default CitySettingsCard;
+export default HotelSettingsCard;

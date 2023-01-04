@@ -16,6 +16,7 @@ import { getCircuit, postData } from "../api/dashboard";
 import AdminSettingsCard from "components/cards/AdminSettingsCard";
 import CitySettingsCard from "components/cards/CitySettingsCard";
 import AgencySettingsCard from "components/cards/AgencySettingsCard";
+import HotelSettingsCard from "components/cards/HotelSettingsCard";
 
 
 function Settings() {
@@ -79,6 +80,8 @@ function Settings() {
         return <CitySettingsCard action={action} />
         case "agency":
           return <AgencySettingsCard action={action} />
+             case "hotel":
+          return <HotelSettingsCard action={action} />
       default:
         break;
     }
@@ -103,22 +106,22 @@ return (
               <Form>
                 <Row>
                   <Col className="" md="12">
-                    <button onClick={()=>{setSector("admin")}} type="button" class="btn btn-block bg-transparent text-black-50 border-gray border">Admin</button>
+                    <button onClick={()=>{setSector("admin")}} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector==='admin' && 'active'}`}>Admin</button>
                   </Col>
                   <Col className="" md="12">
-                    <button onClick={()=>{setSector("partner")}} type="button" class="btn  btn-block bg-transparent text-black-50 border-gray border">Partners</button>
+                    <button onClick={()=>{setSector("partner")}} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector==='partner' && 'active'}`}>Partners</button>
                   </Col>
                   <Col className="" md="12">
-                    <button onClick={()=>{setSector("agency")}} type="button" class="btn  btn-block bg-transparent text-black-50 border-gray border">Agency</button>
+                    <button onClick={()=>{setSector("agency")}} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector==='agency' && 'active'}`}>Agency</button>
                   </Col>
                   <Col className="" md="12">
-                    <button onClick={()=>{setSector("city")}} type="button" class="btn  btn-block bg-transparent text-black-50 border-gray border">City</button>
+                    <button onClick={()=>{setSector("city")}} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector==='city' && 'active'}`}>City</button>
                   </Col>
                   <Col className="" md="12">
-                    <button onClick={()=>{setSector("hotel")}} type="button" class="btn  btn-block bg-transparent text-black-50 border-gray border">Hotel</button>
+                    <button onClick={()=>{setSector("hotel")}} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector==='hotel' && 'active'}`}>Hotel</button>
                   </Col>
                   <Col className="" md="12">
-                    <button onClick={()=>{setSector("circuit")}} type="button" class="btn  btn-block bg-transparent text-black-50 border-gray border">Circuit</button>
+                    <button onClick={()=>{setSector("circuit")}} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector==='circuit' && 'active'}`}>Circuit</button>
                   </Col>
                 </Row>
               </Form>
@@ -131,19 +134,19 @@ return (
               <Form>
                 <Row>
                   <Col className="" sm="12" md="4">
-                    <button onClick={() => { setAction("add") }} type="button" class="btn  btn-block bg-transparent text-black-50 border-gray border">
+                    <button onClick={() => { setAction("add") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${action==='add' && 'active'}`}>
                       <i className="fa fa-solid fa-plus-square-o mr-2" />
                       Add
                     </button>
                   </Col>
                   <Col className="" sm="12" md="4">
-                    <button onClick={() => { setAction("edit") }} type="button" class="btn  btn-block bg-transparent text-black-50 border-gray border">
+                    <button onClick={() => { setAction("edit") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${action==='edit' && 'active'}`}>
                       <i className="fa fa-solid fa-edit mr-2" />
                       Edit
                     </button>
                   </Col>
                   <Col className="" sm="12" md="4">
-                    <button onClick={() => { setAction("delete") }} type="button" class="btn  btn-block bg-transparent text-black-50 border-gray border">
+                    <button onClick={() => { setAction("delete") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${action==='delete' && 'active'}`}>
                       <i className="fa fa-solid fa-trash-o mr-2" />
                       Delete
                     </button>

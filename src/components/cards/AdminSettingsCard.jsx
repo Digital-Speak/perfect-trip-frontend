@@ -199,7 +199,7 @@ function AdminSettingsCard({action}) {
                <div className="update ml-auto mr-auto d-flex">
                  <Button
                    className="btn-round"
-                   color="primary"
+                   color="danger"
                    onClick={() => {
    
                    }}

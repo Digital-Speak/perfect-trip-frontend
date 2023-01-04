@@ -255,7 +255,7 @@ function AgencySettingsCard({ action }) {
                       <label></label>
                       <Button
                         className="btn btn-block"
-                        color="primary"
+                        color="danger"
                         onClick={() => {
                           handleDelete()
                         }}
