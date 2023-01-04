@@ -19,8 +19,10 @@ function EditableSelect({ t, text, data = [], cb }) {
      sx={{ width: "auto" }}
      inputValue={inputValue}
      value={inputValue}
+     onSelect= {(s)=>{console.log("object",s);}}
      renderInput={(params) => <TextField {...params} label={text} />}
-     onInputChange={(event, newInputValue) => {
+     onInputChange={(event, newInputValue,index) => {
+      console.log("nfvd",index);
       setInputValue(newInputValue);
       cb(newInputValue);
      }}
