@@ -1,5 +1,6 @@
 import Dashboard from "views/Dashboard";
 import Login from "views/Login";
+import LoginV2 from "views/Login-v2";
 import Settings from "views/Settings";
 import Filters from "views/Filters";
 
@@ -12,14 +13,14 @@ var routes = [
     layout: "/admin",
     protected : true,
   },
-  {
-    path: "/filters",
-    name: "Filters",
-    icon: "nc-icon nc-settings",
-    component: Filters,
-    layout: "/admin",
-    protected: true,
-  },
+  // {
+  //   path: "/filters",
+  //   name: "Filters",
+  //   icon: "nc-icon nc-settings",
+  //   component: Filters,
+  //   layout: "/admin",
+  //   protected: true,
+  // },
   {
     path: "/settings",
     name: "Settings",
@@ -35,7 +36,14 @@ var routes = [
     component: Login,
     layout: "/auth",
     protected : false,
-  }
-  
+  },
+  // {
+  //   path: "/login-v2",
+  //   name: "Login-V2",
+  //   icon: "nc-icon nc-bank",
+  //   component: LoginV2,
+  //   layout: "/auth",
+  //   protected: false,
+  // }
 ];
 export default routes;
