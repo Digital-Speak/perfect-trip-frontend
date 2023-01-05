@@ -57,6 +57,42 @@ const logout = async (body) => {
   }
 }
 
+const forgotPassword = async (body) => {
+  try {
+    const payload = await fetch(`${process.env.REACT_APP_API_URL}user/forgotpassword`, {
+      method: "POST",
+      origin: `${process.env.REACT_APP_CLIENT_URL}`,
+      headers: {
+        "content-Type": "application/json",
+        authorization: `Bearer ${sessionStorage.getItem('jat')}`
+      },
+      credentials: "include",
+      body: JSON.stringify(body)
+    });
+    return await payload.json();
+  } catch (error) {
+    return error;
+  }
+}
+
+const saveNewPassword = async (body) => {
+  try {
+    const payload = await fetch(`${process.env.REACT_APP_API_URL}user/forgotpassword`, {
+      method: "POST",
+      origin: `${process.env.REACT_APP_CLIENT_URL}`,
+      headers: {
+        "content-Type": "application/json",
+        authorization: `Bearer ${sessionStorage.getItem('jat')}`
+      },
+      credentials: "include",
+      body: JSON.stringify(body)
+    });
+    return await payload.json();
+  } catch (error) {
+    return error;
+  }
+}
+
 const getlastId = async () => {
   try {
     const payload = await fetch(`${process.env.REACT_APP_API_URL}dossier/getlast`, {
@@ -79,5 +115,7 @@ export {
   login,
   checkAuth,
   logout,
-  getlastId
+  getlastId,
+  forgotPassword,
+  saveNewPassword
 }
