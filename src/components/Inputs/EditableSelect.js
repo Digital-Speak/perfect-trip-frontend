@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 
 function EditableSelect({ t, text, data = [], onTextChange }) {
   const [editMode, setEditMode] = useState(false);
   const [inputValue, setInputValue] = useState(text);
+
+  useEffect(() => {
+    setInputValue(text)
+  }, [text])
+  
 
   return (
     <span style={{ "cursor": "pointer" }}>
@@ -17,7 +22,9 @@ function EditableSelect({ t, text, data = [], onTextChange }) {
           inputValue={inputValue}
           value={inputValue}
           renderInput={(params) =>
-            <TextField {...params}
+            <TextField 
+            fullWidth
+            {...params}
               InputProps={{
                 ...params.InputProps,
                 type: 'search',
@@ -33,7 +40,7 @@ function EditableSelect({ t, text, data = [], onTextChange }) {
         />
         : <span onDoubleClick={() => {
           setEditMode(!editMode);
-        }}>{inputValue === "" ? data[0].label : inputValue}</span>}
+        }}>{inputValue}</span>}
     </span>
   );
 }

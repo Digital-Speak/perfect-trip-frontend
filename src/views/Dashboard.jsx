@@ -18,7 +18,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import cats from "../assets/data/cats.json";
 import PaxNumber from "../components/Tables/Pax-Number";
-import HomeTable from "../components/Tables/Home-table";
+import HomeTable from "../components/Tables/HomeTable";
 import { useTranslation } from 'react-i18next';
 import { getCircuit, postData } from "../api/dashboard";
 import { getAgencies } from "../api/agency";
@@ -26,6 +26,7 @@ import { getlastId } from "../api/auth";
 import { addNewDossier } from "../api/dossier";
 
 function Dashboard() {
+  const { t } = useTranslation();
   const [circuitsServerData, setCircuitsServerData] = useState([]);
   const [agencesServerData, setAgencesServerData] = useState([]);
   const [circuits, setCircuits] = useState([]);
@@ -34,27 +35,29 @@ function Dashboard() {
   const [circuit, setCircuit] = useState([]);
   const [newHotelToDb, setNewHotelToDb] = useState([]);
   const [typeOfHb, setTypeOfHb] = useState([]);
+
   const [newClient, setNewClient] = useState({
     folderNumber: 1,
     refClient: "US-2031203420",
     fullName: "Jhon Doe",
     agency: {
-      name: "",
-      id: ""
+      name: "EXOTICCA",
+      id: 1
     },
     circuit: {
-      name: "",
-      id: ""
+      name: "GRT",
+      id: 1
     },
     cat: {
       name: "5 ⭐ L",
       id: "L"
     },
-    typeHAB: "",
-    nbrPax: "",
+    nbrPax: 0,
     startDate: new Date(),
     endDate: new Date(),
-    extraNights: 0
+    extraNights: 0,
+    typeOfHb: typeOfHb,
+    note: "Note !!!",
   });
 
   const loadData = async () => {
@@ -96,7 +99,8 @@ function Dashboard() {
     });
 
     if (!payload.success) return;
-    setHotels(payload.hotels)
+    setHotels([]);
+    setHotels(payload.hotels);
   }
 
   useEffect(() => {
@@ -108,14 +112,12 @@ function Dashboard() {
       fetchHotels(newClient.circuit.id, newClient.cat.id);
   }, [newClient.circuit, newClient.cat]);
 
-
   useEffect(() => {
     let totalNbrPax = 0;
-    typeOfHb.forEach((item) => totalNbrPax = totalNbrPax + item.nbr)
-    setNewClient({ ...newClient, nbrPax: totalNbrPax })
+    typeOfHb.forEach((item) => totalNbrPax = totalNbrPax + item.nbr);
+    setNewClient({ ...newClient, nbrPax: totalNbrPax, typeOfHb: typeOfHb })
   }, [typeOfHb]);
 
-  const { t } = useTranslation();
   return (
     <>
       <div className="content" style={{ "width": "90%", "justifyContent": "center", "marginLeft": "auto", "marginRight": "auto" }}>
@@ -201,18 +203,15 @@ function Dashboard() {
                           id="cat"
                           options={cats}
                           sx={{ width: "auto" }}
+                          defaultValue={newClient.cat.name}
                           inputValue={newClient.cat.name}
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={(event, newInputValue) => {
                             setNewClient({
                               ...newClient,
-                              cat:
-                              {
+                              cat: {
                                 name: newInputValue,
-                                id: newInputValue === "5 ⭐ L" ? "L" :
-                                  newInputValue === "4 ⭐ A" ? "A" :
-                                    "4 ⭐ B" === "B" ? "B" :
-                                      "L"
+                                id: newInputValue === "5 ⭐ L" ? "L" : newInputValue === "4 ⭐ A" ? "A" : "B"
                               }
                             })
                           }}
@@ -244,7 +243,7 @@ function Dashboard() {
                               const newDate = new Date(newValue.$d);
                               setNewClient({ ...newClient, startDate: newDate })
                             }}
-                            renderInput={(params) => <TextField {...params} />}
+                            renderInput={(params) => <TextField fullWidth {...params} />}
                           />
                         </LocalizationProvider>
                       </FormGroup>
@@ -257,14 +256,14 @@ function Dashboard() {
                             disabled
                             value={newClient.endDate}
                             inputFormat={"DD/MM/YYYY"}
-                            renderInput={(params) => <TextField {...params} />}
+                            renderInput={(params) => <TextField fullWidth {...params} />}
                           />
                         </LocalizationProvider>
                       </FormGroup>
                     </Col>
                     <Col className="" md="4">
                       <FormGroup>
-                        <label> {t("Pax-Number")}</label>
+                        <label>{t("Pax-Number")}</label>
                         <Input
                           value={newClient.nbrPax}
                           disabled
@@ -272,6 +271,20 @@ function Dashboard() {
                           id="nbrPax"
                           type="text"
                           onChange={(event) => { setNewClient({ ...newClient, nbrPax: event.target.value }) }}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col className="" md="12">
+                      <FormGroup>
+                        <label>{t("Note")}</label>
+                        <textarea
+                          value={newClient.note}
+                          style={{ "height": "80px", width: "100%", borderColor: "lightgray" }}
+                          id="note"
+                          type="text"
+                          onChange={(event) => { setNewClient({ ...newClient, note: event.target.value }) }}
                         />
                       </FormGroup>
                     </Col>
@@ -328,11 +341,39 @@ function Dashboard() {
                             ends_at: newClient.endDate,
                             agency_id: newClient.agency.id,
                             circuit_id: newClient.circuit.id,
-                            hotels_dossier: hotels_dossier
+                            hotels_dossier: hotels_dossier,
+                            typeOfHb: newClient.typeOfHb,
+                            note: newClient.note,
                           }
 
-                          const response = await addNewDossier(clientObject);
-                          console.log(response)
+                          try {
+                            await addNewDossier(clientObject);
+                            setNewClient({
+                              folderNumber: 1,
+                              refClient: "US-2031203420",
+                              fullName: "Jhon Doe",
+                              agency: {
+                                name: "EXOTICCA",
+                                id: 1
+                              },
+                              circuit: {
+                                name: "GRT",
+                                id: 1
+                              },
+                              cat: {
+                                name: "5 ⭐ L",
+                                id: "L"
+                              },
+                              nbrPax: 0,
+                              startDate: new Date(),
+                              endDate: new Date(),
+                              extraNights: 0,
+                              typeOfHb: typeOfHb,
+                              note: "Note !!!",
+                            })
+                          } catch (error) {
+                            console.error(error);
+                          }
                         }}
                       >
                         {t("Save")}

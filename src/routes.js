@@ -15,14 +15,14 @@ var routes = [
     layout: "/admin",
     show: true,
   },
-  // {
-  //   path: "/filters",
-  //   name: "Filters",
-  //   icon: "nc-icon nc-settings",
-  //   component: Filters,
-  //   layout: "/admin",
-  //   show: true,
-  // },
+  {
+    path: "/filters",
+    name: "Filters",
+    icon: "nc-icon nc-settings",
+    component: Filters,
+    layout: "/admin",
+    protected: true,
+  },
   {
     path: "/config",
     name: "Configuration",
@@ -40,15 +40,11 @@ var routes = [
     show: false,
   }, {
     path: "/login",
-    name: "Login",
-    icon: "nc-icon nc-bank",
     component: Login,
     layout: "/auth",
     show: false,
   }, {
     path: "/password/forgot",
-    name: "Forgot",
-    icon: "nc-icon nc-bank",
     component: ForgotPassword,
     layout: "/auth",
     show: false,

@@ -32,7 +32,9 @@ const resources = {
    "lang-selected": "Es",
    "Flight": "Vol",
    "Flights": "Vols",
-   "Time": "Temps"
+   "Time": "Temps",
+   "Filter-Folder": "Filtrer les dossiers",
+   "Actions": "Actions"
   }
  },
  es: {
@@ -62,7 +64,9 @@ const resources = {
    "lang-selected": "Fr",
    "Flight": "Vuelo",
    "Flights": "Vuelos",
-   "Time": "Hore"
+   "Time": "Hore",
+   "Filter-Folder": "Filtrar carpetas",
+   "Actions": "Comportamiento"
   }
  }
 };
