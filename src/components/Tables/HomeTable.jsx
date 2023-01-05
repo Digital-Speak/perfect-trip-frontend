@@ -51,7 +51,7 @@ function HomeTable({
       updateData(cityId, "regime", data)
     }} />
 
-  const renderHotel = (cityId, hotels, slectedHotel = "") => {
+  const renderHotel = (cityId, hotels, slectedHotel) => {
     const newHotels = []
     hotels.forEach(hotel => {
       newHotels.push({
@@ -69,6 +69,11 @@ function HomeTable({
         circuit.forEach(function (item) {
           const target = item.hotels.filter((hot) => hot.cityId === cityId && hot.hotelName === data);
           if (target.length !== 0 && item.hotels[0].cityId === cityId) {
+            newCircuits.push({
+              ...item,
+              selectedHotel: data,
+            })
+          } else if (target.length === 0 && item.hotels[0].cityId === cityId) {
             newCircuits.push({
               ...item,
               selectedHotel: data,
@@ -95,7 +100,6 @@ function HomeTable({
         text={cities[0]}
         t={t}
         onTextChange={(data) => {
-          console.log(data)
         }} />
     }
     return city
@@ -130,39 +134,38 @@ function HomeTable({
   }
 
   useEffect(() => {
-    const newData = [];
+    if (hotels.length !== 0) {
+      const newData = [];
+      let startDate = circuitDates.start;
+      let grouped = _.mapValues(_.groupBy(hotels, 'cityName'), clist => clist.map(city => _.omit(city, 'cityName')));
 
-    let startDate = circuitDates.start;
-    let grouped = _.mapValues(_.groupBy(hotels, 'cityName'), clist => clist.map(city => _.omit(city, 'cityName')));
-
-    Object.keys(grouped).forEach((item, index) => {
-      let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(grouped[item][0].numberOfNights)));
-
-      newData.push({
-        id: grouped[item][0].cityId,
-        city: item,
-        hotels: grouped[item],
-        regimgeData: "DP",
-        regime: renderRegime(grouped[item][0].cityId),
-        selectedHotel: grouped[item][0].hotelName,
-        from:
-          `${(new Date(startDate).getDate() < 10 ? "0" : "") + new Date(startDate).getDate()}
+      Object.keys(grouped).forEach((item, index) => {
+        let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(grouped[item][0].numberOfNights)));
+        newData.push({
+          id: grouped[item][0].cityId,
+          city: item,
+          hotels: grouped[item],
+          regimgeData: "DP",
+          regime: renderRegime(grouped[item][0].cityId),
+          selectedHotel: grouped[item][0].hotelName,
+          from:
+            `${(new Date(startDate).getDate() < 10 ? "0" : "") + new Date(startDate).getDate()}
      - 
      ${new Date(startDate).toLocaleString('default', { month: 'long' }).substring(0, 4)}`,
-        to:
-          `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
+          to:
+            `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
     - 
     ${new Date(endDate).toLocaleString('default', { month: 'long' }).substring(0, 4)}`
+        })
+
+        startDate = endDate;
+        if (index === parseInt(Object.keys(grouped).length - 1)) {
+          setNewClient({ ...newClient, endDate: endDate })
+        }
       })
-
-      startDate = endDate;
-      if (index === parseInt(Object.keys(grouped).length - 1)) {
-        setNewClient({ ...newClient, endDate: endDate })
-      }
-    })
-
-    setCircuit(newData)
-  }, [hotels, t, circuitDates.start]);
+      setCircuit(newData);
+    }
+  }, [hotels.length && hotels[0].hotelId, circuitDates.start]);
 
   return (
     <>
@@ -188,14 +191,12 @@ function HomeTable({
                     {selectedCircuit !== "" && circuit.length !== 0 && circuit.map((element, index) => (
                       <tr>
                         <td>{renderCity(element.city)}</td>
-                        <td>{renderHotel(element.hotels[0].cityId, element.hotels, element.hotel)}</td>
+                        <td>{renderHotel(element.hotels[0].cityId, element.hotels, element.selectedHotel)}</td>
                         <td>{index !== 0 ? (element.from) :
                           <EditableDatePicker selectedDate={circuitDates.start} t onDateChange={(date) => {
-                            console.log(date)
                           }} />} </td>
                         <td>{index !== circuit.length - 1 ? (element.to) :
                           <EditableDatePicker selectedDate={circuitDates.end} t onDateChange={(date) => {
-                            console.log(date)
                           }} />} </td>
                         <td>{element.regime}</td>
                       </tr>
