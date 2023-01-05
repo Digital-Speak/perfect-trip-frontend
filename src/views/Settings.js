@@ -41,17 +41,14 @@ function Settings() {
               <CardBody>
                 <Form>
                   <Row>
-                  <Col className="" md="3">
+                  <Col className="" md="4">
                       <button onClick={() => { setSector("hotel") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector === 'hotel' && 'active'}`}>Hotel</button>
                     </Col>
-                    <Col className="" md="3">
+                    <Col className="" md="4">
                       <button onClick={() => { setSector("agency") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector === 'agency' && 'active'}`}>Agency</button>
                     </Col>
-                    <Col className="" md="3">
+                    <Col className="" md="4">
                       <button onClick={() => { setSector("city") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector === 'city' && 'active'}`}>City</button>
-                    </Col>
-                    <Col className="" md="3">
-                      <button onClick={() => { setSector("circuit") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector === 'circuit' && 'active'}`}>Circuit</button>
                     </Col>
                   </Row>
                 </Form>

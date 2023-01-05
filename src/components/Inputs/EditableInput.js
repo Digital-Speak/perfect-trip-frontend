@@ -10,13 +10,13 @@ function EditableInput({ t, text = "ssss", onTextChange, style = {} }) {
    return (
       <span style={{ "cursor": "pointer" }} onBlur={() => {
          setEditMode(false);
+         onTextChange(inputValue);
       }} onDoubleClick={() => {
          setEditMode(!editMode);
-         onTextChange(inputValue);
       }}>
          {editMode ? <Input autoFocus value={inputValue} onChange={(event) => {
             setInputValue(event.target.value);
-         }} /> : <span>{text}</span>}
+         }} /> : <span>{inputValue}</span>}
       </span>
    );
 }

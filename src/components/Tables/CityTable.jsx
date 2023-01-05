@@ -76,6 +76,7 @@ function CityTable() {
                   cities.map((city) => (
                     <tr>
                       <td><EditableInput text={city?.name} onTextChange={(text) => {
+                        console.log(text, "cc ", city?.name)
                         if (text !== city?.name) {
                           handleEdit({
                             id: city?.id,

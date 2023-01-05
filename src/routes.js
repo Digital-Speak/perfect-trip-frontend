@@ -1,8 +1,8 @@
 import Dashboard from "views/Dashboard";
 import Login from "views/Login";
-import LoginV2 from "views/Login-v2";
 import Settings from "views/Settings";
 import Filters from "views/Filters";
+import ForgotPassword from "views/ForgotPassword";
 
 var routes = [
   {
@@ -37,13 +37,13 @@ var routes = [
     layout: "/auth",
     protected : false,
   },
-  // {
-  //   path: "/login-v2",
-  //   name: "Login-V2",
-  //   icon: "nc-icon nc-bank",
-  //   component: LoginV2,
-  //   layout: "/auth",
-  //   protected: false,
-  // }
+  {
+    path: "/forgotpassword",
+    name: "Forgot",
+    icon: "nc-icon nc-bank",
+    component: ForgotPassword,
+    layout: "/auth",
+    protected : false,
+  },
 ];
 export default routes;
