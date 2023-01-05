@@ -90,9 +90,7 @@ const SetNewPassword = (props) => {
             </div>
             {globalError ? <div className={styles.error}>{globalError}</div> : null}
             <input style={{ width: "50%" }} onClick={handleSubmit} type="button" value={t("Save")} className={styles.button} />
-            <div style={{ width: "100%", height: "100px" }}>
               <div className={styles.trajetImg}></div>
-            </div>
           </div>
         </Card>
       </Col>

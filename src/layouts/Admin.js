@@ -21,11 +21,11 @@ function Admin(props) {
     if (!isAuth) {
       push('/auth/login');
     }
+    setIsLoading(false);
   }
   
   useEffect(() => {
     refreshToken();
-    setIsLoading(false);
   }, [])
 
   useEffect(() => {
@@ -51,7 +51,7 @@ function Admin(props) {
   return (
     <div>
       {
-        isLoading ? null :
+        isLoading ? <></> :
           (
             <div className="wrapper">
               <Sidebar

@@ -23,6 +23,7 @@ function Header(props) {
 
   const handlelogout = async() =>{
     const loggedOut = await logout();
+    console.log(loggedOut)
     if(loggedOut?.success){
       push('/auth/login');
     }
