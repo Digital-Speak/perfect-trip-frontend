@@ -106,8 +106,8 @@ function CityTable() {
                   <td>
                     <div onClick={() => {
                       handleAdd(newCity)
-                     }} type="button" className='text-danger' >
-                      <i className="fa fa-solid fa-trash-o mr-2 text-danger" />
+                     }} type="button" className='text-info' >
+                      <i className="fa fa-solid fa-plus mr-2 text-info" />
                       Add
                     </div>
                   </td>

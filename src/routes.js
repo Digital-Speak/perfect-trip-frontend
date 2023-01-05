@@ -22,8 +22,8 @@ var routes = [
   //   protected: true,
   // },
   {
-    path: "/settings",
-    name: "Settings",
+    path: "/config",
+    name: "Configuration",
     icon: "nc-icon nc-settings",
     component: Settings,
     layout: "/admin",
