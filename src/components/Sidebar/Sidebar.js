@@ -44,7 +44,7 @@ function Sidebar(props) {
         <Nav>
           {props.routes.map((prop, key) => {
             return (
-              prop?.layout === '/admin' &&
+              prop?.show &&
               <li
                 className={
                   activeRoute(prop.path) + (prop.pro ? " active-pro" : "")
@@ -73,7 +73,7 @@ function Sidebar(props) {
                   activeClassName="active"
                 >
                   
-                  <p>settings</p>
+                  <p> <i className="fa fa-cogs" />settings</p>
                 </NavLink>
               </li>
         </Nav>

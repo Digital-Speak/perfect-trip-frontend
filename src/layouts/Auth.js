@@ -15,7 +15,7 @@ function Auth(props) {
       />
      );
     })}
-    {/* <Redirect from='*' to='/admin/dashboard' /> */}
+    <Redirect from='*' to='/admin/dashboard' />
    </Switch>
   </div>
  );

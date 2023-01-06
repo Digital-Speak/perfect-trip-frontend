@@ -13,7 +13,7 @@ import HotelTable from "components/Tables/HotelTable";
 import CircuitTable from "components/Tables/CircuitTable";
 
 
-function Settings() {
+function Config() {
   const { t } = useTranslation();
   const [sector, setSector] = useState("hotel");
 
@@ -64,4 +64,4 @@ function Settings() {
   );
 }
 
-export default Settings;
+export default Config;

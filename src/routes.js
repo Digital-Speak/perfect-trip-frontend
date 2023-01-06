@@ -1,5 +1,6 @@
 import Dashboard from "views/Dashboard";
 import Login from "views/Login";
+import Config from "views/Config";
 import Settings from "views/Settings";
 import Filters from "views/Filters";
 import ForgotPassword from "views/password/Forgot";
@@ -12,7 +13,7 @@ var routes = [
     icon: "nc-icon nc-bank",
     component: Dashboard,
     layout: "/admin",
-    protected: true,
+    show: true,
   },
   // {
   //   path: "/filters",
@@ -20,36 +21,44 @@ var routes = [
   //   icon: "nc-icon nc-settings",
   //   component: Filters,
   //   layout: "/admin",
-  //   protected: true,
+  //   show: true,
   // },
   {
     path: "/config",
     name: "Configuration",
     icon: "nc-icon nc-settings",
+    component: Config,
+    layout: "/admin",
+    show: true,
+  },
+  {
+    path: "/settings",
+    name: "Settings",
+    icon: "nc-icon nc-settings",
     component: Settings,
     layout: "/admin",
-    protected: true,
+    show: false,
   }, {
     path: "/login",
     name: "Login",
     icon: "nc-icon nc-bank",
     component: Login,
     layout: "/auth",
-    protected: false,
+    show: false,
   }, {
     path: "/password/forgot",
     name: "Forgot",
     icon: "nc-icon nc-bank",
     component: ForgotPassword,
     layout: "/auth",
-    protected: false,
+    show: false,
   }, {
     path: "/password/new/:token",
     name: "SetNewPassword",
     icon: "nc-icon nc-bank",
     component: SetNewPassword,
     layout: "/auth",
-    protected: false,
+    show: false,
   },
 ];
 export default routes;
