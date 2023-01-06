@@ -73,9 +73,8 @@ const ForgotPassword = () => {
               {globalError ? <div className={styles.error}>{globalError}</div> : null}
 
               <input onClick={handleSubmit} type="button" value="Send" className={styles.button} />
-              <div style={{width:"100%",height:"100px"}}>
               <div className={styles.trajetImg}></div>
-              </div>
+
           </div>
         </Card>
       </Col>
