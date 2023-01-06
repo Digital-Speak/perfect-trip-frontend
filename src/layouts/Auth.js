@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import routes from "routes.js";
 
 function Auth(props) {
@@ -15,6 +15,7 @@ function Auth(props) {
       />
      );
     })}
+    <Redirect from='*' to='/admin/dashboard' />
    </Switch>
   </div>
  );

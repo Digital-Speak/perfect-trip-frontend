@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import PerfectScrollbar from "perfect-scrollbar";
-import { Route, Switch, useLocation } from "react-router-dom";
+import { Route, Switch, useLocation, Redirect } from "react-router-dom";
 import Navbar from "components/Navbars/Navbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
@@ -72,6 +72,7 @@ function Admin(props) {
                       />
                     );
                   })}
+                  <Redirect from='*' to='/admin/dashboard' />
                 </Switch>
                 <Footer fluid />
               </div>
