@@ -96,9 +96,9 @@ overflow:auto;
 
 .text{
   position: absolute;
-  top: 70%;
+  bottom: 10%;
   left: 50%;
-  transform: translate(-50%, -70%);
+  transform: translate(-50%, 10%);
 }
 
 .logo{
@@ -139,6 +139,11 @@ overflow:auto;
     top: 10%;
     left: 10%;
     transform: translate(-10%, -10%);
+  }
+
+  .rightSide{
+    align-items: flex-start;
+    margin-top: 50px;
   }
   
 }
