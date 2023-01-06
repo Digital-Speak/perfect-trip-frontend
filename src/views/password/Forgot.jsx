@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import { Row, Col, Card } from 'reactstrap';
-import logo from '../assets/img/login/logo.png';
-import HelloWorldImg from '../assets/img/login/Hello_World_.png';
-import { login } from "../api/auth"
+import logo from '../../assets/img/login/logo.png';
+import HelloWorldImg from '../../assets/img/login/Hello_World_.png';
+import { forgotPassword } from "../../api/auth"
 import { useHistory } from 'react-router-dom';
-import styles from '../assets/css/views/login.module.scss';
+import styles from '../../assets/css/views/forgotPassword.module.scss';
 
-const Login = () => {
+const ForgotPassword = () => {
   const { push } = useHistory()
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
   const [globalError, setGlobalError] = useState('');
 
   const validate = () => {
@@ -23,14 +21,6 @@ const Login = () => {
     } else {
       setEmailError('');
     }
-
-    if (!password) {
-      setPasswordError('Please enter your password');
-      isError = true;
-    } else {
-      setPasswordError('');
-    }
-
     return isError;
   };
 
@@ -38,13 +28,13 @@ const Login = () => {
     e.preventDefault();
     const err = validate();
     if (!err) {
-      const payload = await login({ email, password })
-      if (!payload?.success) {
-        setGlobalError("Email or assword incorrect.")
-      } else {
+      // TODO:
+      const payload = await forgotPassword({ email })
+      if (!payload?.success && payload?.message === "There is no user with that email address") {
+        setGlobalError("Email incorrect.");
+      } else if (payload?.message === "An email has been sent") {
         setGlobalError('');
-        sessionStorage.setItem('jat', payload?.token);
-        push('/admin/dashboard');
+        push('/auth/login');
       }
     }
   };
@@ -60,11 +50,15 @@ const Login = () => {
         </div>
       </Col>
       <Col xs="12" md="6" className={styles.rightSide}>
-        <Card className={styles.loginCard} >
-          <div className={styles.loginCardBody}>
-            <p className={styles.title}>LOGIN</p>
+        <Card className={styles.forgotCard} >
+          <div className={styles.forgotCardBody}>
+            <p className={styles.title}>Forgot password?</p>
+            <p className={styles.subtitle}>
+              Did you forget your password? No problem.
+              Just enter the email address associated with your account,
+              and we'll send you a link to reset your password.
+            </p>
             <div className={styles.inputRow}>
-
               <input
                 className={styles.input}
                 type="email"
@@ -75,31 +69,18 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)} />
             </div>
             {emailError ? <div className={styles.error}>{emailError}</div> : null}
-            <div className={styles.inputRow}>
 
-              <input
-                className={styles.input}
-                type="password"
-                name="password"
-                placeholder='password'
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)} />
-            </div>
-            {passwordError ? <div className={styles.error}>{passwordError}</div> : null}
             {globalError ? <div className={styles.error}>{globalError}</div> : null}
-
             <div className={styles.hyperLinksRow}>
               <input
                 onClick={() => {
-                  push('/auth/password/forgot')
+                  push('/auth/login')
                 }}
-                type="button" value="Forgot my password?" className={styles.hyperLink} />
+                type="button" value="Go to login" className={styles.hyperLink} />
             </div>
-            <input onClick={handleSubmit} type="button" value="LOGIN" className={styles.button} />
-           
-              <div className={styles.trajetImg}></div>
-          
+            <input onClick={handleSubmit} type="button" value="Send" className={styles.button} />
+            <div className={styles.trajetImg}></div>
+
           </div>
         </Card>
       </Col>
@@ -107,4 +88,4 @@ const Login = () => {
   </div>
 }
 
-export default Login;
+export default ForgotPassword;
