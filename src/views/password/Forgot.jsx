@@ -33,6 +33,7 @@ const ForgotPassword = () => {
       if (!payload?.success && payload?.message === "There is no user with that email address") {
         setGlobalError("Email incorrect.");
       } else if (payload?.message === "An email has been sent") {
+        alert("An email has been sent.");
         setGlobalError('');
         push('/auth/login');
       }

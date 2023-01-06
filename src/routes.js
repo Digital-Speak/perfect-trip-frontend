@@ -44,12 +44,12 @@ var routes = [
     layout: "/auth",
     protected: false,
   }, {
-    path: "/password/new",
+    path: "/password/new/:token",
     name: "SetNewPassword",
     icon: "nc-icon nc-bank",
     component: SetNewPassword,
     layout: "/auth",
     protected: false,
-  }
+  },
 ];
 export default routes;

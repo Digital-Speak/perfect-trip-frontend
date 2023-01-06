@@ -33,12 +33,13 @@ const SetNewPassword = (props) => {
     const err = validate();
     if (!err) {
       const payload = await saveNewPassword({
-        newPassword,
+        password: newPassword,
         token: props.match.params.token
       })
-      if (!payload?.success && payload?.message === "There is no user with that email address") {
+      if (!payload?.success) {
         setGlobalError("Email incorrect.");
-      } else if (payload?.message === "An email has been sent") {
+      } else if (payload?.success) {
+        alert("Password changed successfully.")
         setGlobalError('');
         push('/auth/login');
       }
