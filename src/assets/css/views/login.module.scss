@@ -15,10 +15,11 @@
 
 .loginCard{
   width: 75%;
-  height: 70vh;
   box-shadow: -1px 0px 24px 16px rgba(28,26,26,0.13);
   -webkit-box-shadow: -1px 0px 24px 16px rgba(28,26,26,0.13);
   -moz-box-shadow: -1px 0px 24px 16px rgba(28,26,26,0.13);
+  height:auto;
+overflow:auto;
 }
 
 .loginCardBody{
@@ -87,6 +88,7 @@
 
 .trajetImg{
   height: 120px;
+  margin-bottom: 15px;
   background-image: url("../../../assets/img/login/Trajet_png.png");
   background-size:contain;
   background-repeat: no-repeat;
@@ -120,13 +122,16 @@
 }
 
 @media only screen and (max-width: 767px) {
+  .title{
+    font-size: 35px;
+  }
+  
   .leftSide{
     height: 30vh;
   }
 
   .loginCard{
     width: 85%;
-    height: 60vh;
   }
 
   .logo{
@@ -141,6 +146,5 @@
 @media only screen and (max-width: 550px) {
   .loginCard{
     width: 95%;
-    height: 60vh;
   }
 }

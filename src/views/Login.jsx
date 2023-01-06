@@ -52,7 +52,7 @@ const Login = () => {
   return <div className='container-fluid h-100'>
     <Row>
       <Col xs="12" md="6" className={styles.leftSide} >
-      <div className={styles.logo}>
+        <div className={styles.logo}>
           <img alt='logo' src={logo} />
         </div>
         <div className={styles.text}>
@@ -62,44 +62,44 @@ const Login = () => {
       <Col xs="12" md="6" className={styles.rightSide}>
         <Card className={styles.loginCard} >
           <div className={styles.loginCardBody}>
-              <p className={styles.title}>LOGIN</p>
-              <div className={styles.inputRow}>
-                
-                <input
-                  className={styles.input}
-                  type="email"
-                  name="email"
-                  id="email"
-                  placeholder='Email'
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)} />
-              </div>
-              {emailError ? <div className={styles.error}>{emailError}</div> : null}
-              <div className={styles.inputRow}>
-               
-                <input
-                  className={styles.input}
-                  type="password"
-                  name="password"
-                  placeholder='password'
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)} />
-              </div>
-              {passwordError ? <div className={styles.error}>{passwordError}</div> : null}
-              {globalError ? <div className={styles.error}>{globalError}</div> : null}
+            <p className={styles.title}>LOGIN</p>
+            <div className={styles.inputRow}>
 
-              <div className={styles.hyperLinksRow}>
-                <input
-                onClick={()=>{
+              <input
+                className={styles.input}
+                type="email"
+                name="email"
+                id="email"
+                placeholder='Email'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            {emailError ? <div className={styles.error}>{emailError}</div> : null}
+            <div className={styles.inputRow}>
+
+              <input
+                className={styles.input}
+                type="password"
+                name="password"
+                placeholder='password'
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)} />
+            </div>
+            {passwordError ? <div className={styles.error}>{passwordError}</div> : null}
+            {globalError ? <div className={styles.error}>{globalError}</div> : null}
+
+            <div className={styles.hyperLinksRow}>
+              <input
+                onClick={() => {
                   push('/auth/forgotpassword')
                 }}
-                 type="button" value="Forgot my password?" className={styles.hyperLink} />
-              </div>
-              <input onClick={handleSubmit} type="button" value="LOGIN" className={styles.button} />
-              <div style={{width:"100%",height:"100px"}}>
+                type="button" value="Forgot my password?" className={styles.hyperLink} />
+            </div>
+            <input onClick={handleSubmit} type="button" value="LOGIN" className={styles.button} />
+           
               <div className={styles.trajetImg}></div>
-              </div>
+          
           </div>
         </Card>
       </Col>
