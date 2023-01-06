@@ -71,7 +71,13 @@ const ForgotPassword = () => {
               {emailError ? <div className={styles.error}>{emailError}</div> : null}
 
               {globalError ? <div className={styles.error}>{globalError}</div> : null}
-
+              <div className={styles.hyperLinksRow}>
+              <input
+                onClick={() => {
+                  push('/auth/login')
+                }}
+                type="button" value="Go to login" className={styles.hyperLink} />
+            </div>
               <input onClick={handleSubmit} type="button" value="Send" className={styles.button} />
               <div className={styles.trajetImg}></div>
 
