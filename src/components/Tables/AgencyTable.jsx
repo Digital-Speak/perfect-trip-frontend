@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Col, Row, Table } from 'reactstrap'
+import { Button, Card, CardBody, CardHeader, CardTitle, Col, FormGroup, Input, Row, Table } from 'reactstrap'
 import { useTranslation } from 'react-i18next';
 import EditableSelect from "../Inputs/EditableSelect";
 import EditableInput from "../Inputs/EditableInput"
@@ -10,6 +10,7 @@ function AgencyTable() {
 
   const { t } = useTranslation();
   const [agencies, setAgencies] = useState([]);
+  const [deleteAgencyId, setDeleteAgencyId] = useState(null);
   const [newAgency, setNewAgency] = useState('New agency');
 
   const loadData = async () => {
@@ -22,7 +23,7 @@ function AgencyTable() {
 
   const handleAdd = async (addAgency) => {
     if (addAgency && addAgency !== "") {
-      const data = await addAgencyApi({name:addAgency});
+      const data = await addAgencyApi({ name: addAgency });
       if (data?.success) {
         setNewAgency("New agency");
         loadData();
@@ -38,9 +39,9 @@ function AgencyTable() {
     }
   }
 
-  const handleDelete = async (deleteAgency) => {
-    if (deleteAgency) {
-      const data = await deleteAgencyApi({ id: deleteAgency });
+  const handleDelete = async () => {
+    if (deleteAgencyId) {
+      const data = await deleteAgencyApi({ id: deleteAgencyId });
       if (data?.success) {
         loadData();
       }
@@ -54,6 +55,40 @@ function AgencyTable() {
 
   return (
     <Row>
+      <Col md="12">
+        <Card>
+          <CardHeader>
+            <CardTitle tag="h4">{t("Add-agency")}</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <Row>
+              <Col className="" md="4" style={{ height: "120px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <FormGroup>
+                  <label>{t("Agency-name")}</label>
+                  <Input
+                    defaultValue=""
+                    value={newAgency}
+                    id="refClient"
+                    style={{ "height": "55px" }}
+                    type="text"
+                    onChange={(event) => {
+                      setNewAgency(event.target.value);
+                    }}
+                  />
+                </FormGroup>
+              </Col>
+              <Col className="" md="4" style={{ height: "120px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <FormGroup>
+                  <label style={{ opacity: 0 }}>.</label>
+                  <Button onClick={() => {
+                    handleAdd(newAgency)
+                  }} className='btn btn-block bg-info text-white border-0' style={{ "height": "53px" }}>Add</Button>
+                </FormGroup>
+              </Col>
+            </Row>
+          </CardBody>
+        </Card>
+      </Col>
       <Col md="12">
         <Card>
           <CardHeader>
@@ -85,9 +120,9 @@ function AgencyTable() {
                       <td style={{ backgroundColor: "	#F0F0F0" }}>{agency?.created_at}</td>
                       <td style={{ backgroundColor: "	#F0F0F0" }}>{agency?.updated_at}</td>
                       <td>
-                        <div onClick={() => { 
-                          handleDelete(agency?.id);
-                        }} type="button" className='text-danger' >
+                        <div onClick={() => {
+                           setDeleteAgencyId(agency?.id);
+                          }} data-toggle="modal" data-target={deleteAgencyId === agency?.id && "#exampleModal"} type="button" className='text-danger' >
                           <i className="fa fa-solid fa-trash-o mr-2 text-danger" />
                           Delete
                         </div>
@@ -96,27 +131,30 @@ function AgencyTable() {
                   ))
                 }
                 <tr ><td></td></tr>
-                <tr style={{ marginTop: "30px" }}>
-                  <td><EditableInput style={newAgency==="New agency" ? {color: "#C0C0C0"} :{}} text={newAgency} onTextChange={(text) => {
-                    setNewAgency(text);
-                   }} /></td>
-                  <td style={{ backgroundColor: "	#F0F0F0" }}></td>
-                  <td style={{ backgroundColor: "	#F0F0F0" }}></td>
-                  <td>
-                    <div onClick={() => {
-                      handleAdd(newAgency)
-                     }} type="button" className='text-info' >
-                      <i className="fa fa-solid fa-plus mr-2 text-info" />
-                      Add
-                    </div>
-                  </td>
-                </tr>
-                <tr ><td></td></tr>
               </tbody>
             </Table>
           </CardBody>
         </Card>
       </Col>
+      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Delete agency</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete this agency?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button onClick={handleDelete} data-dismiss="modal" type="button" class="btn btn-primary">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </Row>
   )
 }

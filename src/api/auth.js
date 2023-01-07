@@ -29,13 +29,21 @@ const checkAuth = async () => {
     .then((data) => {
       if(data?.success){
         sessionStorage.setItem('jat',data?.accessToken);
-        return true;
+        sessionStorage.setItem('user',JSON.stringify(data?.data));
+        return {
+          is_admin:data?.data?.is_admin,
+          success:true
+        }
       }
-      return false;
+      return {
+        success:false
+      }
     });
     return isAuth; 
   } catch (error) {
-    return false;
+    return {
+      success:false
+    }
   }
 }
 

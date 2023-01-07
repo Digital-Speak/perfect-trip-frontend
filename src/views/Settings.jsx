@@ -1,16 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import AdminsTable from "components/Tables/AdminsTable";
+import AdminProfileCard from "components/cards/AdminProfileCard";
+import { Card, CardBody } from "reactstrap";
+import { checkAuth } from "api/auth";
 
 
 function Settings() {
   const { t } = useTranslation();
   const [sector, setSector] = useState("profile");
+  const [isadmin, setIsAdmin] = useState(false);
+
+  const refreshToken = async () => {
+    const isAuth = await checkAuth();
+    setIsAdmin(isAuth?.is_admin)
+  }
+  useEffect(() => {
+    refreshToken();
+  }, [])
 
   const loadCard = () => {
     switch (sector) {
       case "profile":
-        return <div>profile</div>
+        return <AdminProfileCard />
       case "admins":
         return <AdminsTable />
       default:
@@ -19,24 +31,21 @@ function Settings() {
   }
 
   return (
-      <div className="content bg-white" style={{ "width": "90%",alignItems:"center", "marginLeft": "auto", "marginRight": "auto", height:"80vh", display:"flex" }}>
-       <div className="row h-75 w-100">
-        <div className="col-md-3 pt-5 border-right border-1 border-info">
-          <button onClick={()=>{setSector("profile")}} className="form-control border-bottom border-top-0 border-left-0 border-right-0 border-1  border-info  text-left  btn-lg">
-          <i className="fa fa-user mr-2"></i> Profile informations
-          </button>
-          <button onClick={()=>{setSector("admins")}} className="form-control border-bottom border-top-0 border-left-0 border-right-0 border-1  border-info  text-left  btn-lg mt-3">
-          <i className="fa fa-user-secret mr-2"></i> Sub admins settings
-          </button>  
-          <button onClick={()=>{setSector("admins")}} className="form-control border-bottom border-top-0 border-left-0 border-right-0 border-1  border-info text-left btn-lg mt-3">
-          <i className="fa fa-history mr-2"></i> History
-          </button>  
+    <div className="content" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }} >
+      {
+        isadmin &&
+        <div className="row  mb-4 " style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", height: "50px", }}>
+          <i onClick={() => { setSector("profile") }} style={sector === "profile" ? { color: "black" } : { cursor: "pointer", color: "gray" }} className={`fa fa-user mr-5 fa-2x ${sector === "profile" && 'fa-3x'}`}></i>
+          <i onClick={() => { setSector("admins") }} style={sector === "admins" ? { color: "black" } : { cursor: "pointer", color: "gray" }} className={`fa fa-user-secret mr-5 fa-2x ${sector === "admins" && 'fa-3x'}`}></i>
+          <i onClick={() => { setSector("history") }} style={sector === "history" ? { color: "black" } : { cursor: "pointer", color: "gray" }} className={`fa fa-history mr-5 fa-2x ${sector === "history" && 'fa-3x'}`}></i>
         </div>
-        <div className="col-md-9">
+      }
+      <div className="row h-75 w-100">
+        <div className="col-md-12">
           {loadCard()}
         </div>
-       </div>
       </div>
+    </div>
   );
 }
 

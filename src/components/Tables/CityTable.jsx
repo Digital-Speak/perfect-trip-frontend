@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Col, Row, Table } from 'reactstrap'
+import { Button, Card, CardBody, CardHeader, CardTitle, Col, FormGroup, Input, Row, Table } from 'reactstrap'
 import { useTranslation } from 'react-i18next';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import EditableInput from "../Inputs/EditableInput";
@@ -7,12 +7,12 @@ import { getCities } from 'api/city';
 import { addCityApi } from 'api/city';
 import { editCityApi } from 'api/city';
 import { deleteCityApi } from 'api/city';
-import { fontSize } from '@mui/system';
 
 function CityTable() {
 
   const { t } = useTranslation();
   const [cities, setCities] = useState([]);
+  const [deleteCityId, setDeleteCityId] = useState(null);
   const [newCity, setNewCity] = useState('New city');
 
   const loadData = async () => {
@@ -41,9 +41,9 @@ function CityTable() {
     }
   }
 
-  const handleDelete = async (deleteCity) => {
-    if (deleteCity) {
-      const data = await deleteCityApi({ id: deleteCity });
+  const handleDelete = async () => {
+    if (deleteCityId) {
+      const data = await deleteCityApi({ id: deleteCityId });
       if (data?.success) {
         loadData();
       }
@@ -115,6 +115,40 @@ function CityTable() {
       <Col md="12">
         <Card>
           <CardHeader>
+            <CardTitle tag="h4">{t("Add-city")}</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <Row>
+              <Col className="" md="4" style={{ height: "120px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <FormGroup>
+                  <label>{t("City-name")}</label>
+                  <Input
+                    defaultValue=""
+                    value={newCity}
+                    id="refClient"
+                    style={{ "height": "55px" }}
+                    type="text"
+                    onChange={(event) => {
+                      setNewCity(event.target.value);
+                    }}
+                  />
+                </FormGroup>
+              </Col>
+              <Col className="" md="4" style={{ height: "120px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <FormGroup>
+                  <label style={{ opacity: 0 }}>.</label>
+                  <Button onClick={() => {
+                    handleAdd(newCity)
+                  }} className='btn btn-block bg-info text-white border-0' style={{ "height": "53px" }}>Add</Button>
+                </FormGroup>
+              </Col>
+            </Row>
+          </CardBody>
+        </Card>
+      </Col>
+      <Col md="12">
+        <Card>
+          <CardHeader>
             <CardTitle tag="h4">{t("Cities")}</CardTitle>
           </CardHeader>
           <CardBody>
@@ -145,8 +179,8 @@ function CityTable() {
                       <td style={{ backgroundColor: "	#F0F0F0" }}>{city?.updated_at}</td>
                       <td>
                         <div onClick={() => { 
-                          handleDelete(city?.id);
-                        }} type="button" className='text-danger' >
+                           setDeleteCityId(city?.id);
+                        }} data-toggle="modal" data-target={deleteCityId === city?.id && "#exampleModal"} type="button" className='text-danger' >
                           <i className="fa fa-solid fa-trash-o mr-2 text-danger" />
                           Delete
                         </div>
@@ -155,27 +189,30 @@ function CityTable() {
                   ))
                 }
                 <tr ><td></td></tr>
-                <tr style={{ marginTop: "30px" }}>
-                  <td><EditableInput style={newCity==="New city" ? {color: "#C0C0C0"} :{}} text={newCity} onTextChange={(text) => {
-                    setNewCity(text);
-                   }} /></td>
-                  <td style={{ backgroundColor: "	#F0F0F0" }}></td>
-                  <td style={{ backgroundColor: "	#F0F0F0" }}></td>
-                  <td>
-                    <div onClick={() => {
-                      handleAdd(newCity)
-                     }} type="button" className='text-info' >
-                      <i className="fa fa-solid fa-plus mr-2 text-info" />
-                      Add
-                    </div>
-                  </td>
-                </tr>
-                <tr ><td></td></tr>
               </tbody>
             </Table>
           </CardBody>
         </Card>
       </Col>
+      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Delete city</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete this city?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button onClick={handleDelete} data-dismiss="modal" type="button" class="btn btn-primary">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </Row>
   )
 }

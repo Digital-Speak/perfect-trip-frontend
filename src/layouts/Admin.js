@@ -18,12 +18,11 @@ function Admin(props) {
 
   const refreshToken = async () => {
     const isAuth = await checkAuth();
-    if (!isAuth) {
+    if (!isAuth?.success) {
       push('/auth/login');
     }
     setIsLoading(false);
   }
-  
   useEffect(() => {
     refreshToken();
   }, [])

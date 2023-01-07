@@ -1,9 +1,6 @@
 import React, { useState } from "react";
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
 
 function CustomEditableSelect({ t, text, data = [], cb, id }) {
-  console.log(data);
   const [editMode, setEditMode] = useState(false);
   const [newText, setNewText] = useState(text);
   return (
