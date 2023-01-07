@@ -23,6 +23,8 @@ import { getDossier } from "../api/dossier";
 function Filters() {
  const { t } = useTranslation();
  const [dataSource, setDataSource] = useState([]);
+ const [selectedDossier, setSelectedDossier] = useState(-1);
+ const [openEditModal, setOpenEditModal] = useState(false);
 
  const [dates, setDates] = useState({
   start: new Date(),
@@ -265,6 +267,8 @@ function Filters() {
               <td style={{ "fontSize": "20px", textAlign: "center" }}>
                <div onClick={() => {
                 // TODO: Add delete fucntion
+                setSelectedDossier(item.dossierNum);
+                setOpenEditModal(true);
                }}
                 type="button"
                 className='text-success'>
@@ -281,7 +285,11 @@ function Filters() {
       </Card>
      </Col>
     </Row>
-    <DefaultModal t={t} />
+    {selectedDossier !== -1 && (<DefaultModal t={t}
+     modalIsOpen={openEditModal}
+     setIsOpen={setOpenEditModal}
+     setSelectedDossier={setSelectedDossier}
+     selectedDossier={selectedDossier} />)}
    </div>
   </>
  );
