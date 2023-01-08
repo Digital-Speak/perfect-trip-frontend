@@ -4,6 +4,7 @@ import AdminsTable from "components/Tables/AdminsTable";
 import AdminProfileCard from "components/cards/AdminProfileCard";
 import { Card, CardBody } from "reactstrap";
 import { checkAuth } from "api/auth";
+import HistoryTable from "components/Tables/HistoryTable";
 
 
 function Settings() {
@@ -25,6 +26,8 @@ function Settings() {
         return <AdminProfileCard />
       case "admins":
         return <AdminsTable />
+        case "history":
+          return <HistoryTable />
       default:
         break;
     }
