@@ -39,13 +39,13 @@ function Dashboard() {
   const [typeOfHb, setTypeOfHb] = useState([]);
   const [flights, setFlights] = useState({
       from_to_start: "APT / HOTEL",
-      city_id_start: "CASABLANCA",
+      city_id_start: 0,
       from_start: "AEROPORT CASABLANCA",
       to_start: "ODYSSEE CENTER",
       flight_start: "AT 410",
       flight_time_start: "06:30",
       from_to_end: "HOTEL / APT",
-      city_id_end: "MARRAKECH",
+      city_id_end: 0,
       from_end: "PALM PLAZA",
       to_end: "Aeroport Marrakech",
       flight_end: "ZF 2850",
@@ -83,7 +83,6 @@ function Dashboard() {
     const data_cities = await getCities();
       setCities(data_cities?.cities);
     
-
     const payload_1 = await getCircuit();
     const payload_2 = await getAgencies();
 
