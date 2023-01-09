@@ -18,7 +18,7 @@ var routes = [
   {
     path: "/filters",
     name: "Filters",
-    icon: "nc-icon nc-settings",
+    icon: "fa fa-filter",
     component: Filters,
     layout: "/admin",
     show: true,

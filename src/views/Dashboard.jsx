@@ -24,6 +24,7 @@ import { getCircuit, postData } from "../api/dashboard";
 import { getAgencies } from "../api/agency";
 import { getlastId } from "../api/auth";
 import { addNewDossier } from "../api/dossier";
+import { getCities } from "api/city";
 
 function Dashboard() {
   const { t } = useTranslation();
@@ -31,11 +32,25 @@ function Dashboard() {
   const [agencesServerData, setAgencesServerData] = useState([]);
   const [circuits, setCircuits] = useState([]);
   const [agences, setAgencies] = useState([]);
+  const [cities, setCities] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [circuit, setCircuit] = useState([]);
   const [newHotelToDb, setNewHotelToDb] = useState([]);
   const [typeOfHb, setTypeOfHb] = useState([]);
-
+  const [flights, setFlights] = useState({
+      from_to_start: "APT / HOTEL",
+      city_id_start: "CASABLANCA",
+      from_start: "AEROPORT CASABLANCA",
+      to_start: "ODYSSEE CENTER",
+      flight_start: "AT 410",
+      flight_time_start: "06:30",
+      from_to_end: "HOTEL / APT",
+      city_id_end: "MARRAKECH",
+      from_end: "PALM PLAZA",
+      to_end: "Aeroport Marrakech",
+      flight_end: "ZF 2850",
+      flight_time_end: "10:20",
+  });
   const [newClient, setNewClient] = useState({
     folderNumber: 1,
     refClient: "US-2031203420",
@@ -64,6 +79,10 @@ function Dashboard() {
     // Get the folder Num:
     const folderNumber = await getlastId();
     setNewClient({ ...newClient, folderNumber: folderNumber.success ? folderNumber.dossier_num : "ERROR" })
+    
+    const data_cities = await getCities();
+      setCities(data_cities?.cities);
+    
 
     const payload_1 = await getCircuit();
     const payload_2 = await getAgencies();
@@ -134,6 +153,7 @@ function Dashboard() {
                     <Col className="" md="4">
                       <FormGroup>
                         <label>{t("Folder-Number")}</label>
+                        {console.log(newClient.folderNumber)}
                         <Input
                           defaultValue=""
                           value={newClient.folderNumber}
@@ -310,6 +330,9 @@ function Dashboard() {
                         newClient={newClient}
                         selectedCircuit={newClient.circuit}
                         t={t}
+                        cities={cities}
+                        flights={flights}
+                        setFlights={setFlights}
                         hotels={hotels}
                         circuit={circuit}
                         setCircuit={setCircuit}
@@ -347,6 +370,7 @@ function Dashboard() {
                             hotels_dossier: hotels_dossier,
                             typeOfHb: newClient.typeOfHb,
                             note: newClient.note,
+                            ...flights
                           }
 
                           try {
