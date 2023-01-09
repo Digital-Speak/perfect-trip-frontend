@@ -73,7 +73,6 @@ function Dashboard() {
 
     setCircuitsServerData(payload_1?.circuits);
     setAgencesServerData(payload_2?.agencies);
-
     const newData = { "agenciesData": [], "circuitsData": [] };
 
     payload_1.circuits.forEach((item) => {
@@ -100,16 +99,18 @@ function Dashboard() {
 
     if (!payload.success) return;
     setHotels([]);
+
     setHotels(payload.hotels);
   }
 
   useEffect(() => {
-    if (circuits.length === 0) loadData();
-  }, [circuits]);
+    if (circuit.length === 0) loadData();
+  }, []);
 
   useEffect(() => {
-    if (newClient.circuit !== "" && newClient.cat !== "")
+    if (newClient.circuit !== "" && newClient.cat !== "") {
       fetchHotels(newClient.circuit.id, newClient.cat.id);
+    }
   }, [newClient.circuit, newClient.cat]);
 
   useEffect(() => {
@@ -151,7 +152,8 @@ function Dashboard() {
                           disablePortal
                           options={agences}
                           sx={{ width: "auto" }}
-                          inputValue={newClient.agency.name}
+                          value={newClient.agency.name}
+                          clearOnEscape
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={(event, newInputValue) => {
                             const agencyId = agencesServerData.filter((item) => item.name === newInputValue);
@@ -185,7 +187,7 @@ function Dashboard() {
                           id="circuit"
                           options={circuits}
                           sx={{ width: "auto" }}
-                          inputValue={newClient.circuit.name}
+                          value={newClient.circuit.name}
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={async (event, newInputValue) => {
                             const circuitId = circuitsServerData.filter((item) => item.name === newInputValue);
@@ -203,8 +205,7 @@ function Dashboard() {
                           id="cat"
                           options={cats}
                           sx={{ width: "auto" }}
-                          defaultValue={newClient.cat.name}
-                          inputValue={newClient.cat.name}
+                          value={newClient.cat.name}
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={(event, newInputValue) => {
                             setNewClient({
@@ -226,7 +227,9 @@ function Dashboard() {
                           style={{ "height": "55px" }}
                           id="fullName"
                           type="text"
-                          onChange={(event) => { setNewClient({ ...newClient, fullName: event.target.value }) }}
+                          onChange={(event) => {
+                            setNewClient({ ...newClient, fullName: event.target.value })
+                          }}
                         />
                       </FormGroup>
                     </Col>

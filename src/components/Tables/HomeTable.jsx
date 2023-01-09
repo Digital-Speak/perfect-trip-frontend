@@ -164,6 +164,8 @@ function HomeTable({
         }
       })
       setCircuit(newData);
+    }else {
+      setCircuit([])
     }
   }, [hotels.length && hotels[0].hotelId, circuitDates.start]);
 
