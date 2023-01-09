@@ -21,7 +21,7 @@ var routes = [
     icon: "nc-icon nc-settings",
     component: Filters,
     layout: "/admin",
-    protected: true,
+    show: true,
   },
   {
     path: "/config",

@@ -9,6 +9,8 @@ import {
   Row,
   Col
 } from "reactstrap";
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import _ from "lodash";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import DefaultModal from "../components/Modals/DefaultModal"
@@ -22,7 +24,7 @@ import { getDossier } from "../api/dossier";
 
 function Filters() {
   const { t } = useTranslation();
-  const [dataSource, setDataSource] = useState([]);
+  const [dataSource, setDataSource] = useState({ keys: [], data: [] });
   const [selectedDossier, setSelectedDossier] = useState(-1);
   const [openEditModal, setOpenEditModal] = useState(false);
 
@@ -77,7 +79,9 @@ function Filters() {
   const loadDossierData = async (filters) => {
     const payload = await getDossier(filters);
     if (!payload?.success) return false;
-    setDataSource(payload?.dossiers)
+    const grouped = _.mapValues(_.groupBy(payload?.dossiers, 'endAt'));
+    const keys = Object.keys(grouped);
+    setDataSource({ keys: keys, data: grouped })
   }
 
   useEffect(() => {
@@ -226,11 +230,10 @@ function Filters() {
               <CardBody>
                 <Row>
                   <Col>
-                    <Table responsive>
+                    <Table responsive striped>
                       <thead className="text-primary">
                         <tr>
-                          <th style={{ textAlign: "center" }}>{t("From")}</th>
-                          <th style={{ textAlign: "center" }}>{t("To")}</th>
+                          <th style={{ textAlign: "center" }}>{t("From")}{"-"}{t("To")}</th>
                           {selectedCity.id === -1 && (<th style={{ textAlign: "center" }}>{t("City")}</th>)}
                           {selectedHotel.id === -1 && (<th style={{ textAlign: "center" }}>{t("Hotel")}</th>)}
                           <th style={{ textAlign: "center" }}>{t("Client-Ref")}</th>
@@ -240,47 +243,50 @@ function Filters() {
                           <th style={{ textAlign: "center" }}>{t("Actions")}</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        {dataSource.length !== 0 && dataSource?.map((item) => (
-                          <tr>
-                            <td style={{ textAlign: "center" }}>
-                              {new Date(item.startAt).toLocaleString('default', { month: 'long' }).substring(0, 3)}
-                              -
-                              {`${(new Date(item.startAt).getDate() < 10 ? "0" : "") + new Date(item.startAt).getDate()}`}
-                              -
-                              {`${new Date(item.startAt).getFullYear()}`}
-                            </td>
-                            <td style={{ textAlign: "center" }}>
-                              {new Date(item.endAt).toLocaleString('default', { month: 'long' }).substring(0, 3)}
-                              -
-                              {`${(new Date(item.endAt).getDate() < 10 ? "0" : "") + new Date(item.endAt).getDate()}`}
-                              -
-                              {`${new Date(item.endAt).getFullYear()}`}
-                            </td>
-                            {selectedCity.id === -1 && (<td style={{ textAlign: "center" }}>{item.city}</td>)}
-                            {selectedCity.id === -1 && (<td style={{ textAlign: "center" }}>{item.hotel}</td>)}
-                            <td style={{ textAlign: "center" }}>{item.clientRef}</td>
-                            <td style={{ textAlign: "center" }}>{item.client}</td>
-                            <td style={{ textAlign: "center" }}>
-                              {item.nbrpaxforhbtype.map(({ typepax, nbr }, index) => (
-                                <span style={{ "fontSize": "12px", }}>{index !== 0 ? '+' : ''} {nbr}{typepax}</span>
-                              ))}
-                            </td>
-                            <td style={{ textAlign: "center" }}>{item.note}</td>
-                            <td style={{ "fontSize": "20px", textAlign: "center" }}>
-                              <div onClick={() => {
-                                // TODO: Add delete fucntion
-                                setSelectedDossier(item.dossierNum);
-                                setOpenEditModal(true);
-                              }}
-                                type="button"
-                                className='text-success'>
-                                <i className="fa fa-cog text-success"></i>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
+                      {dataSource.length !== 0 && dataSource?.keys.map((key) => (
+                        <tbody style={{
+                          "marginBottom": "100px"
+                        }}> {
+                            dataSource.data[key].map((item) => (
+                              <tr>
+                                <td style={{ justifyContent: "center", display: "flex", }}>
+                                  <span>
+                                    {new Date(item.startAt).toLocaleString('default', { month: 'long' }).substring(0, 3)}
+                                    -
+                                    {`${(new Date(item.startAt).getDate() < 10 ? "0" : "") + new Date(item.startAt).getDate()}`}
+                                  </span>
+                                  {"/"}
+                                  <span>
+                                    {new Date(item.endAt).toLocaleString('default', { month: 'long' }).substring(0, 3)}
+                                    -
+                                    {`${(new Date(item.endAt).getDate() < 10 ? "0" : "") + new Date(item.endAt).getDate()}`}
+                                  </span>
+                                </td>
+                                {selectedCity.id === -1 && (<td style={{ textAlign: "center" }}>{item.city}</td>)}
+                                {selectedHotel.id === -1 && (<td style={{ textAlign: "center" }}>{item.hotel}</td>)}
+                                < td style={{ textAlign: "center" }}>{item.clientRef}</td>
+                                <td style={{ textAlign: "center" }}>{item.client}</td>
+                                <td style={{ textAlign: "center" }}>
+                                  {item.nbrpaxforhbtype.map(({ typepax, nbr }, index) => (
+                                    <span style={{ "fontSize": "12px", }}>{index !== 0 ? '+' : ''} {nbr}{typepax}</span>
+                                  ))}
+                                </td>
+                                <td style={{ textAlign: "center" }}>{item.note}</td>
+                                <td style={{ "fontSize": "20px", textAlign: "center" }}>
+                                  <div onClick={() => {
+                                    // TODO: Add delete fucntion
+                                    setSelectedDossier(item.dossierNum);
+                                    setOpenEditModal(true);
+                                  }}
+                                    type="button"
+                                    className='text-success'>
+                                    <i className="fa fa-cog text-success"></i>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      ))}
                     </Table>
                   </Col>
                 </Row>
@@ -293,6 +299,80 @@ function Filters() {
           setIsOpen={setOpenEditModal}
           setSelectedDossier={setSelectedDossier}
           selectedDossier={selectedDossier} />)}
+
+        <ReactHTMLTableToExcel
+          id="test-table-xls-button"
+          className="download-table-xls-button"
+          table="table-to-xls"
+          filename="tablexls"
+          sheet="tablexls"
+          buttonText="Download as XLS"
+        />
+        <table className='d-none' id="table-to-xls" style={{
+          "border": "1px solid black"
+        }}>
+          <thead className="text-primary">
+            <tr></tr>
+            <tr></tr>
+            <tr>
+              <td colSpan={5} style={{ color: "red", fontSize: 30, fontWeight: "bold", textAlign: "center" }}>Dossiers</td>
+            </tr>
+            <tr>
+              <td>
+                {(<th style={{ textAlign: "center" }}>{t("City")}</th>)}
+                {(<th style={{ textAlign: "center" }}>{t("Hotel")}</th>)}
+              </td>
+            </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr>
+              <td>
+                {(<th style={{ textAlign: "center" }}>{t(`${selectedCity.name}`)}</th>)}
+                {(<td style={{ textAlign: "center" }}>{t(`${selectedHotel.name}`)}</td>)}
+              </td>
+            </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr>
+              <th style={{ textAlign: "center" }}>{t("From")}{"-"}{t("To")}</th>
+              <th style={{ textAlign: "center" }}>{t("Client-Ref")}</th>
+              <th style={{ textAlign: "center" }}>{t("FullName")}</th>
+              <th style={{ textAlign: "center" }}>{t("N° Pax")}</th>
+              <th style={{ textAlign: "center" }}>{t("Note")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dataSource.length !== 0 && dataSource?.keys.map((key) => (
+              <tbody style={{ "marginBottom": "100px" }}> {
+                dataSource.data[key].map((item) => (
+                  <tr>
+                    <td style={{ justifyContent: "center", display: "flex", }}>
+                      <span>
+                        {new Date(item.startAt).toLocaleString('default', { month: 'long' }).substring(0, 3)}
+                        -
+                        {`${(new Date(item.startAt).getDate() < 10 ? "0" : "") + new Date(item.startAt).getDate()}`}
+                      </span>
+                      {"/"}
+                      <span>
+                        {new Date(item.endAt).toLocaleString('default', { month: 'long' }).substring(0, 3)}
+                        -
+                        {`${(new Date(item.endAt).getDate() < 10 ? "0" : "") + new Date(item.endAt).getDate()}`}
+                      </span>
+                    </td>
+                    < td style={{ textAlign: "center" }}>{item.clientRef}</td>
+                    <td style={{ textAlign: "center" }}>{item.client}</td>
+                    <td style={{ textAlign: "center" }}>
+                      {item.nbrpaxforhbtype.map(({ typepax, nbr }, index) => (
+                        <span style={{ "fontSize": "12px", }}>{index !== 0 ? '+' : ''} {nbr}{typepax}</span>
+                      ))}
+                    </td>
+                    <td style={{ textAlign: "center" }}>{item.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
