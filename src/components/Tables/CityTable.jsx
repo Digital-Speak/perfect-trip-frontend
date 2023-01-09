@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, CardBody, CardHeader, CardTitle, Col, FormGroup, Input, Row, Table } from 'reactstrap'
 import { useTranslation } from 'react-i18next';
-import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+// import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import EditableInput from "../Inputs/EditableInput";
 import { getCities } from 'api/city';
 import { addCityApi } from 'api/city';
@@ -66,7 +66,7 @@ function CityTable() {
                     filename="tablexls"
                     sheet="tablexls"
                     buttonText="Download as XLS"/> */}
-                <table className='d-none' id="table-to-xls">
+                {/* <table className='d-none' id="table-to-xls">
               <thead className="text-primary">
               <tr></tr>
               <tr></tr>
@@ -108,7 +108,7 @@ function CityTable() {
                 </tr>
                 <tr ><td></td></tr>
               </tbody>
-            </table>
+            </table> */}
 
             </div>
       </Col>

@@ -9,7 +9,7 @@ import {
   Row,
   Col
 } from "reactstrap";
-import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+// import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import _ from "lodash";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -299,7 +299,7 @@ function Filters() {
           setIsOpen={setOpenEditModal}
           setSelectedDossier={setSelectedDossier}
           selectedDossier={selectedDossier} />)}
-
+{/* 
         <ReactHTMLTableToExcel
           id="test-table-xls-button"
           className="download-table-xls-button"
@@ -372,7 +372,7 @@ function Filters() {
               </tbody>
             ))}
           </tbody>
-        </table>
+        </table> */}
       </div>
     </>
   );
