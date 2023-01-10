@@ -143,7 +143,7 @@ function Filters() {
               <CardBody >
                 <Row>
                   <Col md="3"> <FormGroup>
-                    <label>{t("Ville")}:</label>
+                    <label>{t("City")}:</label>
                     <Autocomplete
                       disablePortal
                       id="cities"
@@ -240,7 +240,6 @@ function Filters() {
                           <th style={{ textAlign: "center" }}>{t("FullName")}</th>
                           <th style={{ textAlign: "center" }}>{t("N° Pax")}</th>
                           <th style={{ textAlign: "center" }}>{t("Note")}</th>
-                          <th style={{ textAlign: "center" }}>{t("Actions")}</th>
                         </tr>
                       </thead>
                       {dataSource.length !== 0 && dataSource?.keys.map((key) => (
@@ -272,17 +271,6 @@ function Filters() {
                                   ))}
                                 </td>
                                 <td style={{ textAlign: "center" }}>{item.note}</td>
-                                <td style={{ "fontSize": "20px", textAlign: "center" }}>
-                                  <div onClick={() => {
-                                    // TODO: Add delete fucntion
-                                    setSelectedDossier(item.dossierNum);
-                                    setOpenEditModal(true);
-                                  }}
-                                    type="button"
-                                    className='text-success'>
-                                    <i className="fa fa-cog text-success"></i>
-                                  </div>
-                                </td>
                               </tr>
                             ))}
                         </tbody>
