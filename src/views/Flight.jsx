@@ -34,8 +34,8 @@ function Flight() {
     const payload = await getListFlights();
     const _cities = await getCities();
     setCities(_cities?.cities);
-    setList(payload.flights)
-    setFilteredList(payload.flights)
+    setList(payload?.flights)
+    setFilteredList(payload?.flights)
   }
 
   const filter = () => {
@@ -213,7 +213,7 @@ function Flight() {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredList.length !== 0 && filteredList.map((item, index) => (
+                        {filteredList && filteredList.length !== 0 && filteredList.map((item, index) => (
                           <>
                             <tr style={index == 0 || index % 2 == 0 ? { backgroundColor: "#EFEFEF" } : {}}>
                               <td style={{ textAlign: "center" }}>{item.from_to_start}</td>
