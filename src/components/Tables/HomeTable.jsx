@@ -44,6 +44,7 @@ function HomeTable({
       })
     });
 
+
     slectedHotel = newHotels[0].label;
     return <EditableSelect
       data={newHotels}
@@ -74,6 +75,17 @@ function HomeTable({
       }} />
   }
 
+  const formatDate = (unformatted) => {
+    const date = new Date(unformatted);
+    const yyyy = date.getFullYear();
+    let mm = date.getMonth() + 1;
+    let dd = date.getDate();
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+
+    return yyyy + '-' + mm + '-' + dd;
+  }
+  console.log(formatDate(newClient.startDate.toString()))
   const renderCity = (city) => {
     const cities = city.split(" ");
 
@@ -146,14 +158,18 @@ function HomeTable({
         startDate = endDate;
         if (index === parseInt(Object.keys(grouped).length - 1)) {
           setNewClient({ ...newClient, endDate: endDate })
+          setFlights({
+            ...flights,
+            flight_date_end: endDate
+          })
         }
       })
       setCircuit(newData);
-    }else {
+    } else {
       setCircuit([])
     }
   }, [hotels.length && hotels[0].hotelId, circuitDates.start]);
-console.log(cities)
+
   return (
     <>
       <div className="content">
@@ -213,38 +229,60 @@ console.log(cities)
                   </thead>
                   <tbody>
                     <tr>
-                      <td><EditableInput text={flights.from_to_start} onTextChange={(newText) => { setFlights({ ...flights, from_to_start: newText  }) }} /></td>
-                      <td>{new Date(circuitDates.start).getDate()}/{new Date(circuitDates.start).toLocaleString('default', { month: 'long' }).substring(0, 4)}</td>
+                      <td><EditableInput text={flights.from_to_start} onTextChange={(newText) => { setFlights({ ...flights, from_to_start: newText }) }} /></td>
                       <td>
-                      {cities.length !== 0 && <CustomEditableSelect
+                        {
+                          newClient.startDate &&
+                          <input className="border-0" type="date" value={ formatDate(flights.flight_date_start) || formatDate(newClient.startDate)} onChange={(e) => {
+
+                            setFlights({
+                              ...flights,
+                              flight_date_start: e.target.value
+                            })
+                          }} />
+                        }
+                      </td>
+                      <td>
+                        {cities.length !== 0 && <CustomEditableSelect
                           data={cities.length !== 0 ? cities : []}
                           text={cities[0]?.name}
                           id={flights.city_id_start}
                           cb={(name, id) => {
-                            setFlights({ ...flights, city_id_start: id  })
+                            setFlights({ ...flights, city_id_start: id })
                           }}
                         />}</td>
-                      <td><EditableInput text={flights.from_start} onTextChange={(newText) => { setFlights({ ...flights, from_start: newText  }) }} /></td>
-                      <td><EditableInput text={flights.to_start} onTextChange={(newText) => { setFlights({ ...flights, to_start: newText  }) }} /></td>
-                      <td><EditableInput text={flights.flight_start} onTextChange={(newText) => { setFlights({ ...flights, flight_start: newText  }) }} /></td>
-                      <td><input className="border-0" type="time" width="276" value={flights.flight_time_start} onChange={(e)=>{setFlights({ ...flights, flight_time_start: e.target.value  })}} /></td>
+                      <td><EditableInput text={flights.from_start} onTextChange={(newText) => { setFlights({ ...flights, from_start: newText }) }} /></td>
+                      <td><EditableInput text={flights.to_start} onTextChange={(newText) => { setFlights({ ...flights, to_start: newText }) }} /></td>
+                      <td><EditableInput text={flights.flight_start} onTextChange={(newText) => { setFlights({ ...flights, flight_start: newText }) }} /></td>
+                      <td><input className="border-0" type="time" width="276" value={flights.flight_time_start} onChange={(e) => { setFlights({ ...flights, flight_time_start: e.target.value }) }} /></td>
                     </tr>
                     <tr>
-                      <td><EditableInput text={flights.from_to_end} onTextChange={(newText) => { setFlights({ ...flights, from_to_end: newText  }) }} /></td>
-                      <td>{new Date(circuitDates.end).getDate()}/{new Date(circuitDates.end).toLocaleString('default', { month: 'long' }).substring(0, 4)}</td>
+                      <td><EditableInput text={flights.from_to_end} onTextChange={(newText) => { setFlights({ ...flights, from_to_end: newText }) }} /></td>
+                      <td>
+                        {
+                          newClient.endDate &&
+                          <input className="border-0" type="date" value={ formatDate(flights.flight_date_end) || formatDate(newClient.endDate)} onChange={(e) => {
+
+                            setFlights({
+                              ...flights,
+                              flight_date_end: e.target.value
+                            })
+                          }} />
+                        }
+                      </td>
                       <td>{cities.length !== 0 && <CustomEditableSelect
-                          data={cities.length !== 0 ? cities : []}
-                          text={cities[0]?.name}
-                          id={flights.city_id_end}
-                          cb={(name, id) => {
-                            setFlights({ ...flights, city_id_end: id  })
-                          }}
-                        />}</td>
-                      <td><EditableInput text={flights.from_end} onTextChange={(newText) => { setFlights({ ...flights, from_end: newText  }) }} /></td>
-                      <td><EditableInput text={flights.to_end} onTextChange={(newText) => { setFlights({ ...flights, to_end: newText  }) }} /></td>
-                      <td><EditableInput text={flights.flight_end} onTextChange={(newText) => { setFlights({ ...flights, flight_end: newText  }) }} /></td>
-                      <td><input className="border-0" type="time" width="276" value={flights.flight_time_end} onChange={(e)=>{setFlights({ ...flights, flight_time_end: e.target.value  })}} /></td>
-                   
+                        data={cities.length !== 0 ? cities : []}
+                        text={cities[0]?.name}
+                        id={flights.city_id_end}
+                        cb={(name, id) => {
+                          setFlights({ ...flights, city_id_end: id })
+                        }}
+                      />}</td>
+                      <td><EditableInput text={flights.from_end} onTextChange={(newText) => { setFlights({ ...flights, from_end: newText }) }} /></td>
+                      <td><EditableInput text={flights.to_end} onTextChange={(newText) => { setFlights({ ...flights, to_end: newText }) }} /></td>
+                      <td><EditableInput text={flights.flight_end} onTextChange={(newText) => { setFlights({ ...flights, flight_end: newText }) }} /></td>
+                      <td><input className="border-0" type="time" width="276" value={flights.flight_time_end} onChange={(e) => { setFlights({ ...flights, flight_time_end: e.target.value }) }} /></td>
+
                     </tr>
                   </tbody>
                 </Table>

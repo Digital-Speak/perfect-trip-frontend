@@ -38,18 +38,20 @@ function Dashboard() {
   const [newHotelToDb, setNewHotelToDb] = useState([]);
   const [typeOfHb, setTypeOfHb] = useState([]);
   const [flights, setFlights] = useState({
-      from_to_start: "APT / HOTEL",
-      city_id_start: 0,
-      from_start: "AEROPORT CASABLANCA",
-      to_start: "ODYSSEE CENTER",
-      flight_start: "AT 410",
-      flight_time_start: "06:30",
-      from_to_end: "HOTEL / APT",
-      city_id_end: 0,
-      from_end: "PALM PLAZA",
-      to_end: "Aeroport Marrakech",
-      flight_end: "ZF 2850",
-      flight_time_end: "10:20",
+    from_to_start: "APT / HOTEL",
+    city_id_start: 0,
+    from_start: "AEROPORT CASABLANCA",
+    to_start: "ODYSSEE CENTER",
+    flight_start: "AT 410",
+    flight_time_start: "06:30",
+    from_to_end: "HOTEL / APT",
+    city_id_end: 0,
+    from_end: "PALM PLAZA",
+    to_end: "Aeroport Marrakech",
+    flight_end: "ZF 2850",
+    flight_time_end: "10:20",
+    flight_date_start: new Date(),
+    flight_date_end: new Date(),
   });
   const [newClient, setNewClient] = useState({
     folderNumber: 1,
@@ -79,20 +81,15 @@ function Dashboard() {
     // Get the folder Num:
     const folderNumber = await getlastId();
     setNewClient({ ...newClient, folderNumber: folderNumber.success ? folderNumber.dossier_num : "ERROR" })
-    
     const data_cities = await getCities();
-      setCities(data_cities?.cities);
-    
+    setCities(data_cities?.cities);
     const payload_1 = await getCircuit();
     const payload_2 = await getAgencies();
-
     if (!payload_1?.success) return;
     if (!payload_2?.success) return;
-
     setCircuitsServerData(payload_1?.circuits);
     setAgencesServerData(payload_2?.agencies);
     const newData = { "agenciesData": [], "circuitsData": [] };
-
     payload_1.circuits.forEach((item) => {
       newData.circuitsData.push({
         label: item.name
@@ -107,6 +104,13 @@ function Dashboard() {
 
     setAgencies(newData?.agenciesData);
     setCircuits(newData?.circuitsData);
+    setFlights((prev) => (
+      {
+        ...prev,
+        city_id_end: data_cities?.cities[0].id,
+        city_id_start: data_cities?.cities[0].id
+      }
+    ))
   }
 
   const fetchHotels = async (circ, cat) => {
@@ -263,6 +267,10 @@ function Dashboard() {
                             inputFormat={"DD/MM/YYYY"}
                             onChange={(newValue) => {
                               const newDate = new Date(newValue.$d);
+                              setFlights({
+                                ...flights,
+                                flight_date_start: newDate
+                              })
                               setNewClient({ ...newClient, startDate: newDate })
                             }}
                             renderInput={(params) => <TextField fullWidth {...params} />}
@@ -356,7 +364,6 @@ function Dashboard() {
                               extra_nights: newClient.extraNights
                             })
                           })
-
                           const clientObject = {
                             dossier_num: newClient.folderNumber,
                             ref_client: newClient.refClient,

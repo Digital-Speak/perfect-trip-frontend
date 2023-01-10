@@ -6,6 +6,7 @@ import Filters from "views/Filters";
 import Folders from "views/Folders";
 import ForgotPassword from "views/password/Forgot";
 import SetNewPassword from "views/password/SetNew";
+import Flight from "views/Flight";
 
 var routes = [
   {
@@ -21,6 +22,14 @@ var routes = [
     name: "Folders",
     icon: "fa fa-envelope",
     component: Folders,
+    layout: "/admin",
+    show: true,
+  },
+  {
+    path: "/flights",
+    name: "Flights",
+    icon: "fa fa-plane",
+    component: Flight,
     layout: "/admin",
     show: true,
   },
