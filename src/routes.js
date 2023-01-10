@@ -3,6 +3,7 @@ import Login from "views/Login";
 import Config from "views/Config";
 import Settings from "views/Settings";
 import Filters from "views/Filters";
+import Folders from "views/Folders";
 import ForgotPassword from "views/password/Forgot";
 import SetNewPassword from "views/password/SetNew";
 
@@ -12,6 +13,14 @@ var routes = [
     name: "Accueil",
     icon: "nc-icon nc-bank",
     component: Dashboard,
+    layout: "/admin",
+    show: true,
+  },
+  {
+    path: "/folders",
+    name: "Folders",
+    icon: "fa fa-envelope",
+    component: Folders,
     layout: "/admin",
     show: true,
   },

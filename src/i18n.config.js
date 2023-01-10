@@ -34,7 +34,11 @@ const resources = {
    "Flights": "Vols",
    "Time": "Temps",
    "Filter-Folder": "Filtrer les dossiers",
-   "Actions": "Actions"
+   "Actions": "Actions",
+   "List-Of-Folders": "Liste des dossiers",
+   "Category": "Catégorie",
+   "Folders": "Dossiers"
+
   }
  },
  es: {
@@ -66,7 +70,10 @@ const resources = {
    "Flights": "Vuelos",
    "Time": "Hore",
    "Filter-Folder": "Filtrar carpetas",
-   "Actions": "Comportamiento"
+   "Actions": "Comportamiento",
+   "List-Of-Folders": "Lista de carpetas",
+   "Category": "Categoría",
+   "Folders": "Carpetas"
   }
  }
 };
