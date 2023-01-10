@@ -26,8 +26,8 @@ function Settings() {
         return <AdminProfileCard />
       case "admins":
         return <AdminsTable />
-        case "history":
-          return <HistoryTable />
+      case "history":
+        return <HistoryTable />
       default:
         break;
     }

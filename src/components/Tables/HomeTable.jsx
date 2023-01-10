@@ -13,6 +13,7 @@ import _ from "lodash"
 import EditableSelect from "../Inputs/EditableSelect";
 import EditableDatePicker from "../Inputs/EditableDatePicker";
 import CustomEditableSelect from "components/Inputs/CustomEditableSelect";
+import SameAreaCities from "../../assets/SameAreaCities.json";
 
 function HomeTable({
   t,
@@ -87,16 +88,13 @@ function HomeTable({
   }
   console.log(formatDate(newClient.startDate.toString()))
   const renderCity = (city) => {
-    const cities = city.split(" ");
-
-    if (cities.length === 2) {
+    if (SameAreaCities["Area 1"][city] != undefined) {
       return <EditableSelect
-        data={cities.map((item) => {
-          return { label: item }
-        })}
-        text={cities[0]}
+        data={[{ label: SameAreaCities["Area 1"][city] }, { label: SameAreaCities["Area 1"][city] }]}
+        text={city}
         t={t}
         onTextChange={(data) => {
+          console.log(data)
         }} />
     }
     return city
@@ -134,13 +132,14 @@ function HomeTable({
     if (hotels.length !== 0) {
       const newData = [];
       let startDate = circuitDates.start;
-      let grouped = _.mapValues(_.groupBy(hotels, 'cityName'), clist => clist.map(city => _.omit(city, 'cityName')));
-
+      console.log(startDate);
+      let grouped = _.mapValues(_.groupBy(hotels, 'circuit_city_id'), clist => clist.map(city => _.omit(city, 'circuit_city_id')));
+      console.log(grouped)
       Object.keys(grouped).forEach((item, index) => {
         let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(grouped[item][0].numberOfNights)));
         newData.push({
           id: grouped[item][0].cityId,
-          city: item,
+          city: grouped[item][0].cityName,
           hotels: grouped[item],
           regimgeData: "DP",
           regime: renderRegime(grouped[item][0].cityId),
@@ -148,11 +147,11 @@ function HomeTable({
           from:
             `${(new Date(startDate).getDate() < 10 ? "0" : "") + new Date(startDate).getDate()}
      - 
-     ${new Date(startDate).toLocaleString('default', { month: 'long' }).substring(0, 4)}`,
+     ${new Date(startDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`,
           to:
             `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
     - 
-    ${new Date(endDate).toLocaleString('default', { month: 'long' }).substring(0, 4)}`
+    ${new Date(endDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
         })
 
         startDate = endDate;
@@ -169,7 +168,6 @@ function HomeTable({
       setCircuit([])
     }
   }, [hotels.length && hotels[0].hotelId, circuitDates.start]);
-
   return (
     <>
       <div className="content">

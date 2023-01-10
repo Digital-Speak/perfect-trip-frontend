@@ -20,13 +20,13 @@ function Config() {
   const loadCard = () => {
     switch (sector) {
       case "city":
-        return <CityTable/>
+        return <CityTable />
       case "agency":
         return <AgencyTable />
       case "hotel":
         return <HotelTable />
-        case "circuit":
-          return <CircuitTable />
+      case "circuit":
+        return <CircuitTable />
       default:
         break;
     }
@@ -41,14 +41,17 @@ function Config() {
               <CardBody>
                 <Form>
                   <Row>
-                  <Col className="" md="4">
-                      <button onClick={() => { setSector("hotel") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector === 'hotel' && 'active'}`}>Hotel</button>
+                    <Col className="" md="3">
+                      <button onClick={() => { setSector("hotel") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector === 'hotel' && 'active'}`}>{t("Hotel")}</button>
                     </Col>
-                    <Col className="" md="4">
-                      <button onClick={() => { setSector("agency") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector === 'agency' && 'active'}`}>Agency</button>
+                    <Col className="" md="3">
+                      <button onClick={() => { setSector("agency") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector === 'agency' && 'active'}`}>{t("Agency")}</button>
                     </Col>
-                    <Col className="" md="4">
-                      <button onClick={() => { setSector("city") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector === 'city' && 'active'}`}>City</button>
+                    <Col className="" md="3">
+                      <button onClick={() => { setSector("city") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector === 'city' && 'active'}`}>{t("City")}</button>
+                    </Col>
+                    <Col className="" md="3">
+                      <button onClick={() => { setSector("circuit") }} type="button" class={`btn btn-block bg-transparent text-black-50 border-gray border ${sector === 'circuit' && 'active'}`}>{t("Circuit")}</button>
                     </Col>
                   </Row>
                 </Form>

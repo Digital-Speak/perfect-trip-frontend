@@ -7,10 +7,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import TextField from '@mui/material/TextField';
 
-function EditableDatePicker({ t, selectedDate = new Date(), onDateChange }) {
+function EditableDatePicker({ t, selectedDate, onDateChange }) {
  const [editMode, setEditMode] = useState(false)
  const [inputValue, setInputValue] = useState(selectedDate)
-
  return (
   <span style={{ "cursor": "pointer" }} onBlur={() => {
    setEditMode(false);
@@ -28,9 +27,9 @@ function EditableDatePicker({ t, selectedDate = new Date(), onDateChange }) {
      }}
      renderInput={(params) => <TextField style={{"width": "150px", "height": "10px"}} {...params} />}
     />
-   </LocalizationProvider> : <span>{`${(new Date(inputValue).getDate() < 10 ? "0" : "") + new Date(inputValue).getDate()} 
+     </LocalizationProvider> : <span>{`${(new Date(selectedDate).getDate() < 10 ? "0" : "") + new Date(selectedDate).getDate()} 
     - 
-    ${new Date(inputValue).toLocaleString('default', { month: 'long' }).substring(0, 4)}`}</span>}
+    ${new Date(selectedDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`}</span>}
   </span>
  );
 }

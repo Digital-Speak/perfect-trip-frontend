@@ -38,8 +38,8 @@ const resources = {
    "Actions": "Actions",
    "List-Of-Folders": "Liste des dossiers",
    "Category": "Catégorie",
-   "Folders": "Dossiers"
-
+   "Folders": "Dossiers",
+   "number_of_nights": "Nombre de nuits"
   }
  },
  es: {
@@ -75,7 +75,8 @@ const resources = {
    "Actions": "Comportamiento",
    "List-Of-Folders": "Lista de carpetas",
    "Category": "Categoría",
-   "Folders": "Carpetas"
+   "Folders": "Carpetas",
+   "number_of_nights": "Número de noches"
   }
  }
 };

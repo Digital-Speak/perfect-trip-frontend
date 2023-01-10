@@ -136,7 +136,7 @@ function HotelTable() {
                         city_id: event.target.value,
                       });
                     }} name="" id="">
-                    {cities.length !== 0 && cities.map((city) =>
+                    {cities?.length !== 0 && cities?.map((city) =>
                     (
                       <option value={city?.id}>{city?.name}</option>
                     ))
@@ -184,7 +184,7 @@ function HotelTable() {
                       <td>
                         <EditableInput
                           text={hotel?.name}
-                          cb={(text) => {
+                          onTextChange={(text) => {
                             if (text !== hotel?.name) {
                               handleEdit({
                                 id: hotel?.id,
@@ -203,7 +203,7 @@ function HotelTable() {
                             { label: "4B" },
                           ]}
                           text={hotel?.stars || "-"}
-                          cb={(newStars) => {
+                          onTextChange={(newStars) => {
                             handleEdit({
                               id: hotel?.id,
                               stars: newStars,
@@ -220,7 +220,8 @@ function HotelTable() {
                             hotel?.cityName ? hotel?.cityName : "Affect a city"
                           }
                           id={hotel?.city_id}
-                          cb={(name, id) => {
+                          onTextChange={(name, id) => {
+                            console.log(id);
                             handleEdit({
                               id: hotel?.id,
                               stars: hotel?.stars,
