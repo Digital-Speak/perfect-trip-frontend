@@ -16,7 +16,6 @@ function Filters() {
  const { t } = useTranslation();
  const [list, setList] = useState([])
  const loadData = async () => {
-  console.log("first")
   const payload = await getListDossier({});
   setList(payload.dossiers)
  }

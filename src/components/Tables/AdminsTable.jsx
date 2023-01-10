@@ -47,7 +47,6 @@ function AdminsTable() {
   }
 
   const handleDelete = async () => {
-    console.log(deleteSubAdminId)
     if (deleteSubAdminId) {
       const data = await deleteAdminApi({ id: deleteSubAdminId });
       if (data?.success) {
@@ -60,7 +59,6 @@ function AdminsTable() {
     loadData();
   }, [])
 
-  console.log(deleteSubAdminId)
   return (
     <Row>
       <Col md="12">

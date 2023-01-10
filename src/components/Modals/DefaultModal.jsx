@@ -188,7 +188,6 @@ function DefaultModal({ t, data, modalIsOpen, setIsOpen, selectedDossier, setSel
                   </FormGroup>
                 </Col>
                 <Col className="" md="4">
-                  {console.log(targetDossier)}
                   <FormGroup>
                     <label>{t("Agency")}</label>
                     <Autocomplete
@@ -377,7 +376,6 @@ function DefaultModal({ t, data, modalIsOpen, setIsOpen, selectedDossier, setSel
                         onClick={async () => {
                           seteditMode(true);
                           const payload = await getOneDossier({ dossier_num: selectedDossier });
-                          console.log(payload);
                         }}
                       >
                         {t("Edit")}

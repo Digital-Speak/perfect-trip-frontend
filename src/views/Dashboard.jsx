@@ -156,7 +156,6 @@ function Dashboard() {
                     <Col className="" md="4">
                       <FormGroup>
                         <label>{t("Folder-Number")}</label>
-                        {console.log(newClient.folderNumber)}
                         <Input
                           defaultValue=""
                           value={newClient.folderNumber}
@@ -415,7 +414,6 @@ function Dashboard() {
                         className="btn-round"
                         color="danger"
                         onClick={() => {
-                          console.log("Cancel")
                         }}
                       >
                         {t("Cancel")}

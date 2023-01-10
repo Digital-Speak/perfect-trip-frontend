@@ -61,7 +61,6 @@ function CircuitTable() {
       city_id: newCircuit.city_id,
       number_of_nights: newCircuit.number_of_nights,
     });
-    console.log(data);
     if (data?.success) {
       loadData();
     }

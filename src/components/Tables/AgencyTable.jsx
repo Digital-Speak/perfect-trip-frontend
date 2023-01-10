@@ -15,7 +15,6 @@ function AgencyTable() {
 
   const loadData = async () => {
     const data = await getAgencies();
-    console.log(data)
     if (data?.success) {
       setAgencies(data?.agencies);
     }

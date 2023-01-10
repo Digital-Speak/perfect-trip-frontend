@@ -11,7 +11,6 @@ const getCiruitsApi = async () => {
   });
   return await payload.json();
  } catch (error) {
-  console.log(error)
  }
 }
 
@@ -29,7 +28,6 @@ const addCiruitsApi = async (body) => {
   });
   return await payload.json();
  } catch (error) {
-  console.log(error)
  }
 }
 

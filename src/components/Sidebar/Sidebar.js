@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Nav } from "reactstrap";
 import PerfectScrollbar from "perfect-scrollbar";
 import { useTranslation } from 'react-i18next';
+import logo from '../../assets/img/login/logo.png';
 
 var ps;
 
@@ -37,7 +38,7 @@ function Sidebar(props) {
           href={`${process.env.REACT_APP_CLIENT_URL}/admin/dashboard`}
           className="simple-text logo-normal"
         >
-          Perfect Trips
+          <img alt='logo' src={logo} />
         </a>
       </div>
       <div className="sidebar-wrapper position-relative" ref={sidebar}>

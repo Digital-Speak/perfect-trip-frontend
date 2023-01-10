@@ -26,7 +26,6 @@ function HistoryTable() {
     loadData();
   }, [])
 
-  console.log(deleteSubAdminId)
   return (
     <Row >
       <Col md="12">

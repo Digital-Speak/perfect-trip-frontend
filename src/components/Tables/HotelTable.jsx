@@ -78,7 +78,6 @@ function HotelTable() {
     loadData();
   }, [isLoading]);
 
-  console.log(newHotel);
   return (
     <Row>
       <Col md="12">
@@ -221,7 +220,6 @@ function HotelTable() {
                           }
                           id={hotel?.city_id}
                           onTextChange={(name, id) => {
-                            console.log(id);
                             handleEdit({
                               id: hotel?.id,
                               stars: hotel?.stars,

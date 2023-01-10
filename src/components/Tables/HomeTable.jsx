@@ -86,7 +86,6 @@ function HomeTable({
 
     return yyyy + '-' + mm + '-' + dd;
   }
-  console.log(formatDate(newClient.startDate.toString()))
   const renderCity = (city) => {
     if (SameAreaCities["Area 1"][city] != undefined) {
       return <EditableSelect
@@ -94,7 +93,6 @@ function HomeTable({
         text={city}
         t={t}
         onTextChange={(data) => {
-          console.log(data)
         }} />
     }
     return city
@@ -132,9 +130,7 @@ function HomeTable({
     if (hotels.length !== 0) {
       const newData = [];
       let startDate = circuitDates.start;
-      console.log(startDate);
       let grouped = _.mapValues(_.groupBy(hotels, 'circuit_city_id'), clist => clist.map(city => _.omit(city, 'circuit_city_id')));
-      console.log(grouped)
       Object.keys(grouped).forEach((item, index) => {
         let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(grouped[item][0].numberOfNights)));
         newData.push({

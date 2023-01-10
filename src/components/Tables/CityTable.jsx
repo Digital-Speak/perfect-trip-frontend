@@ -17,7 +17,6 @@ function CityTable() {
 
   const loadData = async () => {
     const data = await getCities();
-    console.log(data)
     if (data?.success) {
       setCities(data?.cities);
     }
@@ -167,7 +166,6 @@ function CityTable() {
                   cities.map((city) => (
                     <tr>
                       <td><EditableInput text={city?.name} onTextChange={(text) => {
-                        console.log(text, "cc ", city?.name)
                         if (text !== city?.name) {
                           handleEdit({
                             id: city?.id,
