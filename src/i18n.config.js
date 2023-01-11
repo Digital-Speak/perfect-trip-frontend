@@ -1,12 +1,22 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
-// the translations
-// (tip move them in a JSON file and import them,
-// or even better, manage them separated from your code: https://react.i18next.com/guides/multiple-translation-files)
 const resources = {
  fr: {
   translation: {
+   "login": "CONNEXION",
+   "Forgot my password?": "Mot de passe oublié ?",
+   "Forgot password?": "Mot de passe oublié?",
+   "Forgot password text": "Tu as oublié ton mot de passe ? Aucun problème. Il suffit de saisir l'adresse électronique associée à votre compte et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+   "Email or password incorrect.": "Email ou mot de passe incorrect.",
+   "Back to login": "Retour à la page de connexion",
+   "Wrong Email": "Email incorrect.",
+   "An email has been sent.": "Un e-mail a été envoyé.",
+   "Set New Password": "Definir Un Nouveau Mot De Passe",
+   "New Password": "Nouveau mot de passe",
+   "ReType New Password": "Retapez le nouveau mot de passe",
+   "email": "Email",
+   "password": "Mot de passe",
    "Accueil": "Accueil",
    "New-Folder": "Nouveau dossier",
    "lang": "Fr",
@@ -39,11 +49,25 @@ const resources = {
    "List-Of-Folders": "Liste des dossiers",
    "Category": "Catégorie",
    "Folders": "Dossiers",
-   "number_of_nights": "Nombre de nuits"
+   "number_of_nights": "Nombre de nuits",
+   "send": "Envoyer"
   }
  },
  es: {
   translation: {
+   "login": "ACCESO",
+   "Forgot my password?": "¿Olvidé mi contraseña?",
+   "Forgot password?": "¿Se te olvidó tu contraseña?",
+   "Forgot password text": "¿Has olvidado tu contraseña? No se preocupe. Introduzca la dirección de correo electrónico asociada a su cuenta y le enviaremos un enlace para restablecerla.",
+   "Email or password incorrect.": "Correo electrónico o contraseña incorrecta.",
+   "Back to login": "Volver a la página de inicio de sesión",
+   "Wrong Email": "Correo electrónico incorrecto.",
+   "An email has been sent.": "Un correo electronico ha sido enviado.",
+   "Set New Password": "Establecer Nueva Contraseña",
+   "New Password": "Nueva contraseña",
+   "ReType New Password": "Vuelva a escribir la nueva contraseña",
+   "email": "Correo electrónico",
+   "password": "Contraseña",
    "Accueil": "Inicio",
    "New-Folder": "Nueva Carpeta",
    "lang": "Es",
@@ -76,18 +100,19 @@ const resources = {
    "List-Of-Folders": "Lista de carpetas",
    "Category": "Categoría",
    "Folders": "Carpetas",
-   "number_of_nights": "Número de noches"
+   "number_of_nights": "Número de noches",
+   "send": "Enviar",
   }
  }
 };
 
 i18n
- .use(initReactI18next) // passes i18n down to react-i18next
+ .use(initReactI18next)
  .init({
   resources,
   lng: "fr",
   interpolation: {
-   escapeValue: false 
+   escapeValue: false
   }
  });
 

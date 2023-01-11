@@ -5,8 +5,10 @@ import HelloWorldImg from '../assets/img/login/Hello_World_.png';
 import { login } from "../api/auth"
 import { useHistory } from 'react-router-dom';
 import styles from '../assets/css/views/login.module.scss';
+import { useTranslation } from 'react-i18next';
 
 const Login = () => {
+  const { t } = useTranslation();
   const { push } = useHistory()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,7 +42,7 @@ const Login = () => {
     if (!err) {
       const payload = await login({ email, password })
       if (!payload?.success) {
-        setGlobalError("Email or assword incorrect.")
+        setGlobalError(t("Email or password incorrect."))
       } else {
         setGlobalError('');
         sessionStorage.setItem('jat', payload?.token);
@@ -62,7 +64,7 @@ const Login = () => {
       <Col xs="12" md="6" className={styles.rightSide}>
         <Card className={styles.loginCard} >
           <div className={styles.loginCardBody}>
-            <p className={styles.title}>LOGIN</p>
+            <p className={styles.title}>{t("login")}</p>
             <div className={styles.inputRow}>
 
               <input
@@ -70,7 +72,7 @@ const Login = () => {
                 type="email"
                 name="email"
                 id="email"
-                placeholder='Email'
+                placeholder={t('email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)} />
             </div>
@@ -81,7 +83,7 @@ const Login = () => {
                 className={styles.input}
                 type="password"
                 name="password"
-                placeholder='password'
+                placeholder={t('password')}
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)} />
@@ -94,12 +96,12 @@ const Login = () => {
                 onClick={() => {
                   push('/auth/password/forgot')
                 }}
-                type="button" value="Forgot my password?" className={styles.hyperLink} />
+                type="button"
+                value={t("Forgot my password?")}
+                className={styles.hyperLink} />
             </div>
-            <input onClick={handleSubmit} type="button" value="LOGIN" className={styles.button} />
-           
-              <div className={styles.trajetImg}></div>
-          
+            <input onClick={handleSubmit} type="button" value={t("login")} className={styles.button} />
+            <div className={styles.trajetImg}></div>
           </div>
         </Card>
       </Col>

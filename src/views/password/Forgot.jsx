@@ -5,8 +5,10 @@ import HelloWorldImg from '../../assets/img/login/Hello_World_.png';
 import { forgotPassword } from "../../api/auth"
 import { useHistory } from 'react-router-dom';
 import styles from '../../assets/css/views/forgotPassword.module.scss';
+import { useTranslation } from 'react-i18next';
 
 const ForgotPassword = () => {
+  const { t } = useTranslation();
   const { push } = useHistory()
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -31,7 +33,7 @@ const ForgotPassword = () => {
       // TODO:
       const payload = await forgotPassword({ email })
       if (!payload?.success && payload?.message === "There is no user with that email address") {
-        setGlobalError("Email incorrect.");
+        setGlobalError(t("Email incorrect."));
       } else if (payload?.message === "An email has been sent") {
         alert("An email has been sent.");
         setGlobalError('');
@@ -53,12 +55,8 @@ const ForgotPassword = () => {
       <Col xs="12" md="6" className={styles.rightSide}>
         <Card className={styles.forgotCard} >
           <div className={styles.forgotCardBody}>
-            <p className={styles.title}>Forgot password?</p>
-            <p className={styles.subtitle}>
-              Did you forget your password? No problem.
-              Just enter the email address associated with your account,
-              and we'll send you a link to reset your password.
-            </p>
+            <p className={styles.title}>{t("Forgot password?")}</p>
+            <p className={styles.subtitle}>{t('Forgot password text')}</p>
             <div className={styles.inputRow}>
               <input
                 className={styles.input}
@@ -77,9 +75,9 @@ const ForgotPassword = () => {
                 onClick={() => {
                   push('/auth/login')
                 }}
-                type="button" value="Go to login" className={styles.hyperLink} />
+                type="button" value={t("Back to login")} className={styles.hyperLink} />
             </div>
-            <input onClick={handleSubmit} type="button" value="Send" className={styles.button} />
+            <input onClick={handleSubmit} type="button" value={t("send")} className={styles.button} />
             <div className={styles.trajetImg}></div>
 
           </div>

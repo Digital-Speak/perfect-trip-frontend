@@ -59,14 +59,14 @@ const SetNewPassword = (props) => {
       <Col xs="12" md="6" className={styles.rightSide}>
         <Card className={styles.forgotCard} >
           <div className={styles.forgotCardBody}>
-            <p className={styles.title}>{t("Set-New-Password")}</p>
+            <p className={styles.title}>{t("Set New Password")}</p>
             <div className={styles.inputRow}>
               <input
                 className={styles.input}
                 type="password"
                 name="password"
                 id="password"
-                placeholder={t("New-Password")}
+                placeholder={t("New Password")}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)} />
             </div>
@@ -76,7 +76,7 @@ const SetNewPassword = (props) => {
                 type="password"
                 name="password"
                 id="password"
-                placeholder={t("ReType-New-Password")}
+                placeholder={t("ReType New Password")}
                 value={reTypeNewPassword}
                 onChange={(e) => {
                   setReTypeNewPassword(e.target.value)
@@ -90,7 +90,7 @@ const SetNewPassword = (props) => {
               />
             </div>
             {globalError ? <div className={styles.error}>{globalError}</div> : null}
-            <input style={{ width: "50%" }} onClick={handleSubmit} type="button" value={t("Save")} className={styles.button} />
+            <input style={{ width: "50%" }} onClick={handleSubmit} type="button" value={t("send")} className={styles.button} />
               <div className={styles.trajetImg}></div>
           </div>
         </Card>
