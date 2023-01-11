@@ -183,7 +183,7 @@ function CircuitTable() {
                 </tr>
               </thead>
               <tbody>
-                {circuits.length !== 0 && circuits.map((item) => (
+                {circuits && circuits.length !== 0 && circuits.map((item) => (
                   <tr>
                     <td style={{ "textAlign": "left" }}>{item.circuit}</td>
                     <td style={{ "textAlign": "left" }}>{item.city}</td>
