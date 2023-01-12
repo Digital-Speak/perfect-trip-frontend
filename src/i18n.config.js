@@ -50,7 +50,12 @@ const resources = {
    "Category": "Catégorie",
    "Folders": "Dossiers",
    "number_of_nights": "Nombre de nuits",
-   "send": "Envoyer"
+   "send": "Envoyer",
+   "Add-Circuit": "Ajouter un nouveau circuit",
+   "Add": "Ajouter",
+   "The circuit has been added successfully": "Le circuit a été ajouté avec succès",
+   "Please fill all the inputs": "Veuillez remplir toutes les entrées",
+   "An error has occurred, please try later": "Une erreur s'est produite, veuillez réessayer plus tard"
   }
  },
  es: {
@@ -102,6 +107,11 @@ const resources = {
    "Folders": "Carpetas",
    "number_of_nights": "Número de noches",
    "send": "Enviar",
+   "Add-Circuit": "Agregar nuevo circuito",
+   "Add": "Agregar",
+   "The circuit has been added successfully": "El circuito ha sido añadido con éxito.",
+   "Please fill all the inputs": "Por favor complete todas las entradas",
+   "An error has occurred, please try later": "Ha ocurrido un error, por favor intente más tarde"
   }
  }
 };

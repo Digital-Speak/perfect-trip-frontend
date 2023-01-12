@@ -16,6 +16,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { message } from 'antd';
 import cats from "../assets/data/cats.json";
 import PaxNumber from "../components/Tables/Pax-Number";
 import HomeTable from "../components/Tables/HomeTable";
@@ -54,9 +55,6 @@ function Dashboard() {
     flight_date_end: new Date(),
   });
   const [newClient, setNewClient] = useState({
-    folderNumber: 1,
-    refClient: "US-2031203420",
-    fullName: "Jhon Doe",
     agency: {
       name: "EXOTICCA",
       id: 1
@@ -73,14 +71,12 @@ function Dashboard() {
     startDate: new Date(),
     endDate: new Date(),
     extraNights: 0,
-    typeOfHb: typeOfHb,
-    note: "Note !!!",
   });
+  const [messageApi, contextHolder] = message.useMessage();
 
   const loadData = async () => {
     // Get the folder Num:
-    const folderNumber = await getlastId();
-    setNewClient({ ...newClient, folderNumber: folderNumber.success ? folderNumber.dossier_num : "ERROR" })
+    await clearInputs();
     const data_cities = await getCities();
     setCities(data_cities?.cities);
     const payload_1 = await getCircuit();
@@ -113,6 +109,34 @@ function Dashboard() {
     ))
   }
 
+  const clearInputs = async () => {
+    // Get the folder Num:
+    const folderNumber = await getlastId();
+    setNewClient({
+      folderNumber: folderNumber?.success ? folderNumber?.dossier_num : "ERROR",
+      refClient: "",
+      fullName: "",
+      agency: {
+        name: "EXOTICCA",
+        id: 1
+      },
+      circuit: {
+        name: "GRT",
+        id: 1
+      },
+      cat: {
+        name: "5 ⭐ L",
+        id: "L"
+      },
+      nbrPax: 0,
+      startDate: new Date(),
+      endDate: new Date(),
+      extraNights: 0,
+      typeOfHb: typeOfHb,
+      note: "",
+    });
+  }
+
   const fetchHotels = async (circ, cat) => {
     const payload = await postData("hotel/circuit_city_hotels", "POST", {
       id: circ,
@@ -130,10 +154,10 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    if (newClient.circuit !== "" && newClient.cat !== "") {
-      fetchHotels(newClient.circuit.id, newClient.cat.id);
+    if (newClient?.circuit !== "" && newClient?.cat !== "") {
+      fetchHotels(newClient?.circuit?.id, newClient?.cat?.id);
     }
-  }, [newClient.circuit, newClient.cat]);
+  }, [newClient?.circuit, newClient?.cat]);
 
   useEffect(() => {
     let totalNbrPax = 0;
@@ -143,6 +167,7 @@ function Dashboard() {
 
   return (
     <>
+      {contextHolder}
       <div className="content" style={{ "width": "90%", "justifyContent": "center", "marginLeft": "auto", "marginRight": "auto" }}>
         <Row>
           <Col md="12">
@@ -158,7 +183,7 @@ function Dashboard() {
                         <label>{t("Folder-Number")}</label>
                         <Input
                           defaultValue=""
-                          value={newClient.folderNumber}
+                          value={newClient?.folderNumber}
                           disabled
                           style={{ "height": "55px" }}
                           id="firstname"
@@ -174,7 +199,7 @@ function Dashboard() {
                           disablePortal
                           options={agences}
                           sx={{ width: "auto" }}
-                          value={newClient.agency.name}
+                          value={newClient?.agency?.name}
                           clearOnEscape
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={(event, newInputValue) => {
@@ -191,7 +216,7 @@ function Dashboard() {
                         <label>{t("Client-Ref")}</label>
                         <Input
                           defaultValue=""
-                          value={newClient.refClient}
+                          value={newClient?.refClient}
                           id="refClient"
                           style={{ "height": "55px" }}
                           type="text"
@@ -209,7 +234,7 @@ function Dashboard() {
                           id="circuit"
                           options={circuits}
                           sx={{ width: "auto" }}
-                          value={newClient.circuit.name}
+                          value={newClient?.circuit?.name}
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={async (event, newInputValue) => {
                             const circuitId = circuitsServerData.filter((item) => item.name === newInputValue);
@@ -227,7 +252,7 @@ function Dashboard() {
                           id="cat"
                           options={cats}
                           sx={{ width: "auto" }}
-                          value={newClient.cat.name}
+                          value={newClient?.cat?.name}
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={(event, newInputValue) => {
                             setNewClient({
@@ -245,7 +270,7 @@ function Dashboard() {
                       <FormGroup>
                         <label>{t("FullName")}</label>
                         <Input
-                          value={newClient.fullName}
+                          value={newClient?.fullName}
                           style={{ "height": "55px" }}
                           id="fullName"
                           type="text"
@@ -262,7 +287,7 @@ function Dashboard() {
                       <FormGroup>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
-                            value={newClient.startDate}
+                            value={newClient?.startDate}
                             inputFormat={"DD/MM/YYYY"}
                             onChange={(newValue) => {
                               const newDate = new Date(newValue.$d);
@@ -283,7 +308,7 @@ function Dashboard() {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
                             disabled
-                            value={newClient.endDate}
+                            value={newClient?.endDate}
                             inputFormat={"DD/MM/YYYY"}
                             renderInput={(params) => <TextField fullWidth {...params} />}
                           />
@@ -294,7 +319,7 @@ function Dashboard() {
                       <FormGroup>
                         <label>{t("Pax-Number")}</label>
                         <Input
-                          value={newClient.nbrPax}
+                          value={newClient?.nbrPax}
                           disabled
                           style={{ "height": "55px" }}
                           id="nbrPax"
@@ -309,7 +334,7 @@ function Dashboard() {
                       <FormGroup>
                         <label>{t("Note")}</label>
                         <textarea
-                          value={newClient.note}
+                          value={newClient?.note}
                           style={{ "height": "80px", width: "100%", borderColor: "lightgray" }}
                           id="note"
                           type="text"
@@ -331,10 +356,10 @@ function Dashboard() {
                   <Row>
                     <Col md="12">
                       <HomeTable
-                        circuitDates={{ start: newClient.startDate, end: newClient.endDate }}
+                        circuitDates={{ start: newClient?.startDate, end: newClient?.endDate }}
                         setNewClient={setNewClient}
                         newClient={newClient}
-                        selectedCircuit={newClient.circuit}
+                        selectedCircuit={newClient?.circuit}
                         t={t}
                         cities={cities}
                         flights={flights}
@@ -354,56 +379,70 @@ function Dashboard() {
                         className="btn-round"
                         color="primary"
                         onClick={async () => {
-                          const hotels_dossier = [];
-                          circuit.forEach((item) => {
-                            const hotels_dossier_item = hotels.filter((hotel) => hotel.cityName === item.city && hotel.hotelName === item.selectedHotel);
-                            hotels_dossier.push({
-                              dossier_num: newClient.folderNumber,
-                              hotel_id: hotels_dossier_item[0].hotelId,
-                              extra_nights: newClient.extraNights
-                            })
-                          })
-                          const clientObject = {
-                            dossier_num: newClient.folderNumber,
-                            ref_client: newClient.refClient,
-                            name: newClient.fullName,
-                            category: newClient.cat.id,
-                            starts_at: newClient.startDate,
-                            ends_at: newClient.endDate,
-                            agency_id: newClient.agency.id,
-                            circuit_id: newClient.circuit.id,
-                            hotels_dossier: hotels_dossier,
-                            typeOfHb: newClient.typeOfHb,
-                            note: newClient.note,
-                            ...flights
-                          }
-
                           try {
-                            await addNewDossier(clientObject);
-                            setNewClient({
-                              folderNumber: 1,
-                              refClient: "US-2031203420",
-                              fullName: "Jhon Doe",
-                              agency: {
-                                name: "EXOTICCA",
-                                id: 1
-                              },
-                              circuit: {
-                                name: "GRT",
-                                id: 1
-                              },
-                              cat: {
-                                name: "5 ⭐ L",
-                                id: "L"
-                              },
-                              nbrPax: 0,
-                              startDate: new Date(),
-                              endDate: new Date(),
-                              extraNights: 0,
-                              typeOfHb: typeOfHb,
-                              note: "Note !!!",
-                            })
+                            const hotels_dossier = [];
+                            circuit.forEach((item) => {
+                              const hotels_dossier_item = hotels.filter((hotel) => hotel.cityName === item.city && hotel.hotelName === item.selectedHotel);
+                              hotels_dossier.push({
+                                dossier_num: newClient.folderNumber,
+                                hotel_id: hotels_dossier_item[0].hotelId,
+                                extra_nights: newClient.extraNights
+                              })
+                            });
+
+                            if (
+                              newClient?.folderNumber === "ERROR" ||
+                              newClient?.refClient === "" ||
+                              newClient?.fullName === "" ||
+                              newClient?.cat?.id === "" ||
+                              newClient?.circuit?.id === "" ||
+                              newClient?.startDate === "" ||
+                              newClient?.endDate === "" ||
+                              newClient?.typeOfHb === "" ||
+                              newClient?.agency?.id === "" ||
+                              newClient?.nbrPax === 0 ||
+                              hotels_dossier.length === 0
+                            ) {
+
+                              return messageApi.open({
+                                type: 'error',
+                                content: t("Please fill all the inputs"),
+                              });
+                            }
+
+                            const payload = await addNewDossier({
+                              dossier_num: newClient.folderNumber,
+                              ref_client: newClient.refClient,
+                              name: newClient.fullName,
+                              category: newClient.cat.id,
+                              starts_at: newClient.startDate,
+                              ends_at: newClient.endDate,
+                              agency_id: newClient.agency.id,
+                              circuit_id: newClient.circuit.id,
+                              hotels_dossier: hotels_dossier,
+                              typeOfHb: newClient.typeOfHb,
+                              nbrPax: newClient?.nbrPax,
+                              note: newClient.note,
+                              ...flights
+                            });
+
+                            if (payload?.success) {
+                              messageApi.open({
+                                type: 'success',
+                                content: t("Folder has been added successfully"),
+                              });
+                              clearInputs();
+                            } else {
+                              messageApi.open({
+                                type: 'error',
+                                content: t("An Error has accuired please try again"),
+                              });
+                            }
                           } catch (error) {
+                            messageApi.open({
+                              type: 'error',
+                              content: t("An Error has accuired please try again"),
+                            });
                             console.error(error);
                           }
                         }}

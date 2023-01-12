@@ -276,7 +276,6 @@ function HomeTable({
                       <td><EditableInput text={flights.to_end} onTextChange={(newText) => { setFlights({ ...flights, to_end: newText }) }} /></td>
                       <td><EditableInput text={flights.flight_end} onTextChange={(newText) => { setFlights({ ...flights, flight_end: newText }) }} /></td>
                       <td><input className="border-0" type="time" width="276" value={flights.flight_time_end} onChange={(e) => { setFlights({ ...flights, flight_time_end: e.target.value }) }} /></td>
-
                     </tr>
                   </tbody>
                 </Table>

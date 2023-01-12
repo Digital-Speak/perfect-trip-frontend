@@ -79,7 +79,7 @@ function Filters() {
               <td style={{ textAlign: "center" }}>{item.client}</td>
               <td style={{ textAlign: "center" }}>{item.paxNumber}</td>
               <td style={{ textAlign: "center" }}>{item.circuit}</td>
-              <td style={{ textAlign: "center" }}>{item.category}</td>
+              <td style={{ textAlign: "center" }}>{item.category === "L" ? "5 ⭐ L" : item.category === "A" ? "4 ⭐ A" : "4 ⭐ B"}</td>
               <td style={{ textAlign: "center" }}>{item.note}</td>
               <td style={{ textAlign: "center" }}>
                <div onClick={() => {

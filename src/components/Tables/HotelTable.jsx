@@ -38,23 +38,21 @@ function HotelTable() {
     const data = await getHotels();
     const _data = await getCities();
     setCities(_data?.cities);
-    setNewHotel({
-      name: "New hotel",
-      stars: "5L",
-      city_id: _data?.cities[0].id,
-      city_name: _data?.cities[0].name,
-    });
     if (data?.success) {
       setHotels(data?.hotels);
+      setNewHotel({
+        name: "New hotel",
+        ...newHotel
+      });
     }
     setIsLoading(false);
   };
 
   const handleAdd = async () => {
-      const data = await addHotelApi(newHotel);
-      if (data?.success) {
-        setIsLoading(true)
-      }  
+    const data = await addHotelApi(newHotel);
+    if (data?.success) {
+      setIsLoading(true);
+    }
   };
 
   const handleEdit = async (editHotel) => {
@@ -67,16 +65,27 @@ function HotelTable() {
   };
 
   const handleDelete = async () => {
-      const data = await deleteHotelApi({ id: deleteHotelId });
-      if (data?.success) {
-        setIsLoading(true)
-      }  
+    const data = await deleteHotelApi({ id: deleteHotelId });
+    if (data?.success) {
+      setIsLoading(true)
+    }
   };
 
   useEffect(() => {
-    if(isLoading)
-    loadData();
+    if (isLoading)
+      loadData();
   }, [isLoading]);
+
+  useEffect(() => {
+    if (cities.length !== 0) {
+      setNewHotel({
+        name: "New hotel",
+        stars: "5L",
+        city_id: cities[0]?.id,
+        city_name: cities[0]?.name,
+      });
+    }
+  }, [cities.length])
 
   return (
     <Row>
@@ -176,7 +185,7 @@ function HotelTable() {
                 </tr>
               </thead>
               <tbody>
-                { hotels?.length !== 0 &&
+                {hotels?.length !== 0 &&
                   hotels.map((hotel) => (
                     <tr key={hotel?.id}>
                       {/* hotel name cell */}
