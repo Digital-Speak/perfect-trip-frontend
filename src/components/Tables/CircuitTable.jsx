@@ -47,6 +47,7 @@ function CircuitTable() {
     setCircuitData(circuitsData?.circuits);
     setCircuits(dataCircuits?.circuits_cities);
     const data = dataCircuits?.circuits_cities;
+    data.map((item) => item.show = false)
     let grouped = _.mapValues(_.groupBy(data, 'circuit_id'), clist => clist.map(data => _.omit(data, 'circuit_id')));
     setCircuits(grouped);
   };
@@ -156,9 +157,33 @@ function CircuitTable() {
         {circuits && circuits?.length !== 0 && Object.keys(circuits).map((key) => (
           <Card>
             <CardHeader>
-              <CardTitle tag="h4">{circuits[key][0]?.circuit}</CardTitle>
+              <CardTitle tag="h4" style={{
+                "display": "flex",
+                "justifyContent": "space-between",
+                "cursor": "pointer",
+                "paddingTop": "5px",
+                "paddingBottom": "15px",
+              }}
+                onClick={() => {
+                  const data = [];
+                  Object.keys(circuits).forEach((key) => {
+                    circuits[key].forEach((item) => {
+                      data.push({
+                        ...item,
+                        show: !item.show
+                      })
+                    })
+                  })
+                  setCircuits(_.values({ ...circuits, [key]: data }));
+                }}
+              >
+                <span>{circuits[key][0]?.circuit}</span>
+                <span>
+                  {circuits[key][0]?.show ? <i className="fas fa-chevron-down mr-4"></i> : <i className="fas fa-chevron-up mr-4"></i>}
+                </span>
+              </CardTitle>
             </CardHeader>
-            <CardBody>
+            {circuits[key][0]?.show ? <CardBody>
               <Table
                 responsive
                 striped
@@ -183,7 +208,9 @@ function CircuitTable() {
                   ))}
                 </tbody>
               </Table>
-            </CardBody>
+            </CardBody> :
+              <></>
+            }
           </Card>
         ))}
       </Col>
