@@ -56,20 +56,20 @@ function Dashboard() {
   });
   const [newClient, setNewClient] = useState({
     agency: {
-      name: "EXOTICCA",
-      id: 1
+      name: null,
+      id: null
     },
     circuit: {
-      name: "GRT",
-      id: 1
+      name: null,
+      id: null
     },
     cat: {
-      name: "5 ⭐ L",
-      id: "L"
+      name: null,
+      id: null
     },
     nbrPax: 0,
-    startDate: new Date(),
-    endDate: new Date(),
+    startDate: null,
+    endDate: null,
     extraNights: 0,
   });
   const [messageApi, contextHolder] = message.useMessage();
@@ -117,23 +117,23 @@ function Dashboard() {
       refClient: "",
       fullName: "",
       agency: {
-        name: "EXOTICCA",
-        id: 1
+        name: null,
+        id: null
       },
       circuit: {
-        name: "GRT",
-        id: 1
+        name: null,
+        id: null
       },
       cat: {
-        name: "5 ⭐ L",
-        id: "L"
+        name: null,
+        id: null
       },
       nbrPax: 0,
-      startDate: new Date(),
-      endDate: new Date(),
+      startDate: null,
+      endDate: null,
       extraNights: 0,
-      typeOfHb: typeOfHb,
-      note: "",
+      typeOfHb: [],
+      note: null,
     });
   }
 
@@ -392,16 +392,16 @@ function Dashboard() {
 
                             if (
                               newClient?.folderNumber === "ERROR" ||
-                              newClient?.refClient === "" ||
-                              newClient?.fullName === "" ||
-                              newClient?.cat?.id === "" ||
-                              newClient?.circuit?.id === "" ||
-                              newClient?.startDate === "" ||
-                              newClient?.endDate === "" ||
-                              newClient?.typeOfHb === "" ||
-                              newClient?.agency?.id === "" ||
-                              newClient?.nbrPax === 0 ||
-                              hotels_dossier.length === 0
+                              newClient?.refClient === null ||
+                              newClient?.fullName === null ||
+                              newClient?.cat?.id === null ||
+                              newClient?.circuit?.id === null ||
+                              newClient?.startDate === null ||
+                              newClient?.endDate === null ||
+                              newClient?.typeOfHb === null ||
+                              newClient?.agency?.id === null ||
+                              newClient?.nbrPax === null ||
+                              hotels_dossier.length === null
                             ) {
 
                               return messageApi.open({
@@ -432,6 +432,10 @@ function Dashboard() {
                                 content: t("Folder has been added successfully"),
                               });
                               clearInputs();
+                              window.scroll({
+                                top: 0,
+                                behavior: 'smooth'
+                              });
                             } else {
                               messageApi.open({
                                 type: 'error',

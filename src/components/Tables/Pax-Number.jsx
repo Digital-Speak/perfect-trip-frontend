@@ -14,18 +14,22 @@ function PaxNumber({
     {
       label: "DBL",
       plus: 2,
+      dispaly: 0,
       nbr: 0,
     }, {
       label: "TWIN",
       plus: 2,
+      dispaly: 0,
       nbr: 0,
     }, {
       label: "TRPL",
+      dispaly: 0,
       plus: 3,
       nbr: 0,
     }, {
       label: "SGL",
       plus: 1,
+      dispaly: 0,
       nbr: 0,
     }])
 
@@ -39,13 +43,17 @@ function PaxNumber({
         <Col md="3" style={{ "alignItems": "center", "display": "flex", "justifyContent": "space-between", "background": index % 2 === 0 ? "#EDEDED" : "white", borderRadius: "5px" }}>
           <span style={{ "alignItems": "center", "display": "flex", 'flexDirection': "row" }}>
             <Button
-              onClick={() => { setTypeHb(typeHB.map((item) => item.label === dataItem.label ? { ...item, nbr: item.nbr + item.plus } : item)) }}
+              onClick={() => {
+                setTypeHb(typeHB.map((item) => item.label === dataItem.label ? { ...item, nbr: item.nbr + item.plus, dispaly: item.dispaly + 1 } : item))
+              }}
               style={{ "height": "30px", alignItems: "center", display: "flex", fontSize: "22px" }} color="primary" type="button">+</Button>
             <Button
-              onClick={() => { setTypeHb(typeHB.map((item) => item.label === dataItem.label ? { ...item, nbr: item.nbr - 1 < 0 ? item.nbr : item.nbr - item.plus } : item)) }}
+              onClick={() => {
+                setTypeHb(typeHB.map((item) => item.label === dataItem.label ? { ...item, nbr: item.nbr - 1 < 0 ? item.nbr : item.nbr - item.plus, dispaly: item.nbr - 1 < 0 ? item.dispaly :item.dispaly - 1 } : item))
+              }}
               style={{ "height": "30px", display: "flex", alignItems: "center", fontSize: "22px" }} color="danger" type="button">-</Button>
           </span>
-          <span>{`${dataItem.nbr} ${dataItem.label}`}</span>
+          <span>{`${dataItem.dispaly} ${dataItem.label}`}</span>
         </Col>
       )}
     </Row>
