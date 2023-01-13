@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, CardBody, CardHeader, CardTitle, Col, FormGroup, Input, Row, Table } from 'reactstrap'
 import { useTranslation } from 'react-i18next';
-import EditableSelect from "../Inputs/EditableSelect";
 import EditableInput from "../Inputs/EditableInput"
 import { getAgencies } from 'api/agency';
 import { editAgencyApi, deleteAgencyApi, addAgencyApi } from 'api/agency';
@@ -11,7 +10,7 @@ function AgencyTable() {
   const { t } = useTranslation();
   const [agencies, setAgencies] = useState([]);
   const [deleteAgencyId, setDeleteAgencyId] = useState(null);
-  const [newAgency, setNewAgency] = useState('New agency');
+  const [newAgency, setNewAgency] = useState('');
 
   const loadData = async () => {
     const data = await getAgencies();
@@ -24,7 +23,7 @@ function AgencyTable() {
     if (addAgency && addAgency !== "") {
       const data = await addAgencyApi({ name: addAgency });
       if (data?.success) {
-        setNewAgency("New agency");
+        setNewAgency("");
         loadData();
       }
     }
@@ -81,7 +80,7 @@ function AgencyTable() {
                   <label style={{ opacity: 0 }}>.</label>
                   <Button onClick={() => {
                     handleAdd(newAgency)
-                  }} className='btn btn-block bg-info text-white border-0' style={{ "height": "53px" }}>Add</Button>
+                  }} className='btn btn-block bg-info text-white border-0' style={{ "height": "53px" }}>{t("Add")}</Button>
                 </FormGroup>
               </Col>
             </Row>
@@ -97,10 +96,10 @@ function AgencyTable() {
             <Table responsive style={{ borderBottomWidth: 1, borderBottomColor: "gray" }}>
               <thead className="text-primary">
                 <tr>
-                  <th>{t("Agency-name")}</th>
+                  <th>{t("name")}</th>
                   <th>{t("Added-at")}</th>
-                  <th>{t("updated-at")}</th>
-                  <th>{t("delete")}</th>
+                  <th>{t("Updated-at")}</th>
+                  <th>{t("status")}</th>
                 </tr>
               </thead>
               <tbody>

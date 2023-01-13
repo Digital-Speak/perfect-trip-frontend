@@ -28,7 +28,7 @@ function HotelTable() {
   const [deleteHotelId, setDeleteHotelId] = useState(null);
   const [cities, setCities] = useState([]);
   const [newHotel, setNewHotel] = useState({
-    name: "New hotel",
+    name: "",
     stars: "5L",
     city_id: null,
     city_name: "*",
@@ -79,7 +79,7 @@ function HotelTable() {
   useEffect(() => {
     if (cities.length !== 0) {
       setNewHotel({
-        name: "New hotel",
+        name: "",
         stars: "5L",
         city_id: cities[0]?.id,
         city_name: cities[0]?.name,
@@ -98,7 +98,7 @@ function HotelTable() {
             <Row>
               <Col className="" md="3" style={{ height: "120px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <FormGroup>
-                  <label>{t("hotel-name")}</label>
+                  <label>{t("name")}</label>
                   <Input
                     defaultValue=""
                     value={newHotel?.name}
@@ -116,7 +116,7 @@ function HotelTable() {
               </Col>
               <Col className="" md="3" style={{ height: "120px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <FormGroup>
-                  <label>{t("hotel-number-of-stars")}</label>
+                  <label>{t("Cat")}</label>
                   <select
                     className="form-control"
                     style={{ height: "55px" }}
@@ -134,7 +134,7 @@ function HotelTable() {
               </Col>
               <Col className="" md="3" style={{ height: "120px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <FormGroup>
-                  <label>{t("location-city")}</label>
+                  <label>{t("Ville")}</label>
                   <select
                     className="form-control"
                     style={{ height: "55px" }}
@@ -157,7 +157,7 @@ function HotelTable() {
                   <label style={{ opacity: 0 }}>.</label>
                   <Button onClick={() => {
                     handleAdd()
-                  }} className='btn btn-block bg-info text-white border-0' style={{ "height": "53px" }}>Add</Button>
+                  }} className='btn btn-block bg-info text-white border-0' style={{ "height": "53px" }}>{t('Add')}</Button>
                 </FormGroup>
               </Col>
             </Row>
@@ -176,12 +176,12 @@ function HotelTable() {
             >
               <thead className="text-primary">
                 <tr>
-                  <th>{t("hotel-name")}</th>
-                  <th>{t("number-of-stars")}</th>
+                  <th>{t("name")}</th>
+                  <th>{t("cat")}</th>
                   <th>{t("hotel-location")}</th>
                   <th>{t("Added-at")}</th>
-                  <th>{t("updated-at")}</th>
-                  <th>{t("delete")}</th>
+                  <th>{t("Updated-at")}</th>
+                  <th>{t("status")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -254,7 +254,7 @@ function HotelTable() {
                           className="text-danger"
                         >
                           <i className="fa fa-solid fa-trash-o mr-2 text-danger" />
-                          Delete
+                          {t('Supprimer')}
                         </div>
                       </td>
                     </tr>

@@ -13,7 +13,7 @@ function CityTable() {
   const { t } = useTranslation();
   const [cities, setCities] = useState([]);
   const [deleteCityId, setDeleteCityId] = useState(null);
-  const [newCity, setNewCity] = useState('New city');
+  const [newCity, setNewCity] = useState('');
 
   const loadData = async () => {
     const data = await getCities();
@@ -26,7 +26,7 @@ function CityTable() {
     if (addCity && addCity !== "") {
       const data = await addCityApi({name:addCity});
       if (data?.success) {
-        setNewCity("New city");
+        setNewCity("");
         loadData();
       }
     }
@@ -138,7 +138,7 @@ function CityTable() {
                   <label style={{ opacity: 0 }}>.</label>
                   <Button onClick={() => {
                     handleAdd(newCity)
-                  }} className='btn btn-block bg-info text-white border-0' style={{ "height": "53px" }}>Add</Button>
+                  }} className='btn btn-block bg-info text-white border-0' style={{ "height": "53px" }}>{t("Add")}</Button>
                 </FormGroup>
               </Col>
             </Row>
@@ -154,10 +154,10 @@ function CityTable() {
             <Table responsive style={{ borderBottomWidth: 1, borderBottomColor: "gray" }}>
               <thead className="text-primary">
                 <tr>
-                  <th>{t("City-name")}</th>
+                  <th>{t("name")}</th>
                   <th>{t("Added-at")}</th>
-                  <th>{t("updated-at")}</th>
-                  <th>{t("delete")}</th>
+                  <th>{t("Updated-at")}</th>
+                  <th>{t("satatus")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -180,7 +180,7 @@ function CityTable() {
                            setDeleteCityId(city?.id);
                         }} data-toggle="modal" data-target={deleteCityId === city?.id && "#exampleModal"} type="button" className='text-danger' >
                           <i className="fa fa-solid fa-trash-o mr-2 text-danger" />
-                          Delete
+                          Supprimer
                         </div>
                       </td>
                     </tr>

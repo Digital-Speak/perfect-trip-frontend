@@ -54,8 +54,17 @@ const resources = {
    "Add-Circuit": "Ajouter un nouveau circuit",
    "Add": "Ajouter",
    "The circuit has been added successfully": "Le circuit a été ajouté avec succès",
-   "Please fill all the inputs": "Veuillez remplir toutes les entrées",
-   "An error has occurred, please try later": "Une erreur s'est produite, veuillez réessayer plus tard"
+   "Please fill all the inputs": "Veuillez< remplir toutes les entrées",
+   "An error has occurred, please try later": "Une erreur s'est produite, veuillez réessayer plus tard",
+   "Add-city": "Ajouter Ville",
+   "City-name": "Nom de Ville",
+   "Added-at": "Date d'ajout",
+   "Updated-at": "Date de modification",
+   "Cities": "Les Villes",
+   "Add-agency": "Ajouter Agence",
+   "name": "Nom",
+   "Agencies": "Agences",
+   "Add-hotel": "Ajouter hôtel"
   }
  },
  es: {
@@ -111,7 +120,10 @@ const resources = {
    "Add": "Agregar",
    "The circuit has been added successfully": "El circuito ha sido añadido con éxito.",
    "Please fill all the inputs": "Por favor complete todas las entradas",
-   "An error has occurred, please try later": "Ha ocurrido un error, por favor intente más tarde"
+   "An error has occurred, please try later": "Ha ocurrido un error, por favor intente más tarde",
+   "Add-city": "Añadir Ciudad",
+   "City-name": "Nombre de la ciudad",
+   "Add-hotel": "Añadir hotel"
   }
  }
 };

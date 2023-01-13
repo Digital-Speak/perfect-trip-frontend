@@ -26,6 +26,7 @@ function CircuitTable() {
   const [cities, setCities] = useState([]);
   const [circuitData, setCircuitData] = useState([]);
   const [circuits, setCircuits] = useState([]);
+  const [circuitsBackUp, setCircuitsBackUp] = useState([]);
   const [newCircuit, setNewCircuit] = useState({
     circuit_id: -1,
     city_id: -1,
@@ -50,6 +51,7 @@ function CircuitTable() {
     data.map((item) => item.show = false)
     let grouped = _.mapValues(_.groupBy(data, 'circuit_id'), clist => clist.map(data => _.omit(data, 'circuit_id')));
     setCircuits(grouped);
+    setCircuitsBackUp(grouped)
   };
 
   const handleAdd = async () => {
@@ -73,6 +75,7 @@ function CircuitTable() {
 
   return (
     <Row>
+      {contextHolder}
       <Col md="12">
         <Card>
           <CardHeader>
@@ -128,7 +131,8 @@ function CircuitTable() {
                   <label style={{ opacity: 0 }}>.</label>
                   <Button onClick={async () => {
                     try {
-                      if (newCircuit.cat === "" || newCircuit.circuit_id === -1 || newCircuit.city_id === -1) {
+                      console.log(newCircuit)
+                      if (newCircuit.circuit_id != -1 && newCircuit.city_id != -1 && newCircuit.number_of_nights != 0 && newCircuit.number_of_nights != "") {
                         await handleAdd();
                         messageApi.open({
                           type: 'success',
@@ -166,12 +170,10 @@ function CircuitTable() {
               }}
                 onClick={() => {
                   const data = [];
-                  Object.keys(circuits).forEach((key) => {
-                    circuits[key].forEach((item) => {
-                      data.push({
-                        ...item,
-                        show: !item.show
-                      })
+                  circuits[key].forEach((item) => {
+                    data.push({
+                      ...item,
+                      show: !item.show
                     })
                   })
                   setCircuits(_.values({ ...circuits, [key]: data }));
