@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import PerfectScrollbar from "perfect-scrollbar";
+// import PerfectScrollbar from "perfect-scrollbar";
 import { Route, Switch, useLocation, Redirect } from "react-router-dom";
 import Navbar from "components/Navbars/Navbar.js";
 import Footer from "components/Footer/Footer.js";
@@ -27,25 +27,25 @@ function Admin(props) {
     refreshToken();
   }, [])
 
-  useEffect(() => {
-    if (navigator.platform.indexOf("Win") > -1) {
-      ps = new PerfectScrollbar(mainPanel.current);
-      document.body.classList.toggle("perfect-scrollbar-on");
-    }
-    return function cleanup() {
-      if (navigator.platform.indexOf("Win") > -1) {
-        ps.destroy();
-        document.body.classList.toggle("perfect-scrollbar-on");
-      }
-    };
-  });
+  // useEffect(() => {
+  //   if (navigator.platform.indexOf("Win") > -1) {
+  //     ps = new PerfectScrollbar(mainPanel.current);
+  //     document.body.classList.toggle("perfect-scrollbar-on");
+  //   }
+  //   return function cleanup() {
+  //     if (navigator.platform.indexOf("Win") > -1) {
+  //       ps.destroy();
+  //       document.body.classList.toggle("perfect-scrollbar-on");
+  //     }
+  //   };
+  // });
 
-  useEffect(() => {
-    if (!isLoading) {
-      mainPanel.current.scrollTop = 0;
-      document.scrollingElement.scrollTop = 0;
-    }
-  }, [location, isLoading]);
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //     mainPanel.current.scrollTop = 0;
+  //     document.scrollingElement.scrollTop = 0;
+  //   }
+  // }, [location, isLoading]);
 
   return (
     <div>

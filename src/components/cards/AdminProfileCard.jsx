@@ -39,7 +39,7 @@ function AdminProfileCard() {
               <Row className="mt-5">
                 <Col className="" md="4">
                   <FormGroup>
-                    <label>{t("Name")}</label>
+                    <label>{t("name")}</label>
                     <p>{user && user?.name}</p>
                   </FormGroup>
                 </Col>
@@ -51,7 +51,7 @@ function AdminProfileCard() {
                 </Col>
                 <Col className="" md="4">
                   <FormGroup>
-                    <label>{t("created-at")}</label>
+                    <label>{t("Added-at")}</label>
                     <p>{user && user?.created_at}</p>
                   </FormGroup>
                 </Col>
