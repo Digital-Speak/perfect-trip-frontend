@@ -17,8 +17,8 @@ import { getHotels } from "api/hotel";
 import { addHotelApi } from "api/hotel";
 import { editHotelApi } from "api/hotel";
 import { deleteHotelApi } from "api/hotel";
-import EditableSelect from "components/Inputs/EditableSelect";
 import { getCities } from "api/city";
+import EditableSelect from "components/Inputs/EditableSelect";
 import CustomEditableSelect from "components/Inputs/CustomEditableSelect";
 
 function HotelTable() {
@@ -37,6 +37,7 @@ function HotelTable() {
   const loadData = async () => {
     const data = await getHotels();
     const _data = await getCities();
+
     setCities(_data?.cities);
     if (data?.success) {
       setHotels(data?.hotels);

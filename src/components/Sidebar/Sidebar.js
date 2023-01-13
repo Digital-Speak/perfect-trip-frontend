@@ -64,19 +64,15 @@ function Sidebar(props) {
             );
           })}
         </Nav>
-        <Nav className="position-absolute fixed-bottom">
-        <li
-             
-              >
-                <NavLink
-                  to={'/admin/settings'}
-                  className="nav-link"
-                  activeClassName="active"
-                >
-                  
-                  <p> <i className="fa fa-cogs" />settings</p>
-                </NavLink>
-              </li>
+        <Nav className="">
+          <li>
+            <NavLink
+              to={'/admin/settings'}
+              className="nav-link"
+              activeClassName="active"
+            ><p> <i className="fa fa-cogs" />{t("settings")}</p>
+            </NavLink>
+          </li>
         </Nav>
       </div>
     </div>

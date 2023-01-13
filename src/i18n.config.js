@@ -64,7 +64,9 @@ const resources = {
    "Add-agency": "Ajouter Agence",
    "name": "Nom",
    "Agencies": "Agences",
-   "Add-hotel": "Ajouter hôtel"
+   "Add-hotel": "Ajouter hôtel",
+   "Filter-flights": "Filtrer les vols",
+   "settings": "Paramètres"
   }
  },
  es: {
@@ -123,7 +125,8 @@ const resources = {
    "An error has occurred, please try later": "Ha ocurrido un error, por favor intente más tarde",
    "Add-city": "Añadir Ciudad",
    "City-name": "Nombre de la ciudad",
-   "Add-hotel": "Añadir hotel"
+   "Add-hotel": "Añadir hotel",
+   "settings": "Ajustes"
   }
  }
 };

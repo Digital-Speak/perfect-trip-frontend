@@ -127,6 +127,8 @@ function HomeTable({
   }
 
   useEffect(() => {
+    console.log(130);
+    console.log( hotels.length);
     if (hotels.length !== 0) {
       const newData = [];
       let startDate = circuitDates.start;
@@ -163,7 +165,7 @@ function HomeTable({
     } else {
       setCircuit([])
     }
-  }, [hotels.length && hotels[0].hotelId, circuitDates.start]);
+  }, [hotels.length ,hotels.length && hotels[0].hotelId, circuitDates.start]);
   return (
     <>
       <div className="content">
