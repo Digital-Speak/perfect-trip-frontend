@@ -16,7 +16,7 @@ function EditableInput({ t, text = "ssss", onTextChange, style = {} }) {
       }}>
          {editMode ? <Input autoFocus value={inputValue} onChange={(event) => {
             setInputValue(event.target.value);
-         }} /> : <span>{inputValue}</span>}
+         }} /> : <span>{text}</span>}
       </span>
    );
 }

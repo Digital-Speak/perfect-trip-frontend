@@ -1,4 +1,5 @@
 import Dashboard from "views/Dashboard";
+import FolderDetails from "views/FolderDetails";
 import Login from "views/Login";
 import Config from "views/Config";
 import Settings from "views/Settings";
@@ -18,13 +19,21 @@ var routes = [
     show: true,
   },
   {
-    path: "/folders",
-    name: "Folders",
+    path: "/details",
+    name: "Dossiers",
     icon: "fa fa-envelope",
-    component: Folders,
+    component: FolderDetails,
     layout: "/admin",
     show: true,
   },
+  // {
+  //   path: "/folders",
+  //   name: "Folders",
+  //   icon: "fa fa-envelope",
+  //   component: Folders,
+  //   layout: "/admin",
+  //   show: true,
+  // },
   {
     path: "/flights",
     name: "Flights",
