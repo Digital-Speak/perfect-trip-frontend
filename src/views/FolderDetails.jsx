@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 import { getCircuit, postData } from "../api/dashboard";
 import { getAgencies } from "../api/agency";
 import { getlastId } from "../api/auth";
-import { addNewDossier, getOneDossier } from "../api/dossier";
+import { addNewDossier, getOneDossier, removeDossier } from "../api/dossier";
 import { getCities } from "api/city";
 
 function FolderDetails() {
@@ -45,13 +45,13 @@ function FolderDetails() {
     from_start: null,
     to_start: null,
     flight_start: null,
-    flight_time_start: null,
+    flight_time_start: new Date(),
     from_to_end: null,
     city_id_end: 0,
     from_end: null,
     to_end: null,
     flight_end: null,
-    flight_time_end: null,
+    flight_time_end: new Date(),
     flight_date_start: null,
     flight_date_end: null,
   });
@@ -71,9 +71,10 @@ function FolderDetails() {
       id: null
     },
     nbrPax: 0,
-    startDate: null,
-    endDate: null,
+    startDate: new Date(),
+    endDate: new Date(),
     extraNights: 0,
+    deleted: false
   });
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -113,7 +114,6 @@ function FolderDetails() {
 
   const clearInputs = async () => {
     setTargetFolder({
-      folderNumber: "",
       refClient: "",
       fullName: "",
       agency: {
@@ -129,11 +129,12 @@ function FolderDetails() {
         id: null
       },
       nbrPax: "",
-      startDate: null,
-      endDate: null,
+      startDate: new Date(),
+      endDate: new Date(),
       extraNights: "",
       typeOfHb: [],
       note: "",
+      deleted: false
     });
   }
 
@@ -147,6 +148,59 @@ function FolderDetails() {
     setHotels([]);
 
     setHotels(payload.hotels);
+  }
+
+  const getTargetDossier = async (value) => {
+    setTargetFolder({ ...targetFolder, folderNumber: value })
+    const payload = await getOneDossier({
+      id: value
+    });
+    if (payload?.success) {
+      if (payload?.data.length !== 0) {
+        setTargetFolder({
+          refClient: payload?.data[0]?.client_ref,
+          fullName: payload?.data[0]?.client_name,
+          folderNumber: payload?.data[0]?.dossierNum,
+          agency: {
+            name: payload?.data[0]?.agency,
+            id: payload?.data[0]?.agency_id
+          },
+          circuit: {
+            name: payload?.data[0]?.circuit,
+            id: payload?.data[0]?.circuit_id
+          },
+          cat: {
+            name: payload?.data[0]?.category,
+            id: payload?.data[0]?.category
+          },
+          nbrPax: 0,
+          startDate: payload?.data[0]?.startAt,
+          endDate: payload?.data[0]?.endAt,
+          extraNights: 0,
+          note: payload?.data[0]?.note,
+          deleted: payload?.data[0]?.deleted,
+        });
+
+        setFlights({
+          from_to_start: payload?.data[0]?.from_to_start,
+          city_id_start: payload?.data[0]?.city_id_start,
+          from_start: payload?.data[0]?.from_start,
+          to_start: payload?.data[0]?.to_start,
+          flight_start: payload?.data[0]?.flight_start,
+          flight_time_start: payload?.data[0]?.flight_time_start,
+          from_to_end: payload?.data[0]?.from_to_end,
+          city_id_end: payload?.data[0]?.city_id_end,
+          from_end: payload?.data[0]?.from_end,
+          to_end: payload?.data[0]?.to_end,
+          flight_end: payload?.data[0]?.flight_end,
+          flight_time_end: payload?.data[0]?.flight_time_end,
+          flight_date_start: payload?.data[0]?.flight_date_start,
+          flight_date_end: payload?.data[0]?.flight_date_end,
+        })
+      } else {
+        clearInputs();
+      }
+    }
   }
 
   useEffect(() => {
@@ -170,8 +224,10 @@ function FolderDetails() {
       {contextHolder}
       <div className="content" style={{ "width": "90%", "justifyContent": "center", "marginLeft": "auto", "marginRight": "auto" }}>
         <Row>
-          <Col md="12">
-            <Card className="card-user">
+          <Col>
+            <Card className="card-user" style={{
+              border: targetFolder.deleted == true ? "red solid 2px" : "lightgray solid 0.2px"
+            }}>
               <CardHeader>
                 <CardTitle tag="h5">{t("Search For A Folder")}</CardTitle>
               </CardHeader>
@@ -182,7 +238,6 @@ function FolderDetails() {
                       <FormGroup>
                         <label>{t("Folder-Number")}</label>
                         <Input
-                          defaultValue=""
                           value={targetFolder?.folderNumber}
                           style={{ "height": "55px" }}
                           id="firstname"
@@ -191,54 +246,7 @@ function FolderDetails() {
                             if (event.target.value === "") {
                               clearInputs();
                             } else {
-                              setTargetFolder({ ...targetFolder, folderNumber: event.target.value })
-                              const payload = await getOneDossier({
-                                id: event.target.value
-                              });
-                              if (payload?.success) {
-                                if (payload?.data.length !== 0) {
-                                  setTargetFolder({
-                                    refClient: payload?.data[0]?.client_ref,
-                                    fullName: payload?.data[0]?.client_name,
-                                    folderNumber: payload?.data[0]?.dossierNum,
-                                    agency: {
-                                      name: payload?.data[0]?.agency,
-                                      id: payload?.data[0]?.agency_id
-                                    },
-                                    circuit: {
-                                      name: payload?.data[0]?.circuit,
-                                      id: payload?.data[0]?.circuit_id
-                                    },
-                                    cat: {
-                                      name: payload?.data[0]?.category,
-                                      id: payload?.data[0]?.category
-                                    },
-                                    nbrPax: 0,
-                                    startDate: payload?.data[0]?.startAt,
-                                    endDate: payload?.data[0]?.endAt,
-                                    extraNights: 0,
-                                    note: payload?.data[0]?.note
-                                  });
-                                  setFlights({
-                                    from_to_start: payload?.data[0]?.from_to_start,
-                                    city_id_start: payload?.data[0]?.city_id_start,
-                                    from_start: payload?.data[0]?.from_start,
-                                    to_start: payload?.data[0]?.to_start,
-                                    flight_start: payload?.data[0]?.flight_start,
-                                    flight_time_start: payload?.data[0]?.flight_time_start,
-                                    from_to_end: payload?.data[0]?.from_to_end,
-                                    city_id_end: payload?.data[0]?.city_id_end,
-                                    from_end: payload?.data[0]?.from_end,
-                                    to_end: payload?.data[0]?.to_end,
-                                    flight_end: payload?.data[0]?.flight_end,
-                                    flight_time_end: payload?.data[0]?.flight_time_end,
-                                    flight_date_start: payload?.data[0]?.flight_date_start,
-                                    flight_date_end: payload?.data[0]?.flight_date_end,
-                                  })
-                                } else {
-                                  clearInputs();
-                                }
-                              }
+                              await getTargetDossier(event.target.value)
                             }
                           }}
                         />
@@ -527,14 +535,14 @@ function FolderDetails() {
                         </Button>
                       </div>
                     ) :
-                      (
+                      !targetFolder.deleted ? (
                         <div className="update ml-auto mr-auto d-flex">
                           <Button
                             className="btn-round"
                             disabled={targetFolder.folderNumber === null}
                             color="primary"
                             onClick={() => {
-                              if (targetFolder.folderNumber === null) {
+                              if (targetFolder.folderNumber !== null) {
                                 setEditeMode(true)
                               } else {
                                 message.warning("There is no selected Folder")
@@ -547,10 +555,32 @@ function FolderDetails() {
                             className="btn-round"
                             color="danger"
                             disabled={targetFolder.folderNumber === null}
-                            onClick={() => {
+                            onClick={async () => {
+                              // eslint-disable-next-line no-restricted-globals
+                              if (confirm(t("Do you want to remove this Folder")) === true) {
+                                await removeDossier({ dossier_num: targetFolder.folderNumber, state: true });
+                                await getTargetDossier(targetFolder.folderNumber);
+                              }
                             }}
                           >
                             {t("Remove")}
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="update ml-auto mr-auto d-flex">
+                          <Button
+                            className="btn-round"
+                            color="success"
+                            disabled={targetFolder.folderNumber === null}
+                            onClick={async () => {
+                              // eslint-disable-next-line no-restricted-globals
+                              if (confirm(t("Do you want to recover this Folder")) === true) {
+                                await removeDossier({ dossier_num: targetFolder.folderNumber, state: false })
+                                await getTargetDossier(targetFolder.folderNumber);
+                              }
+                            }}
+                          >
+                            {t("Recover")}
                           </Button>
                         </div>
                       )}

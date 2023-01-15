@@ -2,29 +2,30 @@ import React, { useState, useEffect } from "react";
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 
-function EditableSelect({ t, text, data = [], onTextChange }) {
+function EditableSelect({ t, text, data = [], onTextChange, disabled = false }) {
   const [editMode, setEditMode] = useState(false);
   const [inputValue, setInputValue] = useState(text);
 
   useEffect(() => {
     setInputValue(text)
   }, [text])
-  
+
 
   return (
     <span style={{ "cursor": "pointer" }}>
       {editMode ?
         <Autocomplete
           freeSolo
+          disabled={disabled}
           id="cat"
           options={data}
           sx={{ width: "auto" }}
           inputValue={inputValue}
           value={inputValue}
           renderInput={(params) =>
-            <TextField 
-            fullWidth
-            {...params}
+            <TextField
+              fullWidth
+              {...params}
               InputProps={{
                 ...params.InputProps,
                 type: 'search',
@@ -39,7 +40,9 @@ function EditableSelect({ t, text, data = [], onTextChange }) {
           }}
         />
         : <span onDoubleClick={() => {
-          setEditMode(!editMode);
+          if (disabled === false) {
+            setEditMode(!editMode);
+          }
         }}>{inputValue}</span>}
     </span>
   );

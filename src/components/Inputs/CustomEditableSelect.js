@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 
-function CustomEditableSelect({ t, text, data = [], cb, id }) {
+function CustomEditableSelect({ t, text, data = [], cb, id, disabled = false }) {
   const [editMode, setEditMode] = useState(false);
   const [newText, setNewText] = useState(text);
   return (
     <span style={{ "cursor": "pointer" }} onBlur={() => {
       setEditMode(false);
     }} onDoubleClick={() => {
-      setEditMode(!editMode);
+      if (disabled === false) {
+        setEditMode(!editMode);
+      }
     }}>
       {editMode ?
         <select

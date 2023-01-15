@@ -63,10 +63,24 @@ const getListDossier = async (body) => {
  return await payload.json();
 }
 
+const removeDossier = async (body) => {
+ const payload = await fetch(`${process.env.REACT_APP_API_URL}dossier/`, {
+  method: "DELETE",
+  headers: {
+   "content-Type": "application/json",
+   origin: `${process.env.REACT_APP_CLIENT_URL}`,
+   authorization: `Bearer ${sessionStorage.getItem('jat')}`
+  },
+  body: JSON.stringify(body)
+ });
+ return await payload.json();
+}
+
 export {
  addNewDossier,
  updateDossier,
  getDossier,
  getOneDossier,
- getListDossier
+ getListDossier,
+ removeDossier
 }

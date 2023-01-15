@@ -28,7 +28,7 @@ function HomeTable({
   flights,
   setFlights,
   cities,
-  disabled
+  disabled = false
 }) {
   const renderRegime = (cityId) => <EditableSelect
     data={[{ label: "PC" }, { label: "DP" }, { label: "BB" }]}
@@ -50,6 +50,7 @@ function HomeTable({
     slectedHotel = newHotels[0].label;
     return <EditableSelect
       data={newHotels}
+      disabled={disabled}
       text={slectedHotel}
       t={t}
       onTextChange={(data) => {
@@ -90,6 +91,7 @@ function HomeTable({
   const renderCity = (city) => {
     if (SameAreaCities["Area 1"][city] != undefined) {
       return <EditableSelect
+        disabled={disabled}
         data={[{ label: SameAreaCities["Area 1"][city] }, { label: SameAreaCities["Area 1"][city] }]}
         text={city}
         t={t}
@@ -107,6 +109,7 @@ function HomeTable({
           newData.push({
             ...item,
             regime: <EditableSelect
+              disabled={disabled}
               data={[{ label: "PC" }, { label: "DP" }, { label: "BB" }]}
               text={data}
               t={t}
@@ -128,8 +131,6 @@ function HomeTable({
   }
 
   useEffect(() => {
-    console.log(130);
-    console.log( hotels.length);
     if (hotels.length !== 0) {
       const newData = [];
       let startDate = circuitDates.start;
@@ -166,7 +167,7 @@ function HomeTable({
     } else {
       setCircuit([])
     }
-  }, [hotels.length ,hotels.length && hotels[0].hotelId, circuitDates.start]);
+  }, [hotels.length, hotels.length && hotels[0].hotelId, circuitDates.start]);
   return (
     <>
       <div className="content">
@@ -193,11 +194,16 @@ function HomeTable({
                         <td>{renderCity(element.city)}</td>
                         <td>{renderHotel(element.hotels[0].cityId, element.hotels, element.selectedHotel)}</td>
                         <td>{index !== 0 ? (element.from) :
-                          <EditableDatePicker selectedDate={circuitDates.start} t onDateChange={(date) => {
-                          }} />} </td>
+                          <EditableDatePicker
+                            disabled={disabled}
+                            selectedDate={circuitDates.start} t onDateChange={(date) => {
+                            }} />} </td>
                         <td>{index !== circuit.length - 1 ? (element.to) :
-                          <EditableDatePicker selectedDate={circuitDates.end} t onDateChange={(date) => {
-                          }} />} </td>
+                          <EditableDatePicker
+                            disabled={disabled}
+                            selectedDate={circuitDates.end}
+                            t onDateChange={(date) => {
+                            }} />} </td>
                         <td>{element.regime}</td>
                       </tr>
                     ))}
@@ -226,18 +232,24 @@ function HomeTable({
                   </thead>
                   <tbody>
                     <tr>
-                      <td><EditableInput text={flights?.from_to_start} onTextChange={(newText) => { setFlights({ ...flights, from_to_start: newText }) }} /></td>
                       <td>
-                        {
-                          newClient?.startDate &&
-                          <input className="border-0" type="date" value={ formatDate(flights?.flight_date_start) || formatDate(newClient?.startDate)} onChange={(e) => {
-
+                        <EditableInput
+                          disabled={disabled}
+                          text={flights?.from_to_start}
+                          onTextChange={(newText) => {
+                            setFlights({ ...flights, from_to_start: newText })
+                          }} /></td>
+                      <td>
+                        <input
+                          disabled={disabled}
+                          className="border-0"
+                          type="date"
+                          value={formatDate(flights?.flight_date_start) || formatDate(newClient?.startDate)} onChange={(e) => {
                             setFlights({
                               ...flights,
                               flight_date_start: e.target.value
                             })
                           }} />
-                        }
                       </td>
                       <td>
                         {cities?.length !== 0 && <CustomEditableSelect
@@ -248,23 +260,53 @@ function HomeTable({
                             setFlights({ ...flights, city_id_start: id })
                           }}
                         />}</td>
-                      <td><EditableInput text={flights?.from_start} onTextChange={(newText) => { setFlights({ ...flights, from_start: newText }) }} /></td>
-                      <td><EditableInput text={flights?.to_start} onTextChange={(newText) => { setFlights({ ...flights, to_start: newText }) }} /></td>
-                      <td><EditableInput text={flights?.flight_start} onTextChange={(newText) => { setFlights({ ...flights, flight_start: newText }) }} /></td>
-                      <td><input className="border-0" type="time" width="276" value={flights?.flight_time_start} onChange={(e) => { setFlights({ ...flights, flight_time_start: e.target.value }) }} /></td>
+                      <td><EditableInput
+                        disabled={disabled}
+                        text={flights?.from_start}
+                        onTextChange={(newText) => {
+                          setFlights({ ...flights, from_start: newText })
+                        }} /></td>
+                      <td><EditableInput
+                        text={flights?.to_start}
+                        onTextChange={(newText) => {
+                          setFlights({ ...flights, to_start: newText })
+                        }} /></td>
+                      <td><EditableInput
+                        text={flights?.flight_start}
+                        onTextChange={(newText) => {
+                          setFlights({ ...flights, flight_start: newText })
+                        }} /></td>
+                      <td><input
+                        className="border-0"
+                        type="time"
+                        width="276"
+                        disabled={disabled}
+                        value={flights?.flight_time_start}
+                        onChange={(e) => {
+                          setFlights({ ...flights, flight_time_start: e.target.value })
+                        }}
+                      /></td>
                     </tr>
                     <tr>
-                      <td><EditableInput text={flights?.from_to_end} onTextChange={(newText) => { setFlights({ ...flights, from_to_end: newText }) }} /></td>
                       <td>
-                        {
-                          newClient?.endDate &&
-                          <input className="border-0" type="date" value={ formatDate(flights?.flight_date_end) || formatDate(newClient?.endDate)} onChange={(e) => {
+                        <EditableInput
+                          disabled={disabled}
+                          text={flights?.from_to_end}
+                          onTextChange={(newText) => {
+                            setFlights({ ...flights, from_to_end: newText })
+                          }} /></td>
+                      <td>
+                        <input
+                          className="border-0"
+                          type="date"
+                          disabled={disabled}
+                          value={formatDate(flights?.flight_date_end) || formatDate(newClient?.endDate)}
+                          onChange={(e) => {
                             setFlights({
                               ...flights,
                               flight_date_end: e.target.value
                             })
                           }} />
-                        }
                       </td>
                       <td>{cities.length !== 0 && <CustomEditableSelect
                         data={cities?.length !== 0 ? cities : []}
@@ -274,10 +316,33 @@ function HomeTable({
                           setFlights({ ...flights, city_id_end: id })
                         }}
                       />}</td>
-                      <td><EditableInput text={flights.from_end} onTextChange={(newText) => { setFlights({ ...flights, from_end: newText }) }} /></td>
-                      <td><EditableInput text={flights.to_end} onTextChange={(newText) => { setFlights({ ...flights, to_end: newText }) }} /></td>
-                      <td><EditableInput text={flights.flight_end} onTextChange={(newText) => { setFlights({ ...flights, flight_end: newText }) }} /></td>
-                      <td><input className="border-0" type="time" width="276" value={flights?.flight_time_end} onChange={(e) => { setFlights({ ...flights, flight_time_end: e.target.value }) }} /></td>
+                      <td><EditableInput
+                        disabled={disabled}
+                        text={flights.from_end}
+                        onTextChange={(newText) => {
+                          setFlights({ ...flights, from_end: newText })
+                        }} /></td>
+                      <td><EditableInput
+                        disabled={disabled}
+                        text={flights.to_end}
+                        onTextChange={(newText) => {
+                          setFlights({ ...flights, to_end: newText })
+                        }} /></td>
+                      <td><EditableInput
+                        disabled={disabled}
+                        text={flights.flight_end}
+                        onTextChange={(newText) => {
+                          setFlights({ ...flights, flight_end: newText })
+                        }} /></td>
+                      <td><input
+                        disabled={disabled}
+                        className="border-0"
+                        type="time"
+                        width="276"
+                        value={flights?.flight_time_end}
+                        onChange={(e) => {
+                          setFlights({ ...flights, flight_time_end: e.target.value })
+                        }} /></td>
                     </tr>
                   </tbody>
                 </Table>

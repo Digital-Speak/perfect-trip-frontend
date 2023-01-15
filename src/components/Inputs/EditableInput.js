@@ -3,7 +3,7 @@ import {
    Input,
 } from "reactstrap";
 
-function EditableInput({ t, text = "ssss", onTextChange, style = {} }) {
+function EditableInput({ t, text = "ssss", onTextChange, style = {}, disabled = false }) {
    const [editMode, setEditMode] = useState(false)
    const [inputValue, setInputValue] = useState(text)
 
@@ -12,9 +12,11 @@ function EditableInput({ t, text = "ssss", onTextChange, style = {} }) {
          setEditMode(false);
          onTextChange(inputValue);
       }} onDoubleClick={() => {
-         setEditMode(!editMode);
+         if (disabled === false) {
+            setEditMode(!editMode);
+         }
       }}>
-         {editMode ? <Input autoFocus value={inputValue} onChange={(event) => {
+         {editMode ? <Input disabled={disabled} autoFocus value={inputValue} onChange={(event) => {
             setInputValue(event.target.value);
          }} /> : <span>{text}</span>}
       </span>

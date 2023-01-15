@@ -143,9 +143,9 @@ function AdminsTable() {
                             })
                           }
                         }} /></td>
-                        <td style={{ backgroundColor: "	#F0F0F0" }}>{admin?.email}</td>
-                        <td style={{ backgroundColor: "	#F0F0F0" }}>{admin?.updated_at}</td>
-                        <td style={{ backgroundColor: "	#F0F0F0" }}>{admin?.updated_at}</td>
+                        <td style={{ backgroundColor: "#F0F0F0" }}>{admin?.email}</td>
+                        <td style={{ backgroundColor: "#F0F0F0" }}>{admin?.updated_at}</td>
+                        <td style={{ backgroundColor: "#F0F0F0" }}>{admin?.updated_at}</td>
                         <td>
                           <div onClick={() => {
                             setDeleteSubAdminId(admin?.id);
