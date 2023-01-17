@@ -21,7 +21,9 @@ const resources = {
    "New-Folder": "Nouveau dossier",
    "lang": "Fr",
    "Save": "Sauvegarder",
-   "Cancel": "Anular",
+   "Remove": "Supprimer",
+   "Edite": "Éditer",
+   "Cancel": "Annuler",
    "Period": "Période",
    "Folder-Number": "Dossier N°",
    "Agency": "Agence",
@@ -44,6 +46,7 @@ const resources = {
    "Flight": "Vol",
    "Flights": "Vols",
    "Time": "Temps",
+   "Search For A Folder": "Rechercher un dossier",
    "Filter-Folder": "Filtrer les dossiers",
    "Actions": "Actions",
    "List-Of-Folders": "Liste des dossiers",
@@ -114,6 +117,7 @@ const resources = {
    "Filter-Folder": "Filtrar carpetas",
    "Actions": "Comportamiento",
    "List-Of-Folders": "Lista de carpetas",
+   "Remove": "Eliminar",
    "Category": "Categoría",
    "Folders": "Carpetas",
    "number_of_nights": "Número de noches",
@@ -126,7 +130,9 @@ const resources = {
    "Add-city": "Añadir Ciudad",
    "City-name": "Nombre de la ciudad",
    "Add-hotel": "Añadir hotel",
-   "settings": "Ajustes"
+   "settings": "Ajustes",
+   "Search For A Folder": "Buscar una carpeta",
+   "Edite": "Editar"
   }
  }
 };

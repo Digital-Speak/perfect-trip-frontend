@@ -71,6 +71,7 @@ function Dashboard() {
     startDate: null,
     endDate: null,
     extraNights: 0,
+    extraData: []
   });
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -134,6 +135,7 @@ function Dashboard() {
       extraNights: 0,
       typeOfHb: [],
       note: null,
+      extraData: []
     });
   }
 
@@ -386,7 +388,9 @@ function Dashboard() {
                               hotels_dossier.push({
                                 dossier_num: newClient.folderNumber,
                                 hotel_id: hotels_dossier_item[0].hotelId,
-                                extra_nights: newClient.extraNights
+                                extra_nights: newClient.extraNights,
+                                from: item.fromForServer,
+                                to: item.toForServer
                               })
                             });
 
@@ -423,6 +427,7 @@ function Dashboard() {
                               typeOfHb: newClient.typeOfHb,
                               nbrPax: newClient?.nbrPax,
                               note: newClient.note,
+                              extraData: newClient.extraData,
                               ...flights
                             });
 

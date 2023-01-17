@@ -144,6 +144,8 @@ function HomeTable({
           regimgeData: "DP",
           regime: renderRegime(grouped[item][0].cityId),
           selectedHotel: grouped[item][0].hotelName,
+          fromForServer: startDate,
+          toForServer: endDate,
           from:
             `${(new Date(startDate).getDate() < 10 ? "0" : "") + new Date(startDate).getDate()}
      - 

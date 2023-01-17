@@ -27,8 +27,8 @@ function Flight() {
   const [filterState, setFilterState] = useState({
     type: 1,
     cityId: -1,
-    from: new Date(),
-    to: new Date()
+    from: null,
+    to: null
   });
 
   const loadData = async () => {

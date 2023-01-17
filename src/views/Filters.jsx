@@ -30,7 +30,7 @@ function Filters() {
 
   const [dates, setDates] = useState({
     start: new Date(),
-    end: new Date(),
+    end: new Date().setMonth(new Date().getMonth() + 1),
   })
 
   const [cities, setCities] = useState({
@@ -287,7 +287,7 @@ function Filters() {
           setIsOpen={setOpenEditModal}
           setSelectedDossier={setSelectedDossier}
           selectedDossier={selectedDossier} />)}
-{/* 
+        {/* 
         <ReactHTMLTableToExcel
           id="test-table-xls-button"
           className="download-table-xls-button"

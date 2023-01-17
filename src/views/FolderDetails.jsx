@@ -209,7 +209,7 @@ function FolderDetails() {
 
   useEffect(() => {
     if (targetFolder?.circuit !== "" && targetFolder?.cat !== "") {
-      fetchHotels(targetFolder?.circuit?.id, targetFolder?.cat?.id);
+      fetchHotels(targetFolder?.circuit?.id, targetFolder?.cat?.name);
     }
   }, [targetFolder?.circuit, targetFolder?.cat]);
 
