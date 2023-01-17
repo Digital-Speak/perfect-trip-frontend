@@ -1,0 +1,5 @@
+
+name: paper-dashboard-react
+services:
+- name: web
+  dockerfile_path: Dockerfile
