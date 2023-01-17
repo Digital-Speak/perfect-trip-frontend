@@ -11,6 +11,7 @@ import {
   Row,
   Col
 } from "reactstrap";
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -26,6 +27,7 @@ import { getAgencies } from "../api/agency";
 import { getlastId } from "../api/auth";
 import { addNewDossier } from "../api/dossier";
 import { getCities } from "api/city";
+import moment from "moment/moment";
 
 function Dashboard() {
   const { t } = useTranslation();
@@ -108,6 +110,18 @@ function Dashboard() {
         city_id_start: data_cities?.cities[0].id
       }
     ))
+  }
+
+  const nombreHAB = () => {
+    let text = "";
+    typeOfHb?.forEach((hab, index) => {
+      if (hab?.dispaly !== 0) {
+        text === "" ?
+          text = text + hab?.label + ' x' + hab?.dispaly + "   " :
+          text = text + '  &  ' + hab?.label + ' x' + hab?.dispaly;
+      }
+    })
+    return text;
   }
 
   const clearInputs = async () => {
@@ -467,15 +481,95 @@ function Dashboard() {
                         {t("Cancel")}
                       </Button>
                     </div>
+
                   </Row>
                 </Form>
               </CardBody>
             </Card>
           </Col>
         </Row>
+        <div>
+          <ReactHTMLTableToExcel
+            id="test-table-xls-button"
+            className="download-table-xls-button btn btn-success"
+            table="table-to-xls"
+            filename="tablexls"
+            sheet="tablexls"
+            buttonText="Download excel file" />
+          <table className="d-none" id="table-to-xls">
+            <tr></tr>
+            <tr></tr>
+            <tr><th></th><th style={{ width: "150px", height: "50px" }}>logo</th></tr>
+            <tr></tr>
+            <tr><th></th><th style={{ width: "150px" }}></th><th style={{ width: "150px" }}></th><th colSpan={3} style={{ width: "250px", height: "50px" }}>CONFIRMATION DE RESERVATION</th></tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+
+            <tr ><th></th><th style={styles.td} >Agence</th><th style={styles.td} >pour</th><th style={styles.td} >date</th></tr>
+            <tr ><th></th><td style={styles.td} >{newClient?.agency?.name}</td><td style={styles.td} >toAskfor</td><td style={styles.td} >{moment(new Date(Date.now()).toLocaleDateString()).format('DD/MM/YYYY')}</td></tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+
+            <tr><th></th><th style={styles.td} colSpan={3} >NOMBRE</th><th style={styles.td} >HAB</th><th style={styles.td} >PAX</th><th style={styles.td} colSpan={2} >TOUR</th><th style={styles.td} colSpan={2} >DATE</th></tr>
+            <tr><th></th><td style={styles.td} colSpan={3} >
+              {nombreHAB()}
+            </td>
+              <td style={styles.td} >
+                {
+                  parseInt(typeOfHb[0]?.dispaly + typeOfHb[1]?.dispaly + typeOfHb[2]?.dispaly + typeOfHb[3]?.dispaly) + ' habitation'
+                }
+              </td>
+              <td style={styles.td} >{newClient?.nbrPax.toString()}</td><td style={styles.td} colSpan={2} >{newClient?.circuit?.name}</td><td style={styles.td} colSpan={2} >{moment((newClient?.startDate)?.toString()).format('DD/MM/YYYY')}</td></tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+
+            <tr><th></th><th style={styles.td} >HOTELS</th></tr>
+            <tr><th></th><th style={styles.td} colSpan={2} >VILLE</th><th style={styles.td} colSpan={2} >HOTEL</th><th style={styles.td} colSpan={2} >DU</th><th style={styles.td} colSpan={2} >AU</th><th style={styles.td} >REGIME</th><th style={styles.td} colSpan={4} >NOTE</th></tr>
+            {
+              circuit?.map((data) => (
+                <tr><th></th><td style={styles.td} colSpan={2} >{data?.city}</td><td style={styles.td} colSpan={2} >{data?.selectedHotel}</td><td style={styles.td} colSpan={2} >{data?.from}</td><td style={styles.td} colSpan={2} >{data?.to}</td><td style={styles.td} >{data?.regimgeData}</td><td style={styles.td} colSpan={4} >{newClient?.note}</td></tr>
+              ))
+            }
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+
+            <tr><th></th><th style={styles.td} >DE/A</th><th style={styles.td} >DATE</th><th style={styles.td} >VILLE</th><th style={styles.td} colSpan={2}>DE</th><th style={styles.td} colSpan={2} >A</th><th style={styles.td} colSpan={2} >VOLS</th><th style={styles.td} colSpan={2} >HEURS</th></tr>
+            <tr><th></th><td style={styles.td} >{flights?.from_to_start}</td><td style={styles.td} >{moment(flights?.flight_date_start.toString()).format('DD/MM/YYYY')}</td>
+              {flights && cities?.map((city) => (
+                city?.id == flights?.city_id_start &&
+                <td style={styles.td} >
+                  {city?.name}
+                </td>
+              ))
+              }
+              <td style={styles.td} colSpan={2} >{flights?.from_start}</td><td style={styles.td} colSpan={2} >{flights?.to_start}</td><td style={styles.td} colSpan={2} >{flights?.flight_start}</td><td style={styles.td} colSpan={2} >{flights?.flight_time_start}</td></tr>
+            <tr><th></th><td style={styles.td} >{flights?.from_to_end}</td><td style={styles.td} >{moment(flights?.flight_date_end.toString()).format('DD/MM/YYYY')}</td>
+              {flights && cities?.map((city) => (
+                city?.id == flights?.city_id_end &&
+                <td style={styles.td} >
+                  {city?.name}
+                </td>
+              ))
+              }
+              <td style={styles.td} colSpan={2} >{flights?.from_end}</td><td style={styles.td} colSpan={2} >{flights?.to_end}</td><td style={styles.td} colSpan={2} >{flights?.flight_end}</td><td style={styles.td} colSpan={2} >{flights?.flight_time_end}</td></tr>
+          </table>
+        </div>
       </div>
     </>
   );
 }
 
+const styles = {
+  td: {
+    border: 1,
+    borderColor: "black",
+    borderStyle: "solid",
+    height: '40px',
+  }
+}
 export default Dashboard;
