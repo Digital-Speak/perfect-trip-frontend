@@ -3,7 +3,7 @@ import FolderDetails from "views/FolderDetails";
 import Login from "views/Login";
 import Config from "views/Config";
 import Settings from "views/Settings";
-import Filters from "views/Filters";
+import Hotels from "views/Hotels";
 import Folders from "views/Folders";
 import ForgotPassword from "views/password/Forgot";
 import SetNewPassword from "views/password/SetNew";
@@ -44,9 +44,9 @@ var routes = [
   },
   {
     path: "/filters",
-    name: "Filters",
+    name: "Hotels",
     icon: "fa fa-filter",
-    component: Filters,
+    component: Hotels,
     layout: "/admin",
     show: true,
   },

@@ -47,7 +47,7 @@ const resources = {
    "Flights": "Vols",
    "Time": "Temps",
    "Search For A Folder": "Rechercher un dossier",
-   "Filter-Folder": "Filtrer les dossiers",
+   "Filter-Folder": "Filtrer les hotels",
    "Actions": "Actions",
    "List-Of-Folders": "Liste des dossiers",
    "Category": "Catégorie",

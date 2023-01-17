@@ -22,7 +22,7 @@ import { getCities } from "../api/city";
 import { getHotels } from "../api/hotel";
 import { getDossier } from "../api/dossier";
 
-function Filters() {
+function Hotels() {
   const { t } = useTranslation();
   const [dataSource, setDataSource] = useState({ keys: [], data: [] });
   const [selectedDossier, setSelectedDossier] = useState(-1);
@@ -367,4 +367,4 @@ function Filters() {
     </>
   );
 }
-export default Filters;
+export default Hotels;
