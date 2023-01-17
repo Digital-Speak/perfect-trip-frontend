@@ -69,7 +69,10 @@ const resources = {
    "Agencies": "Agences",
    "Add-hotel": "Ajouter hôtel",
    "Filter-flights": "Filtrer les vols",
-   "settings": "Paramètres"
+   "settings": "Paramètres",
+   "Do you want to remove this Folder": "Voulez-vous supprimer ce dossier",
+   "Recover": "Récupérer",
+   "All": "Tout"
   }
  },
  es: {
@@ -132,7 +135,10 @@ const resources = {
    "Add-hotel": "Añadir hotel",
    "settings": "Ajustes",
    "Search For A Folder": "Buscar una carpeta",
-   "Edite": "Editar"
+   "Edite": "Editar",
+   "Do you want to remove this Folder": "¿Quieres eliminar esta carpeta?",
+   "Recover": "Para Recuperar",
+   "All": "Todas"
   }
  }
 };

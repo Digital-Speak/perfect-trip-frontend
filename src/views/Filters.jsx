@@ -36,10 +36,10 @@ function Filters() {
   const [cities, setCities] = useState({
     dataSource: [{
       id: -1,
-      name: "All"
+      name: t("All")
     }],
     mapedData: [{
-      label: "All"
+      label: t("All")
     }]
   })
 
@@ -47,15 +47,15 @@ function Filters() {
     dataSource: [{
       id: -1,
       city_id: -1,
-      name: "All"
+      name: t("All")
     }],
     mapedData: [{
-      label: "All"
+      label: t("All")
     }]
   })
 
-  const [selectedCity, setSelectedCity] = useState({ id: -1, name: "All" })
-  const [selectedHotel, setSelectedHotel] = useState({ id: -1, city_id: -1, name: "All" })
+  const [selectedCity, setSelectedCity] = useState({ id: -1, name: t("All") })
+  const [selectedHotel, setSelectedHotel] = useState({ id: -1, city_id: -1, name: t("All") })
 
   const loadAppData = async () => {
     const payload_1 = await getCities();
@@ -111,7 +111,7 @@ function Filters() {
   }, [selectedCity.id, selectedHotel.id, dates.start, dates.end]);
 
   useEffect(() => {
-    const newMappedData = [{ label: "All" }, ...hotels?.dataSource
+    const newMappedData = [{ label: t("All") }, ...hotels?.dataSource
       .filter((item) => parseInt(item.city_id) === selectedCity.id)
       .map((item) => { return { label: item.name } })]
     setHotels({
@@ -119,7 +119,7 @@ function Filters() {
       mapedData: newMappedData
     })
 
-    // setSelectedHotel({ id: -1, name: "All" })
+    // setSelectedHotel({ id: -1, name: t("All") })
   }, [selectedCity.id]);
 
   return (
@@ -148,12 +148,12 @@ function Filters() {
                       disablePortal
                       id="cities"
                       sx={{ width: "auto" }}
-                      defaultValue={"All"}
+                      defaultValue={t("All")}
                       options={cities.mapedData}
                       value={selectedCity.name}
                       renderInput={(params) => <TextField fullWidth {...params} label={t("Select")} />}
                       onInputChange={async (event, newInputValue) => {
-                        if (newInputValue === "All") return setSelectedCity({ id: -1, name: "All" });
+                        if (newInputValue === t("All")) return setSelectedCity({ id: -1, name: t("All") });
 
                         const targetItem = cities.dataSource.filter((city) => city.name === newInputValue);
                         if (targetItem.length === 0) return false;
@@ -169,12 +169,12 @@ function Filters() {
                       <Autocomplete
                         disablePortal
                         sx={{ width: "auto" }}
-                        defaultValue={"All"}
+                        defaultValue={t("All")}
                         options={hotels.mapedData}
                         value={selectedHotel.name}
                         renderInput={(params) => <TextField fullWidth {...params} label={t("Select")} />}
                         onInputChange={async (event, newInputValue) => {
-                          if (newInputValue === "All") return setSelectedHotel({ id: -1, name: "All" });
+                          if (newInputValue === t("All")) return setSelectedHotel({ id: -1, name: t("All") });
 
                           const targetItem = hotels.dataSource.filter((hotel) => hotel.name === newInputValue);
                           if (targetItem.length === 0) return false;
