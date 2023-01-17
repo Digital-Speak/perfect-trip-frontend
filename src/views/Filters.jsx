@@ -79,6 +79,7 @@ function Filters() {
   const loadDossierData = async (filters) => {
     const payload = await getDossier(filters);
     if (!payload?.success) return false;
+    console.log(payload?.dossiers)
     const grouped = _.mapValues(_.groupBy(payload?.dossiers, 'endAt'));
     const keys = Object.keys(grouped);
     setDataSource({ keys: keys, data: grouped })
@@ -243,10 +244,10 @@ function Filters() {
                         </tr>
                       </thead>
                       {dataSource.length !== 0 && dataSource?.keys.map((key) => (
-                        <tbody style={{
-                          "marginBottom": "100px"
-                        }}> {
-                            dataSource.data[key].map((item) => (
+                        dataSource.data[key].map((item) => (
+                          <tbody style={{
+                            "marginBottom": "100px"
+                          }}> {
                               <tr>
                                 <td style={{ justifyContent: "center", display: "flex", }}>
                                   <span>
@@ -272,8 +273,9 @@ function Filters() {
                                 </td>
                                 <td style={{ textAlign: "center" }}>{item.note}</td>
                               </tr>
-                            ))}
-                        </tbody>
+                            }
+                          </tbody>
+                        ))
                       ))}
                     </Table>
                   </Col>
