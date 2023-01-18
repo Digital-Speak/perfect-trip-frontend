@@ -520,7 +520,6 @@ function Dashboard() {
           </Col>
         </Row>
         <div>
-
           <table className="d-none" id="table-to-xls">
             <tr></tr>
             <tr></tr>
