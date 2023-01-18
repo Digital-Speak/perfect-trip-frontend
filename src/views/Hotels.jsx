@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { getCities } from "../api/city";
 import { getHotels } from "../api/hotel";
 import { getDossier } from "../api/dossier";
+import moment from "moment/moment";
 
 function Hotels() {
   const { t } = useTranslation();
@@ -62,11 +63,14 @@ function Hotels() {
     const payload_2 = await getHotels();
 
     if (!payload_1?.success || !payload_2?.success) return false;
-
     setCities({
       ...cities,
       dataSource: payload_1?.cities,
-      mapedData: [...cities.mapedData, ...payload_1?.cities.map((item) => { return { label: item.name } })]
+      mapedData: [...payload_1?.cities.map((item) => {
+        return {
+          label: item.name
+        }
+      })]
     })
 
     setHotels({
@@ -303,30 +307,33 @@ function Hotels() {
             <tr></tr>
             <tr></tr>
             <tr>
-              <td colSpan={5} style={{ color: "red", fontSize: 30, fontWeight: "bold", textAlign: "center" }}>{t("Hotels")}</td>
+              <td colSpan={5} style={{ color: "red", fontSize: 30, fontWeight: "bold", textAlign: "center", border: 0 }}>{t("Hotels")}</td>
             </tr>
+            <tr></tr>
+            <tr></tr>
             <tr>
               <td>
-                {(<th style={{ textAlign: "center" }}>{t("City")}</th>)}
-                {(<th style={{ textAlign: "center" }}>{t("Hotel")}</th>)}
+                {(<th style={{ textAlign: "center" }}>{t("From")}</th>)}{(<td style={{ textAlign: "center" }}>{t(`${moment(dates.start).format("DD/MM/YYYY")}`)}</td>)}
+                {(<th style={{ textAlign: "center" }}>{t("To")}</th>)}{(<td style={{ textAlign: "center" }}>{t(`${moment(dates.end).format("DD/MM/YYYY")}`)}</td>)}
               </td>
             </tr>
             <tr></tr>
-            <tr></tr>
             <tr>
               <td>
-                {(<th style={{ textAlign: "center" }}>{t(`${selectedCity.name}`)}</th>)}
-                {(<td style={{ textAlign: "center" }}>{t(`${selectedHotel.name}`)}</td>)}
+                {(<th style={{ textAlign: "center" }}>{t("City")}</th>)}{(<td style={{ textAlign: "center" }}>{t(`${selectedCity.name}`)}</td>)}
+                {(<th style={{ textAlign: "center" }}>{t("Hotel")}</th>)}{(<td style={{ textAlign: "center" }}>{t(`${selectedHotel.name}`)}</td>)}
               </td>
             </tr>
             <tr></tr>
             <tr></tr>
             <tr>
               <th style={{ textAlign: "center" }}>{t("From")}{"-"}{t("To")}</th>
-              <th style={{ textAlign: "center" }}>{t("Client-Ref")}</th>
-              <th style={{ textAlign: "center" }}>{t("FullName")}</th>
-              <th style={{ textAlign: "center" }}>{t("N° Pax")}</th>
-              <th style={{ textAlign: "center" }}>{t("Note")}</th>
+              {selectedCity.id === -1 && (<th style={{ textAlign: "center" }}>{t("City")}</th>)}
+              {selectedHotel.id === -1 && (<th style={{ textAlign: "center" }}>{t("Hotel")}</th>)}
+              <th style={{ textAlign: "center" }} colSpan={2}>{t("Client-Ref")}</th>
+              <th style={{ textAlign: "center" }} colSpan={2}>{t("FullName")}</th>
+              <th style={{ textAlign: "center" }} colSpan={3}>{t("N° Pax")}</th>
+              <th style={{ textAlign: "center" }} colSpan={3}>{t("Note")}</th>
             </tr>
           </thead>
           <tbody style={{
@@ -346,14 +353,14 @@ function Hotels() {
                   </td>
                   {selectedCity.id === -1 && (<td style={{ textAlign: "center" }}>{item.city}</td>)}
                   {selectedHotel.id === -1 && (<td style={{ textAlign: "center" }}>{item.hotel}</td>)}
-                  < td style={{ textAlign: "center" }}>{item.clientRef}</td>
-                  <td style={{ textAlign: "center" }}>{item.client}</td>
-                  <td style={{ textAlign: "center" }}>
+                  < td style={{ textAlign: "center" }} colSpan={2}>{item.clientRef}</td>
+                  <td style={{ textAlign: "center" }} colSpan={2}>{item.client}</td>
+                  <td style={{ textAlign: "center" }} colSpan={3}>
                     {item.nbrpaxforhbtype.map(({ typepax, nbr }, index) => (
                       <span style={{ "fontSize": "12px", }}>{index !== 0 ? '+' : ''} {nbr}{typepax}</span>
                     ))}
                   </td>
-                  <td style={{ textAlign: "center" }}>{item.note}</td>
+                  <td style={{ textAlign: "center" }} colSpan={3}>{item.note}</td>
                 </tr>
               ))
             }
