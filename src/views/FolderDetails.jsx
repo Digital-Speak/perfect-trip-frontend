@@ -682,7 +682,7 @@ function FolderDetails() {
           </td>
             <td style={styles.td} >
               {
-                parseInt(typeOfHb[0]?.dispaly + typeOfHb[1]?.dispaly + typeOfHb[2]?.dispaly + typeOfHb[3]?.dispaly) + ' habitation'
+                parseInt(typeOfHb[0]?.dispaly) + parseInt(typeOfHb[1]?.dispaly) + parseInt(typeOfHb[2]?.dispaly) + parseInt(typeOfHb[3]?.dispaly) + ' habitation'
               }
             </td>
             <td style={styles.td} >{targetFolder?.nbrPax?.toString()}</td><td style={styles.td} colSpan={2} >{targetFolder?.circuit?.name}</td><td style={styles.td} colSpan={2} >{moment((targetFolder?.startDate)?.toString()).format('DD/MM/YYYY')}</td></tr>
