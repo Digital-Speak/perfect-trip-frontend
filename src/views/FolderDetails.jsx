@@ -189,30 +189,31 @@ function FolderDetails() {
   const getTargetDossier = async (value) => {
     setTargetFolder({ ...targetFolder, folderNumber: value })
     const payload = await getOneDossier({
-      id: value,
-      "test": "test"
+      id: value
     });
+    console.log(payload);
     if (payload?.success) {
       if (payload?.data.length !== 0) {
         const nbrType = [];
-        payload?.nbrpaxforhbtype.forEach((item) => {
-          let plus = 0;
-          if (item.typepax == "DBL") plus = 2;
-          if (item.typepax == "TWIN") plus = 2;
-          if (item.typepax == "TRPL") plus = 3;
-          if (item.typepax == "SGL") plus = 1;
-          nbrType.push({
-            label: item.typepax,
-            plus: plus,
-            dispaly: item.nbr,
-            nbr: parseInt(item.nbr) * parseInt(plus),
+        if (payload?.nbrpaxforhbtype?.length != 0) {
+          payload?.nbrpaxforhbtype.forEach((item) => {
+            let plus = 0;
+            if (item.typepax == "DBL") plus = 2;
+            if (item.typepax == "TWIN") plus = 2;
+            if (item.typepax == "TRPL") plus = 3;
+            if (item.typepax == "SGL") plus = 1;
+            nbrType.push({
+              label: item.typepax,
+              plus: plus,
+              dispaly: item.nbr,
+              nbr: parseInt(item.nbr) * parseInt(plus),
+            })
           })
-        })
 
-        setTypeOfHb(nbrType);
-        let totalNbrPax = 0;
-        nbrType.forEach((item) => totalNbrPax = totalNbrPax + item.nbr);
-        console.log(payload?.data[0]);
+          setTypeOfHb(nbrType);
+          let totalNbrPax = 0;
+          nbrType.forEach((item) => totalNbrPax = totalNbrPax + item.nbr);
+        }
         setTargetFolder({
           refClient: payload?.data[0]?.client_ref,
           fullName: payload?.data[0]?.client_name,
@@ -235,8 +236,9 @@ function FolderDetails() {
           extraNights: 0,
           note: payload?.data[0]?.note,
           deleted: payload?.data[0]?.deleted,
-          typeOfHb: nbrType
+          typeOfHb: payload?.nbrpaxforhbtype?.length != 0 ? nbrType : typeOfHb
         });
+
         setFlights({
           from_to_start: payload?.data[0]?.from_to_start,
           city_id_start: payload?.data[0]?.city_id_start,
