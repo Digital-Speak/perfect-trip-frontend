@@ -13,10 +13,7 @@ import {
 } from "reactstrap";
 import _ from "lodash"
 import { useTranslation } from "react-i18next";
-import CustomEditableSelect from "components/Inputs/CustomEditableSelect";
-import EditableInput from "../Inputs/EditableInput";
-import EditableSelect from "components/Inputs/EditableSelect";
-// import { message } from "antd";
+import { message } from "antd";
 import { getCiruitsApi, addCiruitsApi } from "api/circuit_city";
 import { getCities } from "api/city";
 import { getCircuit } from "api/dashboard";
@@ -66,7 +63,7 @@ function CircuitTable() {
     }
   };
 
-  // const [messageApi, contextHolder] = message.useMessage();
+   const [messageApi, contextHolder] = message.useMessage();
 
 
   useEffect(() => {
@@ -75,7 +72,7 @@ function CircuitTable() {
 
   return (
     <Row>
-      {/* {contextHolder} */}
+      {contextHolder}
       <Col md="12">
         <Card>
           <CardHeader>
@@ -134,21 +131,21 @@ function CircuitTable() {
                       console.log(newCircuit)
                       if (newCircuit.circuit_id != -1 && newCircuit.city_id != -1 && newCircuit.number_of_nights != 0 && newCircuit.number_of_nights != "") {
                         await handleAdd();
-                        // messageApi.open({
-                        //   type: 'success',
-                        //   content: t("The circuit has been added successfully"),
-                        // });
+                        messageApi.open({
+                          type: 'success',
+                          content: t("The circuit has been added successfully"),
+                        });
                       } else {
-                        // messageApi.open({
-                        //   type: 'error',
-                        //   content: t("Please fill all the inputs"),
-                        // });
+                        messageApi.open({
+                          type: 'error',
+                          content: t("Please fill all the inputs"),
+                        });
                       }
                     } catch (error) {
-                      // messageApi.open({
-                      //   type: 'error',
-                      //   content: t("An error has occurred, please try later"),
-                      // });
+                      messageApi.open({
+                        type: 'error',
+                        content: t("An error has occurred, please try later"),
+                      });
                     }
                   }} className='btn btn-block bg-info text-white border-0' style={{ "height": "53px" }}>{t("Add")}</Button>
                 </FormGroup>

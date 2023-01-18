@@ -17,7 +17,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-// import { message } from 'antd';
+import { message } from 'antd';
 import cats from "../assets/data/cats.json";
 import PaxNumber from "../components/Tables/Pax-Number";
 import HomeTable from "../components/Tables/HomeTable";
@@ -75,7 +75,7 @@ function Dashboard() {
     extraNights: 0,
     extraData: []
   });
-  // const [messageApi, contextHolder] = message.useMessage();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const loadData = async () => {
     // Get the folder Num:
@@ -183,14 +183,25 @@ function Dashboard() {
 
   return (
     <>
-      {/* {contextHolder} */}
+      {contextHolder}
       <div className="content" style={{ "width": "90%", "justifyContent": "center", "marginLeft": "auto", "marginRight": "auto" }}>
         <Row>
           <Col md="12">
             <Card className="card-user">
-              <CardHeader>
-                <CardTitle tag="h5">{t("New-Folder")}</CardTitle>
-              </CardHeader>
+              <div className="row p-5">
+                <CardHeader>
+                  <CardTitle tag="h5">{t("New-Folder")}</CardTitle>
+                </CardHeader>
+
+                  <ReactHTMLTableToExcel
+                    id="test-table-xls-button"
+                    className="download-table-xls-button btn btn-success ml-auto"
+                    table="table-to-xls"
+                    filename={`dossier-number-${newClient?.folderNumber}`}
+                    sheet="tablexls"
+                    buttonText={<i className="fa fa-file-excel fa-3x"></i>}
+                  />
+              </div>
               <CardBody>
                 <Form>
                   <Row>
@@ -422,10 +433,10 @@ function Dashboard() {
                               hotels_dossier.length === null
                             ) {
 
-                              // return messageApi.open({
-                              //   type: 'error',
-                              //   content: t("Please fill all the inputs"),
-                              // });
+                              return messageApi.open({
+                                type: 'error',
+                                content: t("Please fill all the inputs"),
+                              });
                             }
 
                             const payload = await addNewDossier({
@@ -446,26 +457,26 @@ function Dashboard() {
                             });
 
                             if (payload?.success) {
-                              // messageApi.open({
-                              //   type: 'success',
-                              //   content: t("Folder has been added successfully"),
-                              // });
+                              messageApi.open({
+                                type: 'success',
+                                content: t("Folder has been added successfully"),
+                              });
                               clearInputs();
                               window.scroll({
                                 top: 0,
                                 behavior: 'smooth'
                               });
                             } else {
-                              // messageApi.open({
-                              //   type: 'error',
-                              //   content: t("An Error has accuired please try again"),
-                              // });
+                              messageApi.open({
+                                type: 'error',
+                                content: t("An Error has accuired please try again"),
+                              });
                             }
                           } catch (error) {
-                            // messageApi.open({
-                            //   type: 'error',
-                            //   content: t("An Error has accuired please try again"),
-                            // });
+                            messageApi.open({
+                              type: 'error',
+                              content: t("An Error has accuired please try again"),
+                            });
                             console.error(error);
                           }
                         }}
@@ -489,13 +500,7 @@ function Dashboard() {
           </Col>
         </Row>
         <div>
-          <ReactHTMLTableToExcel
-            id="test-table-xls-button"
-            className="download-table-xls-button btn btn-success"
-            table="table-to-xls"
-            filename="tablexls"
-            sheet="tablexls"
-            buttonText="Download excel file" />
+
           <table className="d-none" id="table-to-xls">
             <tr></tr>
             <tr></tr>

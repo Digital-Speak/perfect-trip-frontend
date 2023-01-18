@@ -28,6 +28,7 @@ function HomeTable({
   flights,
   setFlights,
   cities,
+  className,
   disabled = false
 }) {
   const renderRegime = (cityId) => <EditableSelect
@@ -172,15 +173,15 @@ function HomeTable({
   }, [hotels.length, hotels.length && hotels[0].hotelId, circuitDates.start]);
   return (
     <>
-      <div className="content">
+      <div className={`content`}>
         <Row>
           <Col md="12">
             <Card>
               <CardHeader>
                 <CardTitle tag="h4">{t("Hotels")}</CardTitle>
               </CardHeader>
-              <CardBody>
-                <Table responsive>
+              <CardBody className={` ${className}`}>
+                <Table className={` ${className}`} responsive>
                   <thead className="text-primary">
                     <tr>
                       <th>{t("City")}</th>
@@ -219,8 +220,8 @@ function HomeTable({
               <CardHeader>
                 <CardTitle tag="h4">{t("Flights")}</CardTitle>
               </CardHeader>
-              <CardBody>
-                <Table responsive>
+              <CardBody className={` ${className}`}>
+                <Table className={` ${className}`} responsive>
                   <thead className="text-primary">
                     <tr>
                       <th>{t("From-time")} / {t("To-time")}</th>

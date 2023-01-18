@@ -17,7 +17,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-// import { message } from 'antd';
+import { message } from 'antd';
 import cats from "../assets/data/cats.json";
 import PaxNumber from "../components/Tables/Pax-Number";
 import HomeTable from "../components/Tables/HomeTable";
@@ -28,6 +28,7 @@ import { getlastId } from "../api/auth";
 import { addNewDossier, getOneDossier, removeDossier } from "../api/dossier";
 import { getCities } from "api/city";
 import moment from "moment/moment";
+import '../assets/css/views/folderDetails.css';
 
 function FolderDetails() {
   const { t } = useTranslation();
@@ -78,7 +79,7 @@ function FolderDetails() {
     extraNights: 0,
     deleted: false
   });
-  // const [messageApi, contextHolder] = message.useMessage();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const loadData = async () => {
     await clearInputs();
@@ -235,18 +236,28 @@ function FolderDetails() {
 
   return (
     <>
-      {/* {contextHolder} */}
-      <div className="content" style={{ "width": "90%", "justifyContent": "center", "marginLeft": "auto", "marginRight": "auto" }}>
+      {contextHolder}
+      <div className={`content`} style={{ "width": "90%", "justifyContent": "center", "marginLeft": "auto", "marginRight": "auto" }}>
         <Row>
           <Col>
-            <Card className="card-user" style={{
+            <Card className={`card-user`} style={{
               border: targetFolder.deleted == true ? "red solid 2px" : "lightgray solid 0.2px"
             }}>
-              <CardHeader>
-                <CardTitle tag="h5">{t("Search For A Folder")}</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <Form>
+              <div className="row p-5">
+                <CardHeader>
+                  <CardTitle tag="h5">{t("Search For A Folder")}</CardTitle>
+                </CardHeader>
+                  <ReactHTMLTableToExcel
+                    id="test-table-xls-button"
+                    className={`download-table-xls-button btn btn-success ml-auto ${targetFolder.deleted == true && 'btn-danger'}`}
+                    table="table-to-xls"
+                    filename={`dossier-number-${targetFolder?.folderNumber}`}
+                    sheet="tablexls"
+                    buttonText={<i className="fa fa-file-excel fa-3x"></i>}
+                  />
+              </div>
+              <CardBody >
+                <Form className={`${targetFolder.deleted == true && 'deletedDossier'}`}>
                   <Row>
                     <Col className="" md="4">
                       <FormGroup>
@@ -445,6 +456,7 @@ function FolderDetails() {
                         newClient={targetFolder}
                         selectedCircuit={targetFolder?.circuit}
                         t={t}
+                        className={`${targetFolder.deleted == true && 'deletedDossier'}`}
                         cities={cities}
                         flights={flights}
                         setFlights={setFlights}
@@ -489,10 +501,10 @@ function FolderDetails() {
                                 hotels_dossier.length === null
                               ) {
 
-                                // return messageApi.open({
-                                //   type: 'error',
-                                //   content: t("Please fill all the inputs"),
-                                // });
+                                return messageApi.open({
+                                  type: 'error',
+                                  content: t("Please fill all the inputs"),
+                                });
                               }
 
                               const payload = await addNewDossier({
@@ -512,26 +524,26 @@ function FolderDetails() {
                               });
 
                               if (payload?.success) {
-                                // messageApi.open({
-                                //   type: 'success',
-                                //   content: t("Folder has been added successfully"),
-                                // });
+                                messageApi.open({
+                                  type: 'success',
+                                  content: t("Folder has been added successfully"),
+                                });
                                 clearInputs();
                                 window.scroll({
                                   top: 0,
                                   behavior: 'smooth'
                                 });
                               } else {
-                                // messageApi.open({
-                                //   type: 'error',
-                                //   content: t("An Error has accuired please try again"),
-                                // });
+                                messageApi.open({
+                                  type: 'error',
+                                  content: t("An Error has accuired please try again"),
+                                });
                               }
                             } catch (error) {
-                              // messageApi.open({
-                              //   type: 'error',
-                              //   content: t("An Error has accuired please try again"),
-                              // });
+                              messageApi.open({
+                                type: 'error',
+                                content: t("An Error has accuired please try again"),
+                              });
                               console.error(error);
                             }
                           }}
@@ -559,7 +571,7 @@ function FolderDetails() {
                               if (targetFolder.folderNumber !== null) {
                                 setEditeMode(true)
                               } else {
-                                // message.warning("There is no selected Folder")
+                                message.warning("There is no selected Folder")
                               }
                             }}
                           >
@@ -606,13 +618,6 @@ function FolderDetails() {
         </Row>
       </div>
       <div>
-          <ReactHTMLTableToExcel
-            id="test-table-xls-button"
-            className="download-table-xls-button btn btn-success"
-            table="table-to-xls"
-            filename="tablexls"
-            sheet="tablexls"
-            buttonText="Download excel file" />
           <table className="d-none" id="table-to-xls">
             <tr></tr>
             <tr></tr>
