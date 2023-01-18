@@ -100,7 +100,7 @@ const Login = () => {
                 value={t("Forgot my password?")}
                 className={styles.hyperLink} />
             </div>
-            <input onClick={handleSubmit} type="button" value={t("login")} className={styles.button} />
+            <input style={{paddingLeft:30,paddingRight:30}} onClick={handleSubmit} type="button" value={t("login")} className={styles.button} />
             <div className={styles.trajetImg}></div>
           </div>
         </Card>
