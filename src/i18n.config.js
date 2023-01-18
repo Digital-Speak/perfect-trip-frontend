@@ -72,7 +72,8 @@ const resources = {
    "settings": "Paramètres",
    "Do you want to remove this Folder": "Voulez-vous supprimer ce dossier",
    "Recover": "Récupérer",
-   "All": "Tout"
+   "All": "Tout",
+   "Download as XLS": "Télécharger en XLS"
   }
  },
  es: {
@@ -138,7 +139,8 @@ const resources = {
    "Edite": "Editar",
    "Do you want to remove this Folder": "¿Quieres eliminar esta carpeta?",
    "Recover": "Para Recuperar",
-   "All": "Todas"
+   "All": "Todas",
+   "Download as XLS": "Descargar como XLS"
   }
  }
 };
