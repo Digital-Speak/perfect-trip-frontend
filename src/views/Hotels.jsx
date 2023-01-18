@@ -66,7 +66,7 @@ function Hotels() {
     setCities({
       ...cities,
       dataSource: payload_1?.cities,
-      mapedData: [...payload_1?.cities.map((item) => {
+      mapedData: [...cities.mapedData, ...payload_1?.cities.map((item) => {
         return {
           label: item.name
         }
@@ -137,26 +137,19 @@ function Hotels() {
               paddingTop: "15px",
               paddingBottom: "15px",
             }}>
-              <CardHeader>
-                <CardTitle tag="h5" style={{
-                  "display": "flex",
-                  "justifyContent": "space-between"
-                }}>
-                  <span>
-                    {t("Filter-Folder")}
-                  </span>
-                  <span>
-                    <ReactHTMLTableToExcel
-                      id="test-table-xls-button"
-                      className="download-table-xls-button btn btn-success"
-                      table="table-to-xls"
-                      filename="tablexls"
-                      sheet="tablexls"
-                      buttonText={t("Download as XLS")}
-                    />
-                  </span>
-                </CardTitle>
-              </CardHeader>
+              <div className="row px-5">
+                <CardHeader>
+                  <CardTitle tag="h5">{t("Filter-Folder")}</CardTitle>
+                </CardHeader>
+                <ReactHTMLTableToExcel
+                  id="test-table-xls-button"
+                  className={`download-table-xls-button btn btn-success ml-auto`}
+                  table="table-to-xls"
+                  filename={`List des dossier pour la ville:${selectedCity.name} et hotel: ${selectedHotel.name} `}
+                  sheet="tablexls"
+                  buttonText={<i className="fa fa-file-excel fa-3x"></i>}
+                />
+              </div>
               <CardBody >
                 <Row>
                   <Col md="3"> <FormGroup>

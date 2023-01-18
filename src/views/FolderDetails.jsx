@@ -195,7 +195,7 @@ function FolderDetails() {
           note: payload?.data[0]?.note,
           deleted: payload?.data[0]?.deleted,
         });
-
+        console.log(payload?.data[0]);
         setFlights({
           from_to_start: payload?.data[0]?.from_to_start,
           city_id_start: payload?.data[0]?.city_id_start,
@@ -243,7 +243,7 @@ function FolderDetails() {
             <Card className={`card-user`} style={{
               border: targetFolder.deleted == true ? "red solid 2px" : "lightgray solid 0.2px"
             }}>
-              <div className="row p-5">
+              <div className="row px-5">
                 <CardHeader>
                   <CardTitle tag="h5">{t("Search For A Folder")}</CardTitle>
                 </CardHeader>

@@ -188,7 +188,7 @@ function Dashboard() {
         <Row>
           <Col md="12">
             <Card className="card-user">
-              <div className="row p-5">
+              <div className="row px-5">
                 <CardHeader>
                   <CardTitle tag="h5">{t("New-Folder")}</CardTitle>
                 </CardHeader>
