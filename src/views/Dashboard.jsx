@@ -39,8 +39,28 @@ function Dashboard() {
   const [hotels, setHotels] = useState([]);
   const [circuit, setCircuit] = useState([]);
   const [newHotelToDb, setNewHotelToDb] = useState([]);
-  const [typeOfHb, setTypeOfHb] = useState([]);
-  const [flights, setFlights] = useState({
+  const [typeOfHb, setTypeOfHb] = useState([
+    {
+      label: "DBL",
+      plus: 2,
+      dispaly: 0,
+      nbr: 0,
+    }, {
+      label: "TWIN",
+      plus: 2,
+      dispaly: 0,
+      nbr: 0,
+    }, {
+      label: "TRPL",
+      dispaly: 0,
+      plus: 3,
+      nbr: 0,
+    }, {
+      label: "SGL",
+      plus: 1,
+      dispaly: 0,
+      nbr: 0,
+    }]);  const [flights, setFlights] = useState({
     from_to_start: "APT / HOTEL",
     city_id_start: 0,
     from_start: "AEROPORT CASABLANCA",
@@ -148,7 +168,7 @@ function Dashboard() {
       endDate: null,
       extraNights: 0,
       typeOfHb: [],
-      note: null,
+      note: "",
       extraData: []
     });
   }
@@ -374,7 +394,7 @@ function Dashboard() {
                     <Col className="" md="12">
                       <FormGroup>
                         <label>{t("Type-HB")}</label>
-                        <PaxNumber cb={(data) => {
+                        <PaxNumber data={typeOfHb} cb={(data) => {
                           setTypeOfHb(data);
                         }} />
                       </FormGroup>

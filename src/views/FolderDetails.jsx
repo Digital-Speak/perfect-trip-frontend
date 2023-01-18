@@ -40,7 +40,28 @@ function FolderDetails() {
   const [hotels, setHotels] = useState([]);
   const [circuit, setCircuit] = useState([]);
   const [newHotelToDb, setNewHotelToDb] = useState([]);
-  const [typeOfHb, setTypeOfHb] = useState([]);
+  const [typeOfHb, setTypeOfHb] = useState([
+    {
+      label: "DBL",
+      plus: 2,
+      dispaly: 0,
+      nbr: 0,
+    }, {
+      label: "TWIN",
+      plus: 2,
+      dispaly: 0,
+      nbr: 0,
+    }, {
+      label: "TRPL",
+      dispaly: 0,
+      plus: 3,
+      nbr: 0,
+    }, {
+      label: "SGL",
+      plus: 1,
+      dispaly: 0,
+      nbr: 0,
+    }]);
   const [isInEditeMode, setEditeMode] = useState(false)
   const [flights, setFlights] = useState({
     from_to_start: null,
@@ -168,10 +189,30 @@ function FolderDetails() {
   const getTargetDossier = async (value) => {
     setTargetFolder({ ...targetFolder, folderNumber: value })
     const payload = await getOneDossier({
-      id: value
+      id: value,
+      "test": "test"
     });
     if (payload?.success) {
       if (payload?.data.length !== 0) {
+        const nbrType = [];
+        payload?.nbrpaxforhbtype.forEach((item) => {
+          let plus = 0;
+          if (item.typepax == "DBL") plus = 2;
+          if (item.typepax == "TWIN") plus = 2;
+          if (item.typepax == "TRPL") plus = 3;
+          if (item.typepax == "SGL") plus = 1;
+          nbrType.push({
+            label: item.typepax,
+            plus: plus,
+            dispaly: item.nbr,
+            nbr: parseInt(item.nbr) * parseInt(plus),
+          })
+        })
+
+        setTypeOfHb(nbrType);
+        let totalNbrPax = 0;
+        nbrType.forEach((item) => totalNbrPax = totalNbrPax + item.nbr);
+        console.log(payload?.data[0]);
         setTargetFolder({
           refClient: payload?.data[0]?.client_ref,
           fullName: payload?.data[0]?.client_name,
@@ -194,8 +235,8 @@ function FolderDetails() {
           extraNights: 0,
           note: payload?.data[0]?.note,
           deleted: payload?.data[0]?.deleted,
+          typeOfHb: nbrType
         });
-        console.log(payload?.data[0]);
         setFlights({
           from_to_start: payload?.data[0]?.from_to_start,
           city_id_start: payload?.data[0]?.city_id_start,
@@ -247,14 +288,14 @@ function FolderDetails() {
                 <CardHeader>
                   <CardTitle tag="h5">{t("Search For A Folder")}</CardTitle>
                 </CardHeader>
-                  <ReactHTMLTableToExcel
-                    id="test-table-xls-button"
-                    className={`download-table-xls-button btn btn-success ml-auto ${targetFolder.deleted == true && 'btn-danger'}`}
-                    table="table-to-xls"
-                    filename={`dossier-number-${targetFolder?.folderNumber}`}
-                    sheet="tablexls"
-                    buttonText={<i className="fa fa-file-excel fa-3x"></i>}
-                  />
+                <ReactHTMLTableToExcel
+                  id="test-table-xls-button"
+                  className={`download-table-xls-button btn btn-success ml-auto ${targetFolder.deleted == true && 'btn-danger'}`}
+                  table="table-to-xls"
+                  filename={`dossier-number-${targetFolder?.folderNumber}`}
+                  sheet="tablexls"
+                  buttonText={<i className="fa fa-file-excel fa-3x"></i>}
+                />
               </div>
               <CardBody >
                 <Form className={`${targetFolder.deleted == true && 'deletedDossier'}`}>
@@ -441,6 +482,7 @@ function FolderDetails() {
                       <FormGroup>
                         <label>{t("Type-HB")}</label>
                         <PaxNumber disabled={!isInEditeMode}
+                          data={typeOfHb}
                           cb={(data) => {
                             setTypeOfHb(data);
                           }} />
@@ -618,81 +660,81 @@ function FolderDetails() {
         </Row>
       </div>
       <div>
-          <table className="d-none" id="table-to-xls">
-            <tr></tr>
-            <tr></tr>
-            <tr><th></th><th style={{ width: "150px", height: "50px" }}>logo</th></tr>
-            <tr></tr>
-            <tr><th></th><th style={{ width: "150px" }}></th><th style={{ width: "150px" }}></th><th colSpan={3} style={{ width: "250px", height: "50px" }}>CONFIRMATION DE RESERVATION</th></tr>
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
+        <table className="d-none" id="table-to-xls">
+          <tr></tr>
+          <tr></tr>
+          <tr><th></th><th style={{ width: "150px", height: "50px" }}>logo</th></tr>
+          <tr></tr>
+          <tr><th></th><th style={{ width: "150px" }}></th><th style={{ width: "150px" }}></th><th colSpan={3} style={{ width: "250px", height: "50px" }}>CONFIRMATION DE RESERVATION</th></tr>
+          <tr></tr>
+          <tr></tr>
+          <tr></tr>
 
-            <tr ><th></th><th style={styles.td} >Agence</th><th style={styles.td} >pour</th><th style={styles.td} >date</th></tr>
-            <tr ><th></th><td style={styles.td} >{targetFolder?.agency?.name}</td><td style={styles.td} >toAskfor</td><td style={styles.td} >{moment(new Date(Date.now()).toLocaleDateString()).format('DD/MM/YYYY')}</td></tr>
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
+          <tr ><th></th><th style={styles.td} >Agence</th><th style={styles.td} >pour</th><th style={styles.td} >date</th></tr>
+          <tr ><th></th><td style={styles.td} >{targetFolder?.agency?.name}</td><td style={styles.td} >toAskfor</td><td style={styles.td} >{moment(new Date(Date.now()).toLocaleDateString()).format('DD/MM/YYYY')}</td></tr>
+          <tr></tr>
+          <tr></tr>
+          <tr></tr>
 
-            <tr><th></th><th style={styles.td} colSpan={3} >NOMBRE</th><th style={styles.td} >HAB</th><th style={styles.td} >PAX</th><th style={styles.td} colSpan={2} >TOUR</th><th style={styles.td} colSpan={2} >DATE</th></tr>
-            <tr><th></th><td style={styles.td} colSpan={3} >
-              {nombreHAB()}
+          <tr><th></th><th style={styles.td} colSpan={3} >NOMBRE</th><th style={styles.td} >HAB</th><th style={styles.td} >PAX</th><th style={styles.td} colSpan={2} >TOUR</th><th style={styles.td} colSpan={2} >DATE</th></tr>
+          <tr><th></th><td style={styles.td} colSpan={3} >
+            {nombreHAB()}
+          </td>
+            <td style={styles.td} >
+              {
+                parseInt(typeOfHb[0]?.dispaly + typeOfHb[1]?.dispaly + typeOfHb[2]?.dispaly + typeOfHb[3]?.dispaly) + ' habitation'
+              }
             </td>
-              <td style={styles.td} >
-                {
-                  parseInt(typeOfHb[0]?.dispaly + typeOfHb[1]?.dispaly + typeOfHb[2]?.dispaly + typeOfHb[3]?.dispaly) + ' habitation'
-                }
-              </td>
-              <td style={styles.td} >{targetFolder?.nbrPax?.toString()}</td><td style={styles.td} colSpan={2} >{targetFolder?.circuit?.name}</td><td style={styles.td} colSpan={2} >{moment((targetFolder?.startDate)?.toString()).format('DD/MM/YYYY')}</td></tr>
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
+            <td style={styles.td} >{targetFolder?.nbrPax?.toString()}</td><td style={styles.td} colSpan={2} >{targetFolder?.circuit?.name}</td><td style={styles.td} colSpan={2} >{moment((targetFolder?.startDate)?.toString()).format('DD/MM/YYYY')}</td></tr>
+          <tr></tr>
+          <tr></tr>
+          <tr></tr>
 
-            <tr><th></th><th style={styles.td} >HOTELS</th></tr>
-            <tr><th></th><th style={styles.td} colSpan={2} >VILLE</th><th style={styles.td} colSpan={2} >HOTEL</th><th style={styles.td} colSpan={2} >DU</th><th style={styles.td} colSpan={2} >AU</th><th style={styles.td} >REGIME</th><th style={styles.td} colSpan={4} >NOTE</th></tr>
-            {
-              circuit?.map((data) => (
-                <tr><th></th><td style={styles.td} colSpan={2} >{data?.city}</td><td style={styles.td} colSpan={2} >{data?.selectedHotel}</td><td style={styles.td} colSpan={2} >{data?.from}</td><td style={styles.td} colSpan={2} >{data?.to}</td><td style={styles.td} >{data?.regimgeData}</td><td style={styles.td} colSpan={4} >{targetFolder?.note}</td></tr>
-              ))
-            }
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
+          <tr><th></th><th style={styles.td} >HOTELS</th></tr>
+          <tr><th></th><th style={styles.td} colSpan={2} >VILLE</th><th style={styles.td} colSpan={2} >HOTEL</th><th style={styles.td} colSpan={2} >DU</th><th style={styles.td} colSpan={2} >AU</th><th style={styles.td} >REGIME</th><th style={styles.td} colSpan={4} >NOTE</th></tr>
+          {
+            circuit?.map((data) => (
+              <tr><th></th><td style={styles.td} colSpan={2} >{data?.city}</td><td style={styles.td} colSpan={2} >{data?.selectedHotel}</td><td style={styles.td} colSpan={2} >{data?.from}</td><td style={styles.td} colSpan={2} >{data?.to}</td><td style={styles.td} >{data?.regimgeData}</td><td style={styles.td} colSpan={4} >{targetFolder?.note}</td></tr>
+            ))
+          }
+          <tr></tr>
+          <tr></tr>
+          <tr></tr>
+          <tr></tr>
 
-            <tr><th></th><th style={styles.td} >DE/A</th><th style={styles.td} >DATE</th><th style={styles.td} >VILLE</th><th style={styles.td} colSpan={2}>DE</th><th style={styles.td} colSpan={2} >A</th><th style={styles.td} colSpan={2} >VOLS</th><th style={styles.td} colSpan={2} >HEURS</th></tr>
-            <tr><th></th>
+          <tr><th></th><th style={styles.td} >DE/A</th><th style={styles.td} >DATE</th><th style={styles.td} >VILLE</th><th style={styles.td} colSpan={2}>DE</th><th style={styles.td} colSpan={2} >A</th><th style={styles.td} colSpan={2} >VOLS</th><th style={styles.td} colSpan={2} >HEURS</th></tr>
+          <tr><th></th>
             <td style={styles.td} >{flights?.from_to_start}</td>
             <td style={styles.td} >{moment(flights?.flight_date_start?.toString()).format('DD/MM/YYYY')}</td>
-              {flights && cities?.map((city) => (
-                city?.id == flights?.city_id_start &&
-                <td style={styles.td} >
-                  {city?.name}
-                </td>
-              ))
-              }
-              <td style={styles.td} colSpan={2} >{flights?.from_start?.toString()}</td>
-              <td style={styles.td} colSpan={2} >{flights?.to_start?.toString()}</td>
-              <td style={styles.td} colSpan={2} >{flights?.flight_start}</td>
-              <td style={styles.td} colSpan={2} >{flights?.flight_time_start?.toString()}</td>
-              </tr>
-            <tr>
-              <th></th><td style={styles.td} >{flights?.from_to_end?.toString()}</td><td style={styles.td} >{moment(flights?.flight_date_end?.toString()).format('DD/MM/YYYY')}</td>
-              {flights && cities?.map((city) => (
-                city?.id == flights?.city_id_end &&
-                <td style={styles.td} >
-                  {city?.name}
-                </td>
-              ))
-              }
-              <td style={styles.td} colSpan={2} >{flights?.from_end?.toString()}</td>
-              <td style={styles.td} colSpan={2} >{flights?.to_end}</td>
-              <td style={styles.td} colSpan={2} >{flights?.flight_end}</td>
-              <td style={styles.td} colSpan={2} >{flights?.flight_time_end?.toString()}</td>
-              </tr>
-      
-          </table>
-        </div>
+            {flights && cities?.map((city) => (
+              city?.id == flights?.city_id_start &&
+              <td style={styles.td} >
+                {city?.name}
+              </td>
+            ))
+            }
+            <td style={styles.td} colSpan={2} >{flights?.from_start?.toString()}</td>
+            <td style={styles.td} colSpan={2} >{flights?.to_start?.toString()}</td>
+            <td style={styles.td} colSpan={2} >{flights?.flight_start}</td>
+            <td style={styles.td} colSpan={2} >{flights?.flight_time_start?.toString()}</td>
+          </tr>
+          <tr>
+            <th></th><td style={styles.td} >{flights?.from_to_end?.toString()}</td><td style={styles.td} >{moment(flights?.flight_date_end?.toString()).format('DD/MM/YYYY')}</td>
+            {flights && cities?.map((city) => (
+              city?.id == flights?.city_id_end &&
+              <td style={styles.td} >
+                {city?.name}
+              </td>
+            ))
+            }
+            <td style={styles.td} colSpan={2} >{flights?.from_end?.toString()}</td>
+            <td style={styles.td} colSpan={2} >{flights?.to_end}</td>
+            <td style={styles.td} colSpan={2} >{flights?.flight_end}</td>
+            <td style={styles.td} colSpan={2} >{flights?.flight_time_end?.toString()}</td>
+          </tr>
+
+        </table>
+      </div>
     </>
   );
 }
