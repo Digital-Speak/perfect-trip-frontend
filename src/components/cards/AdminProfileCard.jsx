@@ -10,7 +10,7 @@ import {
   Col
 } from "reactstrap";
 import { useTranslation } from 'react-i18next';
-import profilePic from '../../assets/img/image_place_holder_male.jpeg';
+import profilePic from '../../assets/img/person-icon.png';
 
 function AdminProfileCard() {
 
