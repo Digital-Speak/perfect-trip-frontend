@@ -13,8 +13,8 @@ function AdminsTable() {
   const [admins, setAdmins] = useState([]);
   const [deleteSubAdminId, setDeleteSubAdminId] = useState(null);
   const [newAdmin, setNewAdmin] = useState({
-    name: "Sub-admin name",
-    email: "Sub-admin email"
+    name: "name",
+    email: "email"
   });
 
   const loadData = async () => {
@@ -64,13 +64,13 @@ function AdminsTable() {
       <Col md="12">
         <Card>
           <CardHeader>
-            <CardTitle tag="h4">{t("Add sub-admin")}</CardTitle>
+            <CardTitle tag="h4">{t("add-sub-admin")}</CardTitle>
           </CardHeader>
           <CardBody>
             <Row>
               <Col className="" md="4" style={{height:"120px", display:"flex",flexDirection:"column", justifyContent:"center"}}>
                 <FormGroup>
-                  <label>{t("sub-admin-name")}</label>
+                  <label>{t("name")}</label>
                   <Input
                     defaultValue=""
                     value={newAdmin?.name}
@@ -88,7 +88,7 @@ function AdminsTable() {
               </Col>
               <Col className="" md="4" style={{height:"120px", display:"flex",flexDirection:"column", justifyContent:"center"}}>
                 <FormGroup>
-                  <label>{t("sub-admin-email")}</label>
+                  <label>{t("email")}</label>
                   <Input
                     defaultValue=""
                     value={newAdmin?.email}
@@ -107,7 +107,7 @@ function AdminsTable() {
               <Col className="" md="4" style={{height:"120px", display:"flex",flexDirection:"column", justifyContent:"center"}}>
                 <FormGroup>
                 <label style={{opacity:0}}>.</label>
-                <Button  onClick={handleAdd} className='btn btn-block bg-info text-white border-0'  style={{ "height": "50px" }}>Add</Button>
+                <Button  onClick={handleAdd} className='btn btn-block bg-info text-white border-0'  style={{ "height": "50px" }}>{t('Add')}</Button>
                 </FormGroup>
               </Col>
             </Row>
@@ -117,17 +117,17 @@ function AdminsTable() {
       <Col md="12">
         <Card>
           <CardHeader>
-            <CardTitle tag="h4">{t("Sub-admins")}</CardTitle>
+            <CardTitle tag="h4">{t("sub-admins")}</CardTitle>
           </CardHeader>
           <CardBody>
             <Table responsive style={{ borderBottomWidth: 1, borderBottomColor: "gray" }}>
               <thead className="text-primary">
                 <tr>
-                  <th>{t("sub-admins-name")}</th>
+                  <th>{t("name")}</th>
                   <th>{t("email")}</th>
-                  <th>{t("created-at")}</th>
-                  <th>{t("updated-at")}</th>
-                  <th>{t("delete")}</th>
+                  <th>{t("Added-at")}</th>
+                  <th>{t("Updated-at")}</th>
+                  <th>{t("Remove")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -151,14 +151,14 @@ function AdminsTable() {
                             setDeleteSubAdminId(admin?.id);
                           }} data-toggle="modal" data-target={deleteSubAdminId === admin?.id && "#exampleModal"} type="button" className='text-danger' >
                             <i className="fa fa-solid fa-trash-o mr-2 text-danger" />
-                            Delete
+                            {t("Remove")}
                           </div>
                         </td>
                       </tr>
                     )) : (
                       <tr>
                         <td colSpan={5}>
-                          You have no sub admins
+                          <i className='fa fa-file-alt' ></i>
                         </td>
                       </tr>
                     )
@@ -173,17 +173,17 @@ function AdminsTable() {
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <h5 class="modal-title" id="exampleModalLabel">{t('Remove')}</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              Are you sure you want to delete this sub-admin?
+              {t('Are you sure you want to delete?')}
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button onClick={handleDelete} data-dismiss="modal" type="button" class="btn btn-primary">Delete</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">{t('Close')}</button>
+              <button onClick={handleDelete} data-dismiss="modal" type="button" class="btn btn-primary">{t('Remove')}</button>
             </div>
           </div>
         </div>

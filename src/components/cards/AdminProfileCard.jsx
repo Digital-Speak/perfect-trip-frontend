@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, } from "react";
 import {
-  Button,
   Card,
   CardHeader,
   CardBody,
   CardTitle,
   FormGroup,
   Form,
-  Input,
   Row,
   Col
 } from "reactstrap";
@@ -45,7 +43,7 @@ function AdminProfileCard() {
                 </Col>
                 <Col className="" md="4">
                   <FormGroup>
-                    <label>{t("Email")}</label>
+                    <label>{t("email")}</label>
                     <p>{user && user?.email}</p>
                   </FormGroup>
                 </Col>

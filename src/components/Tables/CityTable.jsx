@@ -157,7 +157,7 @@ function CityTable() {
                   <th>{t("name")}</th>
                   <th>{t("Added-at")}</th>
                   <th>{t("Updated-at")}</th>
-                  <th>{t("satatus")}</th>
+                  <th>{t("status")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -180,7 +180,7 @@ function CityTable() {
                            setDeleteCityId(city?.id);
                         }} data-toggle="modal" data-target={deleteCityId === city?.id && "#exampleModal"} type="button" className='text-danger' >
                           <i className="fa fa-solid fa-trash-o mr-2 text-danger" />
-                          Supprimer
+                          {t('Remove')}
                         </div>
                       </td>
                     </tr>
@@ -196,17 +196,17 @@ function CityTable() {
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Delete city</h5>
+              <h5 class="modal-title" id="exampleModalLabel">{t('Delete city')}</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              Are you sure you want to delete this city?
+              {t('Are you sure you want to delete?')}
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button onClick={handleDelete} data-dismiss="modal" type="button" class="btn btn-primary">Delete</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">{t('Close')}</button>
+              <button onClick={handleDelete} data-dismiss="modal" type="button" class="btn btn-primary">{t('Remove')}</button>
             </div>
           </div>
         </div>

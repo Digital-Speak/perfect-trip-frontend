@@ -60,7 +60,7 @@ var routes = [
   },
   {
     path: "/settings",
-    name: "Settings",
+    name: "settings",
     icon: "nc-icon nc-settings",
     component: Settings,
     layout: "/admin",

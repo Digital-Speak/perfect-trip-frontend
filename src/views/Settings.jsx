@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useTranslation } from 'react-i18next';
 import AdminsTable from "components/Tables/AdminsTable";
 import AdminProfileCard from "components/cards/AdminProfileCard";
-import { Card, CardBody } from "reactstrap";
 import { checkAuth } from "api/auth";
 import HistoryTable from "components/Tables/HistoryTable";
 
 
 function Settings() {
-  const { t } = useTranslation();
   const [sector, setSector] = useState("profile");
   const [isadmin, setIsAdmin] = useState(false);
 
