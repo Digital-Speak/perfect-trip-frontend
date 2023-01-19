@@ -39,6 +39,7 @@ function FolderDetails() {
   const [cities, setCities] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [circuit, setCircuit] = useState([]);
+  const [circuitDetails, setCircuitDetails] = useState([]);
   const [newHotelToDb, setNewHotelToDb] = useState([]);
   const [typeOfHb, setTypeOfHb] = useState([
     {
@@ -191,7 +192,6 @@ function FolderDetails() {
     const payload = await getOneDossier({
       id: value
     });
-    console.log(payload);
     if (payload?.success) {
       if (payload?.data.length !== 0) {
         const nbrType = [];
@@ -214,6 +214,9 @@ function FolderDetails() {
           let totalNbrPax = 0;
           nbrType.forEach((item) => totalNbrPax = totalNbrPax + item.nbr);
         }
+
+        setCircuitDetails(payload?.circuits);
+        
         setTargetFolder({
           refClient: payload?.data[0]?.client_ref,
           fullName: payload?.data[0]?.client_name,
@@ -507,6 +510,8 @@ function FolderDetails() {
                         hotels={hotels}
                         circuit={circuit}
                         setCircuit={setCircuit}
+                        isDetails={true}
+                        circuitDetails={circuitDetails}
                         addNewHotel={(newHotel, cityId) => {
                           setNewHotelToDb([...newHotelToDb, { newHotel }])
                         }}

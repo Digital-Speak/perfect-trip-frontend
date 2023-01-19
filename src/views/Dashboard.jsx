@@ -429,16 +429,16 @@ function Dashboard() {
                           try {
                             const hotels_dossier = [];
                             circuit.forEach((item) => {
-                              const hotels_dossier_item = hotels.filter((hotel) => hotel.cityName === item.city && hotel.hotelName === item.selectedHotel);
+                              const hotels_dossier_item = hotels.filter((hotel) => hotel.cityName === item.city && hotel.hotelName == item.selectedHotel);
                               hotels_dossier.push({
                                 dossier_num: newClient.folderNumber,
                                 hotel_id: hotels_dossier_item[0].hotelId,
                                 extra_nights: newClient.extraNights,
                                 from: item.fromForServer,
-                                to: item.toForServer
+                                to: item.toForServer,
+                                regime: item.regime.props.text
                               })
                             });
-
                             if (
                               newClient?.folderNumber === "ERROR" ||
                               newClient?.refClient === null ||

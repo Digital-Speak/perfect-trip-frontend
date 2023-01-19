@@ -29,11 +29,13 @@ function HomeTable({
   setFlights,
   cities,
   className,
-  disabled = false
+  circuitDetails = [],
+  disabled = false,
+  isDetails = false
 }) {
-  const renderRegime = (cityId) => <EditableSelect
+  const renderRegime = (cityId, regime = "DP") => <EditableSelect
     data={[{ label: "PC" }, { label: "DP" }, { label: "BB" }]}
-    text={"DP"}
+    text={regime}
     t={t}
     onTextChange={(data) => {
       updateData(cityId, "regime", data)
@@ -47,8 +49,6 @@ function HomeTable({
       })
     });
 
-
-    slectedHotel = newHotels[0].label;
     return <EditableSelect
       data={newHotels}
       disabled={disabled}
@@ -136,36 +136,80 @@ function HomeTable({
       const newData = [];
       let startDate = circuitDates.start;
       let grouped = _.mapValues(_.groupBy(hotels, 'circuit_city_id'), clist => clist.map(city => _.omit(city, 'circuit_city_id')));
-      Object.keys(grouped).forEach((item, index) => {
-        let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(grouped[item][0].numberOfNights)));
-        newData.push({
-          id: grouped[item][0].cityId,
-          city: grouped[item][0].cityName,
-          hotels: grouped[item],
-          regimgeData: "DP",
-          regime: renderRegime(grouped[item][0].cityId),
-          selectedHotel: grouped[item][0].hotelName,
-          fromForServer: startDate,
-          toForServer: endDate,
-          from:
-            `${(new Date(startDate).getDate() < 10 ? "0" : "") + new Date(startDate).getDate()}
+      if (isDetails == false) {
+        Object.keys(grouped).forEach((item, index) => {
+          let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(grouped[item][0].numberOfNights)));
+          newData.push({
+            id: grouped[item][0].cityId,
+            city: grouped[item][0].cityName,
+            hotels: grouped[item],
+            regimgeData: "DP",
+            regime: renderRegime(grouped[item][0].cityId),
+            selectedHotel: grouped[item][0].hotelName,
+            fromForServer: startDate,
+            toForServer: endDate,
+            from:
+              `${(new Date(startDate).getDate() < 10 ? "0" : "") + new Date(startDate).getDate()}
      - 
      ${new Date(startDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`,
-          to:
-            `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
+            to:
+              `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
     - 
     ${new Date(endDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
-        })
-
-        startDate = endDate;
-        if (index === parseInt(Object.keys(grouped).length - 1)) {
-          setNewClient({ ...newClient, endDate: endDate })
-          setFlights({
-            ...flights,
-            flight_date_end: endDate
           })
-        }
-      })
+
+          startDate = endDate;
+          if (index === parseInt(Object.keys(grouped).length - 1)) {
+            setNewClient({ ...newClient, endDate: endDate })
+            setFlights({
+              ...flights,
+              flight_date_end: endDate
+            })
+          }
+        })
+      } else {
+        Object.keys(grouped).forEach((item, index) => {
+          let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(circuitDetails[index].number_of_nights)));
+          console.log("====================================================================")
+          console.log(circuitDetails[index])
+          console.log("---------------------------------------------------------------------")
+          console.log({
+            id: circuitDetails[index].city_id,
+            city: circuitDetails[index].city,
+            hotels: grouped[item],
+            regimgeData: circuitDetails[index].regime,
+            regime: renderRegime(circuitDetails[index].city_id, circuitDetails[index].regime),
+            selectedHotel: circuitDetails[index].hotel,
+            fromForServer: startDate,
+            toForServer: endDate,
+            from: `${(new Date(startDate).getDate() < 10 ? "0" : "") + new Date(startDate).getDate()}
+                - 
+                  ${new Date(startDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`,
+            to:
+              `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
+                - 
+                ${new Date(endDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
+          })
+          newData.push({
+            id: circuitDetails[index].city_id,
+            city: circuitDetails[index].city,
+            hotels: grouped[item],
+            regimgeData: circuitDetails[index].regime,
+            regime: renderRegime(circuitDetails[index].city_id, circuitDetails[index].regime),
+            selectedHotel: circuitDetails[index].hotel,
+            fromForServer: startDate,
+            toForServer: endDate,
+            from: `${(new Date(startDate).getDate() < 10 ? "0" : "") + new Date(startDate).getDate()}
+                - 
+                  ${new Date(startDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`,
+            to:
+                `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
+                - 
+                ${new Date(endDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
+          })
+          startDate = endDate;
+        })
+      }
       setCircuit(newData);
     } else {
       setCircuit([])
@@ -195,7 +239,7 @@ function HomeTable({
                     {selectedCircuit !== "" && circuit?.length !== 0 && circuit?.map((element, index) => (
                       <tr>
                         <td>{renderCity(element.city)}</td>
-                        <td>{renderHotel(element.hotels[0].cityId, element.hotels, element.selectedHotel)}</td>
+                        <td>{renderHotel(element?.hotels[0]?.cityId, element.hotels, element.selectedHotel)}</td>
                         <td>{index !== 0 ? (element.from) :
                           <EditableDatePicker
                             disabled={disabled}
