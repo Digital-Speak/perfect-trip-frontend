@@ -29,6 +29,8 @@ function HomeTable({
   setFlights,
   cities,
   className,
+  cityName,
+  setCityName,
   circuitDetails = [],
   disabled = false,
   isDetails = false
@@ -38,17 +40,19 @@ function HomeTable({
     text={regime}
     t={t}
     onTextChange={(data) => {
-      updateData(cityId, "regime", data)
+      updateData(cityId, "regime", data);
     }} />
 
-  const renderHotel = (cityId, hotels, slectedHotel) => {
+  const renderHotel = (cityId, hotels, slectedHotel, targetCityName = "") => {
     const newHotels = []
     hotels.forEach(hotel => {
       newHotels.push({
         label: hotel.hotelName
       })
     });
-
+    if (targetCityName == Object.keys(SameAreaCities["Area 1"])[0] || targetCityName == Object.keys(SameAreaCities["Area 1"])[1]) {
+      slectedHotel = SameAreaCities["Area 1"][cityName];
+    }
     return <EditableSelect
       data={newHotels}
       disabled={disabled}
@@ -93,10 +97,11 @@ function HomeTable({
     if (SameAreaCities["Area 1"][city] != undefined) {
       return <EditableSelect
         disabled={disabled}
-        data={[{ label: SameAreaCities["Area 1"][city] }, { label: SameAreaCities["Area 1"][city] }]}
+        data={[{ label: Object.keys(SameAreaCities["Area 1"])[0] }, Object.keys(SameAreaCities["Area 1"])[1]]}
         text={city}
         t={t}
         onTextChange={(data) => {
+          setCityName(data);
         }} />
     }
     return city
@@ -170,26 +175,6 @@ function HomeTable({
       } else {
         Object.keys(grouped).forEach((item, index) => {
           let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(circuitDetails[index].number_of_nights)));
-          console.log("====================================================================")
-          console.log(circuitDetails[index])
-          console.log("---------------------------------------------------------------------")
-          console.log({
-            id: circuitDetails[index].city_id,
-            city: circuitDetails[index].city,
-            hotels: grouped[item],
-            regimgeData: circuitDetails[index].regime,
-            regime: renderRegime(circuitDetails[index].city_id, circuitDetails[index].regime),
-            selectedHotel: circuitDetails[index].hotel,
-            fromForServer: startDate,
-            toForServer: endDate,
-            from: `${(new Date(startDate).getDate() < 10 ? "0" : "") + new Date(startDate).getDate()}
-                - 
-                  ${new Date(startDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`,
-            to:
-              `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
-                - 
-                ${new Date(endDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
-          })
           newData.push({
             id: circuitDetails[index].city_id,
             city: circuitDetails[index].city,
@@ -203,7 +188,7 @@ function HomeTable({
                 - 
                   ${new Date(startDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`,
             to:
-                `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
+              `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
                 - 
                 ${new Date(endDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
           })
@@ -239,7 +224,7 @@ function HomeTable({
                     {selectedCircuit !== "" && circuit?.length !== 0 && circuit?.map((element, index) => (
                       <tr>
                         <td>{renderCity(element.city)}</td>
-                        <td>{renderHotel(element?.hotels[0]?.cityId, element.hotels, element.selectedHotel)}</td>
+                        <td>{renderHotel(element?.hotels[0]?.cityId, element.hotels, element.selectedHotel, element.city)}</td>
                         <td>{index !== 0 ? (element.from) :
                           <EditableDatePicker
                             disabled={disabled}

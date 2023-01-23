@@ -29,6 +29,7 @@ import { addNewDossier, getOneDossier, removeDossier } from "../api/dossier";
 import { getCities } from "api/city";
 import moment from "moment/moment";
 import '../assets/css/views/folderDetails.css';
+import SameAreaCities from "../assets/SameAreaCities.json";
 
 function FolderDetails() {
   const { t } = useTranslation();
@@ -41,6 +42,7 @@ function FolderDetails() {
   const [circuit, setCircuit] = useState([]);
   const [circuitDetails, setCircuitDetails] = useState([]);
   const [newHotelToDb, setNewHotelToDb] = useState([]);
+  const [cityName, setCityName] = useState(Object.keys(SameAreaCities["Area 1"])[0])
   const [typeOfHb, setTypeOfHb] = useState([
     {
       label: "DBL",
@@ -506,6 +508,8 @@ function FolderDetails() {
                         className={`${targetFolder.deleted == true && 'deletedDossier'}`}
                         cities={cities}
                         flights={flights}
+                        cityName={cityName}
+                        setCityName={setCityName}
                         setFlights={setFlights}
                         hotels={hotels}
                         circuit={circuit}

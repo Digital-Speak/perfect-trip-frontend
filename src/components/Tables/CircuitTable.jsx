@@ -128,7 +128,6 @@ function CircuitTable() {
                   <label style={{ opacity: 0 }}>.</label>
                   <Button onClick={async () => {
                     try {
-                      console.log(newCircuit)
                       if (newCircuit.circuit_id != -1 && newCircuit.city_id != -1 && newCircuit.number_of_nights != 0 && newCircuit.number_of_nights != "") {
                         await handleAdd();
                         messageApi.open({

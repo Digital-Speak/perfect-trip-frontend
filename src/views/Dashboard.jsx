@@ -27,6 +27,7 @@ import { getAgencies } from "../api/agency";
 import { getlastId } from "../api/auth";
 import { addNewDossier } from "../api/dossier";
 import { getCities } from "api/city";
+import SameAreaCities from "../assets/SameAreaCities.json";
 import moment from "moment/moment";
 
 function Dashboard() {
@@ -39,6 +40,7 @@ function Dashboard() {
   const [hotels, setHotels] = useState([]);
   const [circuit, setCircuit] = useState([]);
   const [newHotelToDb, setNewHotelToDb] = useState([]);
+  const [cityName, setCityName] = useState(Object.keys(SameAreaCities["Area 1"])[0])
   const [typeOfHb, setTypeOfHb] = useState([
     {
       label: "DBL",
@@ -60,22 +62,22 @@ function Dashboard() {
       plus: 1,
       dispaly: 0,
       nbr: 0,
-    }]);  const [flights, setFlights] = useState({
-    from_to_start: "APT / HOTEL",
-    city_id_start: 0,
-    from_start: "AEROPORT CASABLANCA",
-    to_start: "ODYSSEE CENTER",
-    flight_start: "AT 410",
-    flight_time_start: "06:30",
-    from_to_end: "HOTEL / APT",
-    city_id_end: 0,
-    from_end: "PALM PLAZA",
-    to_end: "Aeroport Marrakech",
-    flight_end: "ZF 2850",
-    flight_time_end: "10:20",
-    flight_date_start: new Date(),
-    flight_date_end: new Date(),
-  });
+    }]); const [flights, setFlights] = useState({
+      from_to_start: "APT / HOTEL",
+      city_id_start: 0,
+      from_start: "AEROPORT CASABLANCA",
+      to_start: "ODYSSEE CENTER",
+      flight_start: "AT 410",
+      flight_time_start: "06:30",
+      from_to_end: "HOTEL / APT",
+      city_id_end: 0,
+      from_end: "PALM PLAZA",
+      to_end: "Aeroport Marrakech",
+      flight_end: "ZF 2850",
+      flight_time_end: "10:20",
+      flight_date_start: new Date(),
+      flight_date_end: new Date(),
+    });
   const [newClient, setNewClient] = useState({
     agency: {
       name: null,
@@ -213,14 +215,14 @@ function Dashboard() {
                   <CardTitle tag="h5">{t("New-Folder")}</CardTitle>
                 </CardHeader>
 
-                  <ReactHTMLTableToExcel
-                    id="test-table-xls-button"
-                    className="download-table-xls-button btn btn-success ml-auto"
-                    table="table-to-xls"
-                    filename={`dossier-number-${newClient?.folderNumber}`}
-                    sheet="tablexls"
-                    buttonText={<i className="fa fa-file-excel fa-3x"></i>}
-                  />
+                <ReactHTMLTableToExcel
+                  id="test-table-xls-button"
+                  className="download-table-xls-button btn btn-success ml-auto"
+                  table="table-to-xls"
+                  filename={`dossier-number-${newClient?.folderNumber}`}
+                  sheet="tablexls"
+                  buttonText={<i className="fa fa-file-excel fa-3x"></i>}
+                />
               </div>
               <CardBody>
                 <Form>
@@ -340,7 +342,7 @@ function Dashboard() {
                               const newDate = new Date(newValue.$d);
                               setFlights({
                                 ...flights,
-                                flight_date_start: newDate
+                                flight_date_start: String(newDate)
                               })
                               setNewClient({ ...newClient, startDate: newDate })
                             }}
@@ -408,6 +410,8 @@ function Dashboard() {
                         newClient={newClient}
                         selectedCircuit={newClient?.circuit}
                         t={t}
+                        cityName={cityName}
+                        setCityName={setCityName}
                         cities={cities}
                         flights={flights}
                         setFlights={setFlights}
@@ -434,9 +438,10 @@ function Dashboard() {
                                 dossier_num: newClient.folderNumber,
                                 hotel_id: hotels_dossier_item[0].hotelId,
                                 extra_nights: newClient.extraNights,
-                                from: item.fromForServer,
-                                to: item.toForServer,
-                                regime: item.regime.props.text
+                                from: String(item.fromForServer),
+                                to: String(item.toForServer),
+                                regime: item.regime.props.text,
+                                cityName: item.city
                               })
                             });
                             if (
@@ -452,20 +457,18 @@ function Dashboard() {
                               newClient?.nbrPax === null ||
                               hotels_dossier.length === null
                             ) {
-
                               return messageApi.open({
                                 type: 'error',
                                 content: t("Please fill all the inputs"),
                               });
                             }
-
                             const payload = await addNewDossier({
                               dossier_num: newClient.folderNumber,
                               ref_client: newClient.refClient,
                               name: newClient.fullName,
                               category: newClient.cat.id,
-                              starts_at: newClient.startDate,
-                              ends_at: newClient.endDate,
+                              starts_at: String(newClient.startDate),
+                              ends_at: String(newClient.endDate),
                               agency_id: newClient.agency.id,
                               circuit_id: newClient.circuit.id,
                               hotels_dossier: hotels_dossier,
@@ -473,7 +476,10 @@ function Dashboard() {
                               nbrPax: newClient?.nbrPax,
                               note: newClient.note,
                               extraData: newClient.extraData,
-                              ...flights
+                              ...flights,
+                              flight_date_start: String(flights.flight_date_start),
+                              flight_date_end: String(flights.flight_date_end),
+                              cityName: cityName,
                             });
 
                             if (payload?.success) {
@@ -512,7 +518,6 @@ function Dashboard() {
                         {t("Cancel")}
                       </Button>
                     </div>
-
                   </Row>
                 </Form>
               </CardBody>
