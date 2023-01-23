@@ -40,7 +40,7 @@ function Dashboard() {
   const [hotels, setHotels] = useState([]);
   const [circuit, setCircuit] = useState([]);
   const [newHotelToDb, setNewHotelToDb] = useState([]);
-  const [cityName, setCityName] = useState(Object.keys(SameAreaCities["Area 1"])[0])
+  const [cityName, setCityName] = useState(Object.keys(SameAreaCities["L"])[0])
   const [typeOfHb, setTypeOfHb] = useState([
     {
       label: "DBL",

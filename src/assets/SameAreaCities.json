@@ -1,5 +1,13 @@
 {
- "Area 1": {
+ "L": {
+  "ERFOUD": "PALAIS DU DESERT",
+  "MERZOUGA": "AUBERGE DU SUD"
+ },
+ "A": {
+  "ERFOUD": "BELERE",
+  "MERZOUGA": "AUBERGE DU SUD"
+ },
+ "B": {
   "ERFOUD": "KASBAH TIZIMI",
   "MERZOUGA": "AUBERGE DU SUD"
  }

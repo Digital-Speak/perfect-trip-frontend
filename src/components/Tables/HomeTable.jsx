@@ -44,14 +44,15 @@ function HomeTable({
     }} />
 
   const renderHotel = (cityId, hotels, slectedHotel, targetCityName = "") => {
+    
     const newHotels = []
     hotels.forEach(hotel => {
       newHotels.push({
         label: hotel.hotelName
       })
     });
-    if (targetCityName == Object.keys(SameAreaCities["Area 1"])[0] || targetCityName == Object.keys(SameAreaCities["Area 1"])[1]) {
-      slectedHotel = SameAreaCities["Area 1"][cityName];
+    if (targetCityName == Object.keys(SameAreaCities[newClient.cat.id])[0] || targetCityName == Object.keys(SameAreaCities[newClient.cat.id])[1]) {
+      slectedHotel = SameAreaCities[newClient.cat.id][cityName];
     }
     return <EditableSelect
       data={newHotels}
@@ -94,10 +95,10 @@ function HomeTable({
     return yyyy + '-' + mm + '-' + dd;
   }
   const renderCity = (city) => {
-    if (SameAreaCities["Area 1"][city] != undefined) {
+    if (SameAreaCities[newClient.cat.id][city] != undefined) {
       return <EditableSelect
         disabled={disabled}
-        data={[{ label: Object.keys(SameAreaCities["Area 1"])[0] }, Object.keys(SameAreaCities["Area 1"])[1]]}
+        data={[{ label: Object.keys(SameAreaCities[newClient.cat.id])[0] }, Object.keys(SameAreaCities[newClient.cat.id])[1]]}
         text={city}
         t={t}
         onTextChange={(data) => {
