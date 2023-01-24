@@ -89,7 +89,7 @@ function Dashboard() {
     },
     cat: {
       name: null,
-      id: null
+      id: "L"
     },
     nbrPax: 0,
     startDate: null,
@@ -163,7 +163,7 @@ function Dashboard() {
       },
       cat: {
         name: null,
-        id: null
+        id: "L"
       },
       nbrPax: 0,
       startDate: null,

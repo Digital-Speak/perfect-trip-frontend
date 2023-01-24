@@ -95,7 +95,7 @@ function HomeTable({
     return yyyy + '-' + mm + '-' + dd;
   }
   const renderCity = (city) => {
-    if (SameAreaCities[newClient.cat.id][city] != undefined) {
+    if (SameAreaCities[(newClient?.cat?.id != undefined ? newClient?.cat?.id : "L")][city] != undefined) {
       return <EditableSelect
         disabled={disabled}
         data={[{ label: Object.keys(SameAreaCities[newClient.cat.id])[0] }, Object.keys(SameAreaCities[newClient.cat.id])[1]]}
