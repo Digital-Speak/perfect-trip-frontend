@@ -90,6 +90,7 @@ const resources = {
    "admin": "administrateur",
    "new folder": "Nouveau Dossier",
    "filter": "Filtrer les dossiers",
+   "Do you want to recover this Folder": "Voulez-vous récupérer ce dossier?",
   }
  },
  es: {
@@ -116,6 +117,7 @@ const resources = {
    "Cancel": "Anular",
    "Period": "Período",
    "Folder-Number": "Archivo No.",
+   "Do you want to recover this Folder": "¿Quieres recuperar esta carpeta??",
    "Agency": "Agencia",
    "Client-Ref": "Cliente de referencia",
    "Select": "Seleccione...",

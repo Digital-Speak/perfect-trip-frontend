@@ -24,7 +24,6 @@ import HomeTable from "../components/Tables/HomeTable";
 import { useTranslation } from 'react-i18next';
 import { getCircuit, postData } from "../api/dashboard";
 import { getAgencies } from "../api/agency";
-import { getlastId } from "../api/auth";
 import { addNewDossier, getOneDossier, removeDossier } from "../api/dossier";
 import { getCities } from "api/city";
 import moment from "moment/moment";
@@ -42,7 +41,6 @@ function FolderDetails() {
   const [circuit, setCircuit] = useState([]);
   const [circuitDetails, setCircuitDetails] = useState([]);
   const [newHotelToDb, setNewHotelToDb] = useState([]);
-  const [cityName, setCityName] = useState(Object.keys(SameAreaCities["L"])[0])
   const [typeOfHb, setTypeOfHb] = useState([
     {
       label: "DBL",
@@ -194,7 +192,6 @@ function FolderDetails() {
     const payload = await getOneDossier({
       id: value
     });
-    console.log(payload)
     if (payload?.success) {
       if (payload?.data.length !== 0) {
         const nbrType = [];
@@ -219,7 +216,7 @@ function FolderDetails() {
         }
 
         setCircuitDetails(payload?.circuits);
-        
+
         setTargetFolder({
           refClient: payload?.data[0]?.client_ref,
           fullName: payload?.data[0]?.client_name,
@@ -264,6 +261,8 @@ function FolderDetails() {
       } else {
         clearInputs();
       }
+    } else {
+      clearInputs();
     }
   }
 
@@ -509,8 +508,6 @@ function FolderDetails() {
                         className={`${targetFolder.deleted == true && 'deletedDossier'}`}
                         cities={cities}
                         flights={flights}
-                        cityName={cityName}
-                        setCityName={setCityName}
                         setFlights={setFlights}
                         hotels={hotels}
                         circuit={circuit}

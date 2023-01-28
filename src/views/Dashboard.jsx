@@ -27,7 +27,6 @@ import { getAgencies } from "../api/agency";
 import { getlastId } from "../api/auth";
 import { addNewDossier } from "../api/dossier";
 import { getCities } from "api/city";
-import SameAreaCities from "../assets/SameAreaCities.json";
 import moment from "moment/moment";
 
 function Dashboard() {
@@ -40,7 +39,6 @@ function Dashboard() {
   const [hotels, setHotels] = useState([]);
   const [circuit, setCircuit] = useState([]);
   const [newHotelToDb, setNewHotelToDb] = useState([]);
-  const [cityName, setCityName] = useState(Object.keys(SameAreaCities["L"])[0])
   const [typeOfHb, setTypeOfHb] = useState([
     {
       label: "DBL",
@@ -410,8 +408,6 @@ function Dashboard() {
                         newClient={newClient}
                         selectedCircuit={newClient?.circuit}
                         t={t}
-                        cityName={cityName}
-                        setCityName={setCityName}
                         cities={cities}
                         flights={flights}
                         setFlights={setFlights}
@@ -479,7 +475,6 @@ function Dashboard() {
                               ...flights,
                               flight_date_start: String(flights.flight_date_start),
                               flight_date_end: String(flights.flight_date_end),
-                              cityName: cityName,
                             });
 
                             if (payload?.success) {

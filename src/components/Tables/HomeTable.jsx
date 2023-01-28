@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -13,7 +13,6 @@ import _ from "lodash"
 import EditableSelect from "../Inputs/EditableSelect";
 import EditableDatePicker from "../Inputs/EditableDatePicker";
 import CustomEditableSelect from "components/Inputs/CustomEditableSelect";
-import SameAreaCities from "../../assets/SameAreaCities.json";
 
 function HomeTable({
   t,
@@ -29,8 +28,6 @@ function HomeTable({
   setFlights,
   cities,
   className,
-  cityName,
-  setCityName,
   circuitDetails = [],
   disabled = false,
   isDetails = false
@@ -44,16 +41,13 @@ function HomeTable({
     }} />
 
   const renderHotel = (cityId, hotels, slectedHotel, targetCityName = "") => {
-    
+
     const newHotels = []
     hotels.forEach(hotel => {
       newHotels.push({
         label: hotel.hotelName
       })
     });
-    // if (targetCityName == Object.keys(SameAreaCities[newClient.cat.id])[0] || targetCityName == Object.keys(SameAreaCities[newClient.cat.id])[1]) {
-    //   slectedHotel = SameAreaCities[newClient.cat.id][cityName];
-    // }
     return <EditableSelect
       data={newHotels}
       disabled={disabled}
@@ -95,16 +89,6 @@ function HomeTable({
     return yyyy + '-' + mm + '-' + dd;
   }
   const renderCity = (city) => {
-    // if (SameAreaCities[(newClient?.cat?.id != undefined ? newClient?.cat?.id : "L")][city] != undefined) {
-    //   return <EditableSelect
-    //     disabled={disabled}
-    //     data={[{ label: Object.keys(SameAreaCities[newClient.cat.id])[0] }, Object.keys(SameAreaCities[newClient.cat.id])[1]]}
-    //     text={city}
-    //     t={t}
-    //     onTextChange={(data) => {
-    //       setCityName(data);
-    //     }} />
-    // }
     return city
   }
 
