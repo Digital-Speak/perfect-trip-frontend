@@ -10,7 +10,6 @@ import {
   Col
 } from "reactstrap";
 import ReactHTMLTableToExcel from 'html-to-excel-react';
-import _ from "lodash";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import DefaultModal from "../components/Modals/DefaultModal"
@@ -82,6 +81,8 @@ function Hotels() {
 
   const loadDossierData = async (filters) => {
     const payload = await getDossier(filters);
+    console.log(payload);
+    console.log(payload);
     if (!payload?.success) return false;
     setDataSource({ data: payload?.dossiers })
   }

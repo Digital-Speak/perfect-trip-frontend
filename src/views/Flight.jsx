@@ -29,114 +29,53 @@ function Flight() {
   const [filterState, setFilterState] = useState({
     type: 1,
     cityId: -1,
-    from: new Date(),
-    to: new Date()
+    from: moment(),
+    to: moment().add(1, "month")
   });
 
   const loadData = async () => {
     const payload = await getListFlights();
     const _cities = await getCities();
     setCities(_cities?.cities);
-    setList(payload?.flights)
-    setFilteredList(payload?.flights);
+    setList(payload?.flights);
     setFilterState({
       ...filterState,
-      from: new Date(new Date().setDate(new Date().getDate() - 1)),
-      to: new Date(new Date().setMonth(new Date().getMonth() + 1))
+      from: moment(),
+      to: moment().add(1, "month")
     })
+    filter();
   }
 
   const filter = () => {
     const filtered = [];
-    if (filterState.type == 1) {
-      list?.forEach((element, index) => {
-        if (filterState?.cityId == -1) {
-          if (filterState?.from === null && filterState?.to === null) {
-            filtered.push(element);
-          } else {
-            if (filterState?.from != null && filterState?.to === null) {
-              if (new Date(filterState?.from) <= new Date(element?.flight_date_start)) {
-                filtered.push(element)
-              }
-            } else if (filterState?.from == null && filterState?.to != null) {
-              if (new Date(filterState?.to) >= new Date(element?.flight_date_start)) {
-                filtered.push(element)
-              }
-            } else if (filterState?.from != null && filterState?.to != null) {
-              if ((new Date(filterState?.from) <= new Date(element?.flight_date_start)) && (new Date(filterState?.to) >= new Date(element?.flight_date_start))) {
-                filtered.push(element)
-              }
+    list?.forEach((flight, index) => {
+      if (parseInt(filterState.type) === 1) {
+        const start_date = flight.flight_date_start;
+        if (moment(start_date).isSameOrAfter(filterState.from, "day") && moment(start_date).isSameOrBefore(filterState.to, "day")) {
+          if (parseInt(filterState.cityId) !== -1) {
+            if (parseInt(flight.city_id_start) === parseInt(filterState.cityId)) {
+              filtered.push(flight);
             }
+          } else if (parseInt(filterState.cityId) === -1) {
+            filtered.push(flight);
           }
         }
-        if (element?.city_id_start == filterState?.cityId) {
-          if (filterState?.from == null && filterState?.to == null) {
-            filtered.push(element);
-          } else {
-            if (filterState?.from != null && filterState?.to == null) {
-              if (new Date(filterState?.from) <= new Date(element?.flight_date_start)) {
-                filtered.push(element)
-              }
-            } else if (filterState?.from == null && filterState?.to != null) {
-              if (new Date(filterState?.to) >= new Date(element?.flight_date_start)) {
-                filtered.push(element)
-              }
-            } else if (filterState?.from != null && filterState?.to !== null) {
-              if ((new Date(filterState?.from) <= new Date(element?.flight_date_start)) && (new Date(filterState?.to) >= new Date(element?.flight_date_start))) {
-                filtered.push(element)
-              }
+      } else {
+        const end_date = flight.flight_date_end;
+        if (moment(end_date).isSameOrAfter(filterState.from, "day") && moment(end_date).isSameOrBefore(filterState.to, "day")) {
+          if (parseInt(filterState.cityId) !== -1) {
+            if (parseInt(flight.city_id_end) === parseInt(filterState.cityId)) {
+              filtered.push(flight);
             }
+          } else if (parseInt(filterState.cityId) === -1) {
+            filtered.push(flight);
           }
         }
-        if (list?.length - 1 === index) {
-          setFilteredList(filtered);
-        }
-      });
-    } else {
-      list.forEach((element, index) => {
-        if (filterState?.cityId == -1) {
-          if (filterState?.from === null && filterState?.to === null) {
-            filtered.push(element);
-          } else {
-            if (filterState?.from !== null && filterState?.to === null) {
-              if (new Date(filterState?.from) <= new Date(element?.flight_date_end)) {
-                filtered.push(element)
-              }
-            } else if (filterState?.from === null && filterState?.to !== null) {
-              if (new Date(filterState?.to) >= new Date(element?.flight_date_end)) {
-                filtered.push(element)
-              }
-            } else if (filterState?.from !== null && filterState?.to !== null) {
-              if ((new Date(filterState?.from) <= new Date(element?.flight_date_end)) && (new Date(filterState?.to) >= new Date(element?.flight_date_end))) {
-                filtered.push(element)
-              }
-            }
-          }
-        }
-        if (element?.city_id_end === filterState?.cityId) {
-          if (filterState?.from === null && filterState?.to === null) {
-            filtered.push(element);
-          } else {
-            if (filterState?.from !== null && filterState?.to === null) {
-              if (new Date(filterState?.from) <= new Date(element?.flight_date_end)) {
-                filtered.push(element)
-              }
-            } else if (filterState?.from === null && filterState?.to !== null) {
-              if (new Date(filterState?.to) >= new Date(element?.flight_date_end)) {
-                filtered.push(element)
-              }
-            } else if (filterState?.from !== null && filterState?.to !== null) {
-              if ((new Date(filterState?.from) <= new Date(element?.flight_date_end)) && (new Date(filterState?.to) >= new Date(element?.flight_date_end))) {
-                filtered.push(element)
-              }
-            }
-          }
-        }
-        if (list.length - 1 === index) {
-          setFilteredList(filtered);
-        }
-      });
-    }
+      }
+      if (parseInt(index) === parseInt(list.length) - 1) {
+        setFilteredList([...filtered]);
+      }
+    })
   }
 
   const formatDate = (unformatted) => {
@@ -334,6 +273,7 @@ function Flight() {
           </Col>
         </Row>
       </div>
+      {/* Export in xsls format */}
       <table className='d-none' id="table-to-xls" style={{
         "border": "1px solid black"
       }}>
