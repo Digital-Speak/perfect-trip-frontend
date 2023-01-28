@@ -273,8 +273,8 @@ function Hotels() {
                               < td style={{ textAlign: "center" }}>{item.clientRef}</td>
                               <td style={{ textAlign: "center" }}>{item.client}</td>
                               <td style={{ textAlign: "center" }}>
-                                {item.nbrpaxforhbtype.map(({ typepax, nbr }, index) => (
-                                  <span style={{ "fontSize": "12px", }}>{index !== 0 ? '+' : ''} {nbr}{typepax}</span>
+                                {item.nbrpaxforhbtype.map(({ typepax, nbr }, index) => nbr != 0 && (
+                                  <span style={{ "fontSize": "12px", }}> {nbr}{typepax}</span>
                                 ))}
                               </td>
                               <td style={{ textAlign: "center" }}>{item.note}</td>
@@ -350,8 +350,8 @@ function Hotels() {
                   < td style={{ textAlign: "center" }} colSpan={2}>{item.clientRef}</td>
                   <td style={{ textAlign: "center" }} colSpan={2}>{item.client}</td>
                   <td style={{ textAlign: "center" }} colSpan={3}>
-                    {item.nbrpaxforhbtype.map(({ typepax, nbr }, index) => (
-                      <span style={{ "fontSize": "12px", }}>{index !== 0 ? '+' : ''} {nbr}{typepax}</span>
+                    {item.nbrpaxforhbtype.map(({ typepax, nbr }, index) => nbr != 0 && (
+                      <span style={{ "fontSize": "12px", }}> {nbr}{typepax}</span>
                     ))}
                   </td>
                   <td style={{ textAlign: "center" }} colSpan={3}>{item.note}</td>

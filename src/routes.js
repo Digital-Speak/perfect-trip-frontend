@@ -12,7 +12,7 @@ import Flight from "views/Flight";
 var routes = [
   {
     path: "/dashboard",
-    name: "Accueil",
+    name: "new folder",
     icon: "nc-icon nc-bank",
     component: Dashboard,
     layout: "/admin",
@@ -20,7 +20,7 @@ var routes = [
   },
   {
     path: "/details",
-    name: "Dossiers",
+    name: "filter",
     icon: "fa fa-envelope",
     component: FolderDetails,
     layout: "/admin",

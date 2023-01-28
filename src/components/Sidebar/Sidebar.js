@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Nav } from "reactstrap";
 import PerfectScrollbar from "perfect-scrollbar";
 import { useTranslation } from 'react-i18next';
-import logoBorder from '../../assets/img/login/logoWhite.png';
+import logoBorder from '../../assets/img/login/logoBorder.png';
 
 var ps;
 

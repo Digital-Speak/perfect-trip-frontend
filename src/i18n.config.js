@@ -88,11 +88,15 @@ const resources = {
    "sub-admins": "sub-admins",
    "add-sub-admin": "Ajouter-sub-admin",
    "admin": "administrateur",
+   "new folder": "Nouveau Dossier",
+   "filter": "Filtrer les dossiers",
   }
  },
  es: {
   translation: {
    "login": "ACCESO",
+   "new folder": "Nueva Carpeta",
+   "filter": "Filtrar carpetas",
    "Forgot my password?": "¿Olvidé mi contraseña?",
    "Forgot password?": "¿Se te olvidó tu contraseña?",
    "Forgot password text": "¿Has olvidado tu contraseña? No se preocupe. Introduzca la dirección de correo electrónico asociada a su cuenta y le enviaremos un enlace para restablecerla.",

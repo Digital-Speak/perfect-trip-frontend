@@ -51,9 +51,9 @@ function HomeTable({
         label: hotel.hotelName
       })
     });
-    if (targetCityName == Object.keys(SameAreaCities[newClient.cat.id])[0] || targetCityName == Object.keys(SameAreaCities[newClient.cat.id])[1]) {
-      slectedHotel = SameAreaCities[newClient.cat.id][cityName];
-    }
+    // if (targetCityName == Object.keys(SameAreaCities[newClient.cat.id])[0] || targetCityName == Object.keys(SameAreaCities[newClient.cat.id])[1]) {
+    //   slectedHotel = SameAreaCities[newClient.cat.id][cityName];
+    // }
     return <EditableSelect
       data={newHotels}
       disabled={disabled}
@@ -95,16 +95,16 @@ function HomeTable({
     return yyyy + '-' + mm + '-' + dd;
   }
   const renderCity = (city) => {
-    if (SameAreaCities[(newClient?.cat?.id != undefined ? newClient?.cat?.id : "L")][city] != undefined) {
-      return <EditableSelect
-        disabled={disabled}
-        data={[{ label: Object.keys(SameAreaCities[newClient.cat.id])[0] }, Object.keys(SameAreaCities[newClient.cat.id])[1]]}
-        text={city}
-        t={t}
-        onTextChange={(data) => {
-          setCityName(data);
-        }} />
-    }
+    // if (SameAreaCities[(newClient?.cat?.id != undefined ? newClient?.cat?.id : "L")][city] != undefined) {
+    //   return <EditableSelect
+    //     disabled={disabled}
+    //     data={[{ label: Object.keys(SameAreaCities[newClient.cat.id])[0] }, Object.keys(SameAreaCities[newClient.cat.id])[1]]}
+    //     text={city}
+    //     t={t}
+    //     onTextChange={(data) => {
+    //       setCityName(data);
+    //     }} />
+    // }
     return city
   }
 
@@ -175,7 +175,7 @@ function HomeTable({
         })
       } else {
         Object.keys(grouped).forEach((item, index) => {
-          let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(circuitDetails[index].number_of_nights)));
+          let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(circuitDetails[index]?.number_of_nights)));
           newData.push({
             id: circuitDetails[index].city_id,
             city: circuitDetails[index].city,

@@ -194,6 +194,7 @@ function FolderDetails() {
     const payload = await getOneDossier({
       id: value
     });
+    console.log(payload)
     if (payload?.success) {
       if (payload?.data.length !== 0) {
         const nbrType = [];
