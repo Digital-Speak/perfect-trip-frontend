@@ -4,7 +4,6 @@ import AdminProfileCard from "components/cards/AdminProfileCard";
 import { checkAuth } from "api/auth";
 import HistoryTable from "components/Tables/HistoryTable";
 
-
 function Settings() {
   const [sector, setSector] = useState("profile");
   const [isadmin, setIsAdmin] = useState(false);

@@ -1,35 +1,26 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  FormGroup,
-  Form,
-  Input,
-  Row,
-  Col
-} from "reactstrap";
-import ReactHTMLTableToExcel from 'html-to-excel-react';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { message } from 'antd';
-import cats from "../assets/data/cats.json";
-import PaxNumber from "../components/Tables/Pax-Number";
-import HomeTable from "../components/Tables/HomeTable";
+import { Button, Card, CardHeader, CardBody, CardTitle, FormGroup, Form, Input, Row, Col } from "reactstrap";
 import { useTranslation } from 'react-i18next';
 import { getCircuit, postData } from "../api/dashboard";
 import { getAgencies } from "../api/agency";
 import { getlastId } from "../api/auth";
 import { addNewDossier } from "../api/dossier";
 import { getCities } from "api/city";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { message } from 'antd';
+import Autocomplete from '@mui/material/Autocomplete';
+import cats from "../assets/data/cats.json";
+import ReactHTMLTableToExcel from 'html-to-excel-react';
+import PaxNumber from "../components/Tables/Pax-Number";
+import SelectedCircuit from "../components/Tables/SelectedCircuit";
+import SpecialCircuit from "../components/Tables/SpecialCircuit";
+import TextField from '@mui/material/TextField';
+
 import moment from "moment/moment";
 
-function Dashboard() {
+function AddNewFolder() {
   const { t } = useTranslation();
   const [circuitsServerData, setCircuitsServerData] = useState([]);
   const [agencesServerData, setAgencesServerData] = useState([]);
@@ -38,7 +29,9 @@ function Dashboard() {
   const [cities, setCities] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [circuit, setCircuit] = useState([]);
+  const [specialCircuitsData, setSpecialCircuitsData] = useState([]);
   const [newHotelToDb, setNewHotelToDb] = useState([]);
+  const [messageApi, contextHolder] = message.useMessage();
   const [typeOfHb, setTypeOfHb] = useState([
     {
       label: "DBL",
@@ -60,22 +53,23 @@ function Dashboard() {
       plus: 1,
       dispaly: 0,
       nbr: 0,
-    }]); const [flights, setFlights] = useState({
-      from_to_start: "APT / HOTEL",
-      city_id_start: 0,
-      from_start: "AEROPORT CASABLANCA",
-      to_start: "ODYSSEE CENTER",
-      flight_start: "AT 410",
-      flight_time_start: "06:30",
-      from_to_end: "HOTEL / APT",
-      city_id_end: 0,
-      from_end: "PALM PLAZA",
-      to_end: "Aeroport Marrakech",
-      flight_end: "ZF 2850",
-      flight_time_end: "10:20",
-      flight_date_start: new Date(),
-      flight_date_end: new Date(),
-    });
+    }]);
+  const [flights, setFlights] = useState({
+    from_to_start: "APT / HOTEL",
+    city_id_start: 0,
+    from_start: "AEROPORT CASABLANCA",
+    to_start: "ODYSSEE CENTER",
+    flight_start: "AT 410",
+    flight_time_start: "06:30",
+    from_to_end: "HOTEL / APT",
+    city_id_end: 0,
+    from_end: "PALM PLAZA",
+    to_end: "Aeroport Marrakech",
+    flight_end: "ZF 2850",
+    flight_time_end: "10:20",
+    flight_date_start: new Date(),
+    flight_date_end: new Date(),
+  });
   const [newClient, setNewClient] = useState({
     agency: {
       name: null,
@@ -95,7 +89,19 @@ function Dashboard() {
     extraNights: 0,
     extraData: []
   });
-  const [messageApi, contextHolder] = message.useMessage();
+
+  const fetchHotels = async (circ, cat) => {
+    const payload = await postData("hotel/circuit_city_hotels", "POST", {
+      id: circ,
+      cat: cat
+    });
+
+    if (!payload.success) return setHotels([]);
+    if (payload.success) {
+      setHotels([]);
+      setHotels(payload.hotels);
+    };
+  }
 
   const loadData = async () => {
     // Get the folder Num:
@@ -132,7 +138,7 @@ function Dashboard() {
     ))
   }
 
-  const nombreHAB = () => {
+  const HabNumber = () => {
     let text = "";
     typeOfHb?.forEach((hab, index) => {
       if (hab?.dispaly !== 0) {
@@ -145,7 +151,6 @@ function Dashboard() {
   }
 
   const clearInputs = async () => {
-    // Get the folder Num:
     const folderNumber = await getlastId();
     setNewClient({
       folderNumber: folderNumber?.success ? folderNumber?.dossier_num : "ERROR",
@@ -173,32 +178,22 @@ function Dashboard() {
     });
   }
 
-  const fetchHotels = async (circ, cat) => {
-    const payload = await postData("hotel/circuit_city_hotels", "POST", {
-      id: circ,
-      cat: cat
-    });
-
-    if (!payload.success) return;
-    setHotels([]);
-
-    setHotels(payload.hotels);
-  }
-
   useEffect(() => {
     if (circuit.length === 0) loadData();
   }, []);
 
   useEffect(() => {
-    if (newClient?.circuit !== "" && newClient?.cat !== "") {
+    if (parseInt(newClient?.circuit?.id) !== -99 && newClient?.circuit !== "" && newClient?.cat !== "") {
       fetchHotels(newClient?.circuit?.id, newClient?.cat?.id);
     }
   }, [newClient?.circuit, newClient?.cat]);
 
   useEffect(() => {
-    let totalNbrPax = 0;
-    typeOfHb.forEach((item) => totalNbrPax = totalNbrPax + item.nbr);
-    setNewClient({ ...newClient, nbrPax: totalNbrPax, typeOfHb: typeOfHb })
+    if (parseInt(typeOfHb.length) !== 0) {
+      let totalNbrPax = 0;
+      typeOfHb.forEach((item) => totalNbrPax = totalNbrPax + item.nbr);
+      setNewClient({ ...newClient, nbrPax: totalNbrPax, typeOfHb: typeOfHb })
+    }
   }, [typeOfHb]);
 
   return (
@@ -212,7 +207,6 @@ function Dashboard() {
                 <CardHeader>
                   <CardTitle tag="h5">{t("New-Folder")}</CardTitle>
                 </CardHeader>
-
                 <ReactHTMLTableToExcel
                   id="test-table-xls-button"
                   className="download-table-xls-button btn btn-success ml-auto"
@@ -279,14 +273,20 @@ function Dashboard() {
                         <Autocomplete
                           disablePortal
                           id="circuit"
-                          options={circuits}
+                          options={[{
+                            label: t("Special Circuit")
+                          }, ...circuits]}
                           sx={{ width: "auto" }}
-                          value={newClient?.circuit?.name}
+                          value={t(newClient?.circuit?.name)}
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={async (event, newInputValue) => {
-                            const circuitId = circuitsServerData.filter((item) => item.name === newInputValue);
-                            if (circuitId.length !== 0)
-                              setNewClient({ ...newClient, circuit: { name: newInputValue, id: circuitId[0].id } });
+                            if (newInputValue === t("Special Circuit")) {
+                              setNewClient({ ...newClient, circuit: { name: "Special Circuit", id: -99 } })
+                            } else {
+                              const circuitId = circuitsServerData.filter((item) => item.name === newInputValue);
+                              if (circuitId.length !== 0)
+                                setNewClient({ ...newClient, circuit: { name: newInputValue, id: circuitId[0].id } });
+                            }
                           }}
                         />
                       </FormGroup>
@@ -402,22 +402,37 @@ function Dashboard() {
                   </Row>
                   <Row>
                     <Col md="12">
-                      <HomeTable
-                        circuitDates={{ start: newClient?.startDate, end: newClient?.endDate }}
-                        setNewClient={setNewClient}
-                        newClient={newClient}
-                        selectedCircuit={newClient?.circuit}
-                        t={t}
-                        cities={cities}
-                        flights={flights}
-                        setFlights={setFlights}
-                        hotels={hotels}
-                        circuit={circuit}
-                        setCircuit={setCircuit}
-                        addNewHotel={(newHotel, cityId) => {
-                          setNewHotelToDb([...newHotelToDb, { newHotel }])
-                        }}
-                      />
+                      {parseInt(newClient.circuit.id) !== -99 ?
+                        <SelectedCircuit
+                          circuitDates={{ start: newClient?.startDate, end: newClient?.endDate }}
+                          setNewClient={setNewClient}
+                          newClient={newClient}
+                          selectedCircuit={newClient?.circuit}
+                          t={t}
+                          cities={cities}
+                          flights={flights}
+                          setFlights={setFlights}
+                          hotels={hotels}
+                          circuit={circuit}
+                          setCircuit={setCircuit}
+                          addNewHotel={(newHotel, cityId) => {
+                            setNewHotelToDb([...newHotelToDb, { newHotel }])
+                          }}
+                        />
+                        : <SpecialCircuit
+                          t={t}
+                          cities={cities}
+                          circuitDates={{ start: newClient?.startDate, end: newClient?.endDate }}
+                          circuit={circuit}
+                          setCircuit={setCircuit}
+                          flights={flights}
+                          hotels={hotels}
+                          newClient={newClient}
+                          setFlights={setFlights}
+                          setNewClient={setNewClient}
+                          specialCircuitsData={specialCircuitsData}
+                          setSpecialCircuitsData={setSpecialCircuitsData}
+                        />}
                     </Col>
                   </Row>
                   <Row>
@@ -538,7 +553,7 @@ function Dashboard() {
 
             <tr><th></th><th style={styles.td} colSpan={3} >NOMBRE</th><th style={styles.td} >HAB</th><th style={styles.td} >PAX</th><th style={styles.td} colSpan={2} >TOUR</th><th style={styles.td} colSpan={2} >DATE</th></tr>
             <tr><th></th><td style={styles.td} colSpan={3} >
-              {nombreHAB()}
+              {HabNumber()}
             </td>
               <td style={styles.td} >
                 {
@@ -596,4 +611,4 @@ const styles = {
     height: '40px',
   }
 }
-export default Dashboard;
+export default AddNewFolder;

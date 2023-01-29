@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 
-function EditableSelect({ t, text, data = [], onTextChange, disabled = false }) {
-  const [editMode, setEditMode] = useState(false);
+function EditableSelect({ t, text, data = [], onTextChange, editModeVal = false, disabled = false }) {
+  const [editMode, setEditMode] = useState(editModeVal);
   const [inputValue, setInputValue] = useState(text);
 
   useEffect(() => {
-    setInputValue(text)
+    setInputValue(text);
   }, [text])
-
 
   return (
     <span style={{ "cursor": "pointer" }}>

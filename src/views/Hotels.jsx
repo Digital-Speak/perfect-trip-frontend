@@ -12,7 +12,6 @@ import {
 import ReactHTMLTableToExcel from 'html-to-excel-react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import DefaultModal from "../components/Modals/DefaultModal"
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -25,9 +24,6 @@ import moment from "moment/moment";
 function Hotels() {
   const { t } = useTranslation();
   const [dataSource, setDataSource] = useState({ keys: [], data: [] });
-  const [selectedDossier, setSelectedDossier] = useState(-1);
-  const [openEditModal, setOpenEditModal] = useState(false);
-
   const [dates, setDates] = useState({
     start: new Date(),
     end: new Date().setMonth(new Date().getMonth() + 1),
@@ -289,11 +285,6 @@ function Hotels() {
             </Card>
           </Col>
         </Row>
-        {selectedDossier !== -1 && (<DefaultModal t={t}
-          modalIsOpen={openEditModal}
-          setIsOpen={setOpenEditModal}
-          setSelectedDossier={setSelectedDossier}
-          selectedDossier={selectedDossier} />)}
         <table className='d-none' id="table-to-xls" style={{
           "border": "1px solid black"
         }}>

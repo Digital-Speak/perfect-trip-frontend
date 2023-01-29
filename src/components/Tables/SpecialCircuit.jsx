@@ -1,0 +1,384 @@
+import React, { useEffect } from "react";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardTitle,
+  Table,
+  Row,
+  Button,
+  Col
+} from "reactstrap";
+import EditableInput from "../Inputs/EditableInput"
+import CustomEditableSelect from "components/Inputs/CustomEditableSelect";
+import Autocomplete from '@mui/material/Autocomplete';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import TextField from '@mui/material/TextField';
+import { useState } from "react";
+import { getHotels } from "api/hotel";
+import moment from "moment";
+
+function SelectedCircuit({
+  t,
+  cities,
+  circuitDates,
+  flights,
+  newClient,
+  specialCircuitsData,
+  setNewClient,
+  setSpecialCircuitsData,
+  setFlights,
+  className,
+}) {
+  const [hotels, setHotels] = useState([]);
+  const [newCircuitRow, setNewCircuitRow] = useState({
+    id: -1,
+    city: {
+      name: "",
+      id: -1
+    },
+    hotel: {
+      name: "",
+      id: -1
+    },
+    regime: {
+      name: "",
+    },
+    startedAt: new Date(),
+    endedAt: new Date()
+  })
+
+  const renderCities = () => {
+    const data = []
+    cities.forEach(city => {
+      data.push({
+        label: city.name
+      })
+    });
+    return <Autocomplete
+      freeSolo
+      id="cities"
+      options={data}
+      sx={{ width: "auto" }}
+      value={newCircuitRow.city.name}
+      inputValue={newCircuitRow.city.name}
+      renderInput={(params) =>
+        <TextField
+          fullWidth
+          {...params}
+          InputProps={{
+            ...params.InputProps,
+            type: 'search',
+          }} />}
+      onInputChange={async (event, newInputValue) => {
+        const targetCity = cities.filter((city => city.name === newInputValue));
+        if (parseInt(targetCity.length) !== 0) {
+          const payload = await getHotels();
+          if (!payload.success) return setHotels([]);
+          if (payload.success) {
+            setHotels([]);
+            setHotels(payload?.hotels?.filter((hotel) =>
+              hotel?.stars?.split("")[1] === newClient?.cat?.id && parseInt(hotel?.city_id) === parseInt(targetCity[0]?.id)
+            ));
+          };
+          setNewCircuitRow({
+            ...newCircuitRow, city: {
+              id: targetCity[0]?.id,
+              name: targetCity[0]?.name
+            }
+          })
+        }
+      }}
+    />
+  }
+
+  const renderHotels = (editModeVal = false) => {
+    const data = []
+    hotels.forEach(hotel => {
+      data.push({
+        label: hotel.name
+      })
+    });
+    return <Autocomplete
+      freeSolo
+      id="hotels"
+      options={data}
+      sx={{ width: "auto" }}
+      inputValue={newCircuitRow.hotel.name}
+      value={newCircuitRow.hotel.name}
+      renderInput={(params) =>
+        <TextField
+          fullWidth
+          {...params}
+          InputProps={{
+            ...params.InputProps,
+            type: 'search',
+          }} />}
+      onInputChange={(event, newInputValue) => {
+        const targetHotel = hotels.filter((hotel => hotel.name === newInputValue));
+        setNewCircuitRow({
+          ...newCircuitRow, hotel: {
+            id: targetHotel[0]?.id,
+            name: targetHotel[0]?.name
+          }
+        })
+      }}
+    />
+  }
+
+  const renderRegimes = (editModeVal = false) =>
+    <Autocomplete
+      freeSolo
+      id="regimes"
+      options={[{ label: "PC" }, { label: "DP" }, { label: "BB" }]}
+      sx={{ width: "auto" }}
+      inputValue={newCircuitRow.regime.name}
+      value={newCircuitRow.regime.name}
+      renderInput={(params) =>
+        <TextField
+          fullWidth
+          {...params}
+          InputProps={{
+            ...params.InputProps,
+            type: 'search',
+          }} />}
+      onInputChange={(event, newInputValue) => {
+        console.log(newInputValue);
+        setNewCircuitRow({
+          ...newCircuitRow, regime: {
+            name: newInputValue
+          }
+        })
+      }} />
+
+  const formatDate = (unformatted) => {
+    const date = new Date(unformatted);
+    const yyyy = date.getFullYear();
+    let mm = date.getMonth() + 1;
+    let dd = date.getDate();
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+
+    return yyyy + '-' + mm + '-' + dd;
+  }
+  return (
+    <>
+      <div className={`content`}>
+        <Row>
+          <Col md="12">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4">{t("Hotels")}</CardTitle>
+              </CardHeader>
+              <CardBody className={` ${className}`}>
+                <Table className={` ${className}`} responsive>
+                  <thead className="text-primary">
+                    <tr>
+                      <th style={{ width: "20%" }}>{t("City")}</th>
+                      <th style={{ width: "20%" }}>{t("Hotel")}</th>
+                      <th style={{ width: "20%" }}>{t("From")}</th>
+                      <th style={{ width: "20%" }}>{t("To")}</th>
+                      <th style={{ width: "20%" }}>{t("Regime")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style={{ width: "20%" }}>{renderCities(true)}</td>
+                      <td style={{ width: "20%" }}>{renderHotels(true)}</td>
+                      <td style={{ width: "20%" }}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            inputFormat={"DD/MM/YYYY"}
+                            value={newCircuitRow.startedAt}
+                            onChange={(newValue) => {
+                              const newDate = new Date(newValue.$d);
+                              console.log(newDate);
+                              setNewCircuitRow({
+                                ...newCircuitRow,
+                                startedAt: newDate
+                              })
+                            }}
+                            renderInput={(params) => <TextField style={{ "width": "100%" }} {...params} />}
+                          />
+                        </LocalizationProvider>
+                      </td>
+                      <td style={{ width: "20%" }}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            inputFormat={"DD/MM/YYYY"}
+                            value={newCircuitRow.endedAt}
+                            onChange={(newValue) => {
+                              const newDate = new Date(newValue.$d);
+                              console.log(newDate);
+                              setNewCircuitRow({
+                                ...newCircuitRow,
+                                endedAt: newDate
+                              })
+                            }}
+                            renderInput={(params) => <TextField style={{ "width": "100%" }} {...params} />}
+                          />
+                        </LocalizationProvider>
+                      </td >
+                      <td style={{ width: "20%" }}>{renderRegimes(true)}</td>
+                      <td style={{ width: "20%" }}><Button onClick={() => {
+                        setSpecialCircuitsData([...specialCircuitsData, { ...newCircuitRow, id: specialCircuitsData.length + 1 }])
+                      }} className="btn btn-success">{t("+")}</Button></td>
+                    </tr>
+                    {console.log(specialCircuitsData)}
+                    {parseInt(specialCircuitsData.length) !== 0 && specialCircuitsData?.map(element =>
+                      <tr>
+                        <td style={{ width: "20%" }}>{element.city.name}</td>
+                        <td style={{ width: "20%" }}>{element.hotel.name}</td>
+                        <td style={{ width: "20%" }}>{moment(element.startedAt).format("D / M / Y")}</td>
+                        <td style={{ width: "20%" }}>{moment(element.endedAt).format("D / M / Y")}</td>
+                        <td style={{ width: "20%" }}>{element.regime.name}</td>
+                        <td style={{ width: "20%" }}><Button onClick={() => {
+                          console.log([...specialCircuitsData?.filter((row) => parseInt(row.id) === parseInt(element.id))])
+                          setSpecialCircuitsData([...specialCircuitsData?.filter((row) => parseInt(row.id) !== parseInt(element.id))])
+                        }} className="btn btn-danger">{t("-")}</Button></td>
+                      </tr>
+                    )}
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col md="12">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4">{t("Flights")}</CardTitle>
+              </CardHeader>
+              <CardBody className={` ${className}`}>
+                <Table className={` ${className}`} responsive>
+                  <thead className="text-primary">
+                    <tr>
+                      <th>{t("From-time")} / {t("To-time")}</th>
+                      <th>{t("Date")}</th>
+                      <th>{t("City")}</th>
+                      <th>{t("From")}</th>
+                      <th>{t("To")}</th>
+                      <th>{t("Flight")}</th>
+                      <th>{t("Time")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <EditableInput
+                          text={flights?.from_to_start}
+                          onTextChange={(newText) => {
+                            setFlights({ ...flights, from_to_start: newText })
+                          }} /></td>
+                      <td>
+                        <input
+
+                          className="border-0"
+                          type="date"
+                          value={formatDate(flights?.flight_date_start) || formatDate(newClient?.startDate)} onChange={(e) => {
+                            setFlights({
+                              ...flights,
+                              flight_date_start: e.target.value
+                            })
+                          }} />
+                      </td>
+                      <td>
+                        {cities?.length !== 0 && <CustomEditableSelect
+                          data={cities?.length !== 0 ? cities : []}
+                          text={cities[0]?.name}
+                          id={flights.city_id_start}
+                          cb={(name, id) => {
+                            setFlights({ ...flights, city_id_start: id })
+                          }}
+                        />}</td>
+                      <td><EditableInput
+                        text={flights?.from_start}
+                        onTextChange={(newText) => {
+                          setFlights({ ...flights, from_start: newText })
+                        }} /></td>
+                      <td><EditableInput
+                        text={flights?.to_start}
+                        onTextChange={(newText) => {
+                          setFlights({ ...flights, to_start: newText })
+                        }} /></td>
+                      <td><EditableInput
+                        text={flights?.flight_start}
+                        onTextChange={(newText) => {
+                          setFlights({ ...flights, flight_start: newText })
+                        }} /></td>
+                      <td><input
+                        className="border-0"
+                        type="time"
+                        width="276"
+                        value={flights?.flight_time_start}
+                        onChange={(e) => {
+                          setFlights({ ...flights, flight_time_start: e.target.value })
+                        }}
+                      /></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <EditableInput
+
+                          text={flights?.from_to_end}
+                          onTextChange={(newText) => {
+                            setFlights({ ...flights, from_to_end: newText })
+                          }} /></td>
+                      <td>
+                        <input
+                          className="border-0"
+                          type="date"
+
+                          value={formatDate(flights?.flight_date_end) || formatDate(newClient?.endDate)}
+                          onChange={(e) => {
+                            setFlights({
+                              ...flights,
+                              flight_date_end: e.target.value
+                            })
+                          }} />
+                      </td>
+                      <td>{cities.length !== 0 && <CustomEditableSelect
+                        data={cities?.length !== 0 ? cities : []}
+                        text={cities[0]?.name}
+                        id={flights?.city_id_end}
+                        cb={(name, id) => {
+                          setFlights({ ...flights, city_id_end: id })
+                        }}
+                      />}</td>
+                      <td><EditableInput
+                        text={flights.from_end}
+                        onTextChange={(newText) => {
+                          setFlights({ ...flights, from_end: newText })
+                        }} /></td>
+                      <td><EditableInput
+                        text={flights.to_end}
+                        onTextChange={(newText) => {
+                          setFlights({ ...flights, to_end: newText })
+                        }} /></td>
+                      <td><EditableInput
+                        text={flights.flight_end}
+                        onTextChange={(newText) => {
+                          setFlights({ ...flights, flight_end: newText })
+                        }} /></td>
+                      <td><input
+                        className="border-0"
+                        type="time"
+                        width="276"
+                        value={flights?.flight_time_end}
+                        onChange={(e) => {
+                          setFlights({ ...flights, flight_time_end: e.target.value })
+                        }} /></td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+    </>
+  );
+}
+
+export default SelectedCircuit;

@@ -14,7 +14,7 @@ import EditableSelect from "../Inputs/EditableSelect";
 import EditableDatePicker from "../Inputs/EditableDatePicker";
 import CustomEditableSelect from "components/Inputs/CustomEditableSelect";
 
-function HomeTable({
+function SelectedCircuit({
   t,
   selectedCircuit,
   setNewClient,
@@ -372,4 +372,4 @@ function HomeTable({
   );
 }
 
-export default HomeTable;
+export default SelectedCircuit;

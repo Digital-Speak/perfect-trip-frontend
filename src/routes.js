@@ -1,20 +1,19 @@
-import Dashboard from "views/Dashboard";
-import FolderDetails from "views/FolderDetails";
-import Login from "views/Login";
+import AddNewFolder from "views/AddNewFolder";
 import Config from "views/Config";
-import Settings from "views/Settings";
-import Hotels from "views/Hotels";
-import Folders from "views/Folders";
+import FolderDetails from "views/FolderDetails";
 import ForgotPassword from "views/password/Forgot";
-import SetNewPassword from "views/password/SetNew";
 import Flight from "views/Flight";
+import Hotels from "views/Hotels";
+import Login from "views/Login";
+import Settings from "views/Settings";
+import SetNewPassword from "views/password/SetNew";
 
 var routes = [
   {
-    path: "/dashboard",
+    path: "/newfolder",
     name: "new folder",
     icon: "nc-icon nc-bank",
-    component: Dashboard,
+    component: AddNewFolder,
     layout: "/admin",
     show: true,
   },
@@ -26,14 +25,6 @@ var routes = [
     layout: "/admin",
     show: true,
   },
-  // {
-  //   path: "/folders",
-  //   name: "Folders",
-  //   icon: "fa fa-envelope",
-  //   component: Folders,
-  //   layout: "/admin",
-  //   show: true,
-  // },
   {
     path: "/flights",
     name: "Flights",

@@ -91,6 +91,7 @@ const resources = {
    "new folder": "Nouveau Dossier",
    "filter": "Filtrer les dossiers",
    "Do you want to recover this Folder": "Voulez-vous récupérer ce dossier?",
+   "Special Circuit": "Circuit spécial",
   }
  },
  es: {
@@ -180,6 +181,7 @@ const resources = {
    "sub-admins": "sub_administradors",
    "admin": "administrador",
    "add-sub-admin": "agregar-sub-administrador",
+   "Special Circuit": "Circuito Especial",
   }
  }
 };

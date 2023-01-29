@@ -1,34 +1,23 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  FormGroup,
-  Form,
-  Input,
-  Row,
-  Col
-} from "reactstrap";
-import ReactHTMLTableToExcel from 'html-to-excel-react';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { message } from 'antd';
-import cats from "../assets/data/cats.json";
-import PaxNumber from "../components/Tables/Pax-Number";
-import HomeTable from "../components/Tables/HomeTable";
+import { Button, Card, CardHeader, CardBody, CardTitle, FormGroup, Form, Input, Row, Col } from "reactstrap";
 import { useTranslation } from 'react-i18next';
 import { getCircuit, postData } from "../api/dashboard";
 import { getAgencies } from "../api/agency";
 import { addNewDossier, getOneDossier, removeDossier } from "../api/dossier";
 import { getCities } from "api/city";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { message } from 'antd';
+import Autocomplete from '@mui/material/Autocomplete';
+import cats from "../assets/data/cats.json";
+import ReactHTMLTableToExcel from 'html-to-excel-react';
+import PaxNumber from "../components/Tables/Pax-Number";
 import moment from "moment/moment";
+import SelectedCircuit from "../components/Tables/SelectedCircuit";
+import TextField from '@mui/material/TextField';
 import '../assets/css/views/folderDetails.css';
-import SameAreaCities from "../assets/SameAreaCities.json";
+
 
 function FolderDetails() {
   const { t } = useTranslation();
@@ -498,7 +487,7 @@ function FolderDetails() {
                   </Row>
                   <Row>
                     <Col md="12">
-                      <HomeTable
+                      <SelectedCircuit
                         disabled={!isInEditeMode}
                         circuitDates={{ start: targetFolder?.startDate, end: targetFolder?.endDate }}
                         setNewClient={setTargetFolder}
