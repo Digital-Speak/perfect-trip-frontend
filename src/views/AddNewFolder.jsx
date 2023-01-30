@@ -271,17 +271,16 @@ function AddNewFolder() {
                       <FormGroup>
                         <label>{t("Circuit")}</label>
                         <Autocomplete
-                          disablePortal
+                          freeSolo
                           id="circuit"
-                          options={[{
-                            label: t("Special Circuit")
-                          }, ...circuits]}
+                          options={circuits}
                           sx={{ width: "auto" }}
                           value={t(newClient?.circuit?.name)}
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={async (event, newInputValue) => {
-                            if (newInputValue === t("Special Circuit")) {
-                              setNewClient({ ...newClient, circuit: { name: "Special Circuit", id: -99 } })
+                            const existCircuit = circuits?.filter((circ) => circ.label === newInputValue);
+                            if (parseInt(existCircuit.length) === 0) {
+                              setNewClient({ ...newClient, circuit: { name: newInputValue, id: -99 } })
                             } else {
                               const circuitId = circuitsServerData.filter((item) => item.name === newInputValue);
                               if (circuitId.length !== 0)
@@ -442,19 +441,30 @@ function AddNewFolder() {
                         color="primary"
                         onClick={async () => {
                           try {
+                            console.log(newClient.circuit.id)
+                            console.log(circuit)
+                            console.log(parseInt(newClient.circuit.id) !== -99)
                             const hotels_dossier = [];
-                            circuit.forEach((item) => {
-                              const hotels_dossier_item = hotels.filter((hotel) => hotel.cityName === item.city && hotel.hotelName == item.selectedHotel);
-                              hotels_dossier.push({
-                                dossier_num: newClient.folderNumber,
-                                hotel_id: hotels_dossier_item[0].hotelId,
-                                extra_nights: newClient.extraNights,
-                                from: String(item.fromForServer),
-                                to: String(item.toForServer),
-                                regime: item.regime.props.text,
-                                cityName: item.city
+                            if (parseInt(newClient.circuit.id) !== -99) {
+                              circuit.forEach((item) => {
+                                const hotels_dossier_item = hotels.filter((hotel) => hotel.cityName === item.city && hotel.hotelName == item.selectedHotel);
+                                hotels_dossier.push({
+                                  dossier_num: newClient.folderNumber,
+                                  hotel_id: hotels_dossier_item[0].hotelId,
+                                  extra_nights: newClient.extraNights,
+                                  from: String(item.fromForServer),
+                                  to: String(item.toForServer),
+                                  regime: item.regime.props.text,
+                                  cityName: item.city
+                                })
+                              });
+                            } else if (parseInt(newClient.circuit.id) === -99) {
+                              specialCircuitsData.forEach(item => {
+                                console.log(item)
+                                hotels_dossier.push(item);
                               })
-                            });
+                            }
+
                             if (
                               newClient?.folderNumber === "ERROR" ||
                               newClient?.refClient === null ||
@@ -482,6 +492,7 @@ function AddNewFolder() {
                               ends_at: String(newClient.endDate),
                               agency_id: newClient.agency.id,
                               circuit_id: newClient.circuit.id,
+                              circuit_name: newClient.circuit.name,
                               hotels_dossier: hotels_dossier,
                               typeOfHb: newClient.typeOfHb,
                               nbrPax: newClient?.nbrPax,

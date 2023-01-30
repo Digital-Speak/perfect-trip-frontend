@@ -19,6 +19,7 @@ import TextField from '@mui/material/TextField';
 import { useState } from "react";
 import { getHotels } from "api/hotel";
 import moment from "moment";
+import { message } from "antd";
 
 function SelectedCircuit({
   t,
@@ -49,6 +50,28 @@ function SelectedCircuit({
     startedAt: new Date(),
     endedAt: new Date()
   })
+
+  useEffect(() => {
+    if (newClient?.startDate == null) return;
+    if (parseInt(specialCircuitsData?.length) === 0) {
+      setNewCircuitRow({
+        ...newCircuitRow,
+        startedAt: newClient?.startDate,
+        endedAt: new Date(new Date(newClient?.startDate).setDate(newClient?.startDate.getDate() + 1))
+      })
+    } else if (parseInt(specialCircuitsData?.length) !== 0) {
+      const newData = [];
+      specialCircuitsData.forEach((item, index) => {
+        if (parseInt(index) === 0) {
+          newData.push({
+            ...item,
+            startedAt: newClient?.startDate
+          })
+        }
+      })
+      setSpecialCircuitsData(newData);
+    }
+  }, [newClient?.startDate])
 
   const renderCities = () => {
     const data = []
@@ -145,7 +168,6 @@ function SelectedCircuit({
             type: 'search',
           }} />}
       onInputChange={(event, newInputValue) => {
-        console.log(newInputValue);
         setNewCircuitRow({
           ...newCircuitRow, regime: {
             name: newInputValue
@@ -223,19 +245,42 @@ function SelectedCircuit({
                       </td >
                       <td style={{ width: "20%" }}>{renderRegimes(true)}</td>
                       <td style={{ width: "20%" }}><Button onClick={() => {
-                        setSpecialCircuitsData([...specialCircuitsData, { ...newCircuitRow, id: specialCircuitsData.length + 1 }])
+                        if (
+                          parseInt(newCircuitRow.city.id) === -1
+                          || parseInt(newCircuitRow.hotel.id) === -1
+                          || newCircuitRow.regime.name === ""
+                        ) {
+                          message.error("Error");
+                          return;
+                        }
+                        setNewClient({ ...newClient, endDate: newCircuitRow?.endedAt })
+                        setNewCircuitRow({
+                          ...newCircuitRow,
+                          startedAt: newCircuitRow?.endedAt,
+                          endedAt: new Date(new Date(newCircuitRow?.endedAt).setDate(newCircuitRow?.endedAt?.getDate() + 1))
+                        })
+                        setSpecialCircuitsData([...specialCircuitsData, {
+                          id: specialCircuitsData.length + 1,
+                          cityName: newCircuitRow.city.name,
+                          dossier_num: newClient.folderNumber,
+                          extra_nights: 0,
+                          from: newCircuitRow.startedAt,
+                          hotel_id: newCircuitRow.hotel.id,
+                          hotel_name: newCircuitRow.hotel.name,
+                          regime: newCircuitRow.regime.name,
+                          to: newCircuitRow.endedAt,
+                        }])
+
                       }} className="btn btn-success">{t("+")}</Button></td>
                     </tr>
-                    {console.log(specialCircuitsData)}
                     {parseInt(specialCircuitsData.length) !== 0 && specialCircuitsData?.map(element =>
                       <tr>
-                        <td style={{ width: "20%" }}>{element.city.name}</td>
-                        <td style={{ width: "20%" }}>{element.hotel.name}</td>
-                        <td style={{ width: "20%" }}>{moment(element.startedAt).format("D / M / Y")}</td>
-                        <td style={{ width: "20%" }}>{moment(element.endedAt).format("D / M / Y")}</td>
-                        <td style={{ width: "20%" }}>{element.regime.name}</td>
+                        <td style={{ width: "20%" }}>{element.cityName}</td>
+                        <td style={{ width: "20%" }}>{element.hotel_name}</td>
+                        <td style={{ width: "20%" }}>{moment(element.from).format("DD / MM / Y")}</td>
+                        <td style={{ width: "20%" }}>{moment(element.to).format("DD / MM / Y")}</td>
+                        <td style={{ width: "20%" }}>{element.regime}</td>
                         <td style={{ width: "20%" }}><Button onClick={() => {
-                          console.log([...specialCircuitsData?.filter((row) => parseInt(row.id) === parseInt(element.id))])
                           setSpecialCircuitsData([...specialCircuitsData?.filter((row) => parseInt(row.id) !== parseInt(element.id))])
                         }} className="btn btn-danger">{t("-")}</Button></td>
                       </tr>

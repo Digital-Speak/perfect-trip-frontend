@@ -41,7 +41,6 @@ function SelectedCircuit({
     }} />
 
   const renderHotel = (cityId, hotels, slectedHotel, targetCityName = "") => {
-
     const newHotels = []
     hotels.forEach(hotel => {
       newHotels.push({
@@ -269,14 +268,15 @@ function SelectedCircuit({
                           }} />
                       </td>
                       <td>
-                        {cities?.length !== 0 && <CustomEditableSelect
+                        <CustomEditableSelect
                           data={cities?.length !== 0 ? cities : []}
-                          text={cities[0]?.name}
+                          text={cities?.filter(city => parseInt(city.id) === parseInt(flights?.city_id_start))[0]?.name}
                           id={flights.city_id_start}
                           cb={(name, id) => {
                             setFlights({ ...flights, city_id_start: id })
                           }}
-                        />}</td>
+                        />
+                      </td>
                       <td><EditableInput
                         disabled={disabled}
                         text={flights?.from_start}
@@ -325,14 +325,16 @@ function SelectedCircuit({
                             })
                           }} />
                       </td>
-                      <td>{cities.length !== 0 && <CustomEditableSelect
+                      <td><CustomEditableSelect
                         data={cities?.length !== 0 ? cities : []}
-                        text={cities[0]?.name}
+                        text={
+                          cities?.filter(city => parseInt(city.id) === parseInt(flights?.city_id_end))[0]?.name
+                        }
                         id={flights?.city_id_end}
                         cb={(name, id) => {
                           setFlights({ ...flights, city_id_end: id })
                         }}
-                      />}</td>
+                      /></td>
                       <td><EditableInput
                         disabled={disabled}
                         text={flights.from_end}
