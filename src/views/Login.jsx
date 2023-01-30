@@ -46,7 +46,7 @@ const Login = () => {
       } else {
         setGlobalError('');
         sessionStorage.setItem('jat', payload?.token);
-        push('/admin/dashboard');
+        push('/admin/newfolder');
       }
     }
   };

@@ -460,7 +460,6 @@ function AddNewFolder() {
                               });
                             } else if (parseInt(newClient.circuit.id) === -99) {
                               specialCircuitsData.forEach(item => {
-                                console.log(item)
                                 hotels_dossier.push(item);
                               })
                             }
@@ -589,7 +588,7 @@ function AddNewFolder() {
             <tr></tr>
 
             <tr><th></th><th style={styles.td} >DE/A</th><th style={styles.td} >DATE</th><th style={styles.td} >VILLE</th><th style={styles.td} colSpan={2}>DE</th><th style={styles.td} colSpan={2} >A</th><th style={styles.td} colSpan={2} >VOLS</th><th style={styles.td} colSpan={2} >HEURS</th></tr>
-            <tr><th></th><td style={styles.td} >{flights?.from_to_start}</td><td style={styles.td} >{moment(flights?.flight_date_start.toString()).format('DD/MM/YYYY')}</td>
+            <tr><th></th><td style={styles.td} >{flights?.from_to_start}</td><td style={styles.td} >{moment(flights?.flight_date_start?.toString()).format('DD/MM/YYYY')}</td>
               {flights && cities?.map((city) => (
                 city?.id == flights?.city_id_start &&
                 <td style={styles.td} >
@@ -598,7 +597,7 @@ function AddNewFolder() {
               ))
               }
               <td style={styles.td} colSpan={2} >{flights?.from_start}</td><td style={styles.td} colSpan={2} >{flights?.to_start}</td><td style={styles.td} colSpan={2} >{flights?.flight_start}</td><td style={styles.td} colSpan={2} >{flights?.flight_time_start}</td></tr>
-            <tr><th></th><td style={styles.td} >{flights?.from_to_end}</td><td style={styles.td} >{moment(flights?.flight_date_end.toString()).format('DD/MM/YYYY')}</td>
+            <tr><th></th><td style={styles.td} >{flights?.from_to_end}</td><td style={styles.td} >{moment(flights?.flight_date_end?.toString()).format('DD/MM/YYYY')}</td>
               {flights && cities?.map((city) => (
                 city?.id == flights?.city_id_end &&
                 <td style={styles.td} >

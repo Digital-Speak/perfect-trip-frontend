@@ -87,6 +87,7 @@ function SelectedCircuit({
       sx={{ width: "auto" }}
       value={newCircuitRow.city.name}
       inputValue={newCircuitRow.city.name}
+      disableClearable={true}
       renderInput={(params) =>
         <TextField
           fullWidth
@@ -101,15 +102,19 @@ function SelectedCircuit({
           const payload = await getHotels();
           if (!payload.success) return setHotels([]);
           if (payload.success) {
-            setHotels([]);
             setHotels(payload?.hotels?.filter((hotel) =>
               hotel?.stars?.split("")[1] === newClient?.cat?.id && parseInt(hotel?.city_id) === parseInt(targetCity[0]?.id)
             ));
           };
           setNewCircuitRow({
-            ...newCircuitRow, city: {
+            ...newCircuitRow,
+            city: {
               id: targetCity[0]?.id,
               name: targetCity[0]?.name
+            },
+            hotel: {
+              id: -1,
+              name: ""
             }
           })
         }
@@ -131,22 +136,24 @@ function SelectedCircuit({
       sx={{ width: "auto" }}
       inputValue={newCircuitRow.hotel.name}
       value={newCircuitRow.hotel.name}
+      disableClearable={true}
       renderInput={(params) =>
         <TextField
           fullWidth
           {...params}
           InputProps={{
             ...params.InputProps,
-            type: 'search',
           }} />}
       onInputChange={(event, newInputValue) => {
         const targetHotel = hotels.filter((hotel => hotel.name === newInputValue));
-        setNewCircuitRow({
-          ...newCircuitRow, hotel: {
-            id: targetHotel[0]?.id,
-            name: targetHotel[0]?.name
-          }
-        })
+        if (parseInt(targetHotel.length) !== 0) {
+          setNewCircuitRow({
+            ...newCircuitRow, hotel: {
+              id: targetHotel[0]?.id,
+              name: targetHotel[0]?.name
+            }
+          })
+        }
       }}
     />
   }
@@ -213,10 +220,10 @@ function SelectedCircuit({
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
                             inputFormat={"DD/MM/YYYY"}
-                            value={newCircuitRow.startedAt}
+                            disabled={parseInt(specialCircuitsData.length) !== 0}
+                            value={moment(newCircuitRow.startedAt).format("MM/DD/YYYY")}
                             onChange={(newValue) => {
                               const newDate = new Date(newValue.$d);
-                              console.log(newDate);
                               setNewCircuitRow({
                                 ...newCircuitRow,
                                 startedAt: newDate
@@ -230,7 +237,7 @@ function SelectedCircuit({
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
                             inputFormat={"DD/MM/YYYY"}
-                            value={newCircuitRow.endedAt}
+                            value={moment(newCircuitRow.endedAt).format("MM/DD/YYYY")}
                             onChange={(newValue) => {
                               const newDate = new Date(newValue.$d);
                               console.log(newDate);
@@ -262,6 +269,7 @@ function SelectedCircuit({
                         setSpecialCircuitsData([...specialCircuitsData, {
                           id: specialCircuitsData.length + 1,
                           cityName: newCircuitRow.city.name,
+                          cityId: newCircuitRow.city.id,
                           dossier_num: newClient.folderNumber,
                           extra_nights: 0,
                           from: newCircuitRow.startedAt,
@@ -318,10 +326,10 @@ function SelectedCircuit({
                           }} /></td>
                       <td>
                         <input
-
                           className="border-0"
                           type="date"
-                          value={formatDate(flights?.flight_date_start) || formatDate(newClient?.startDate)} onChange={(e) => {
+                          value={formatDate(flights?.flight_date_start) || formatDate(newClient?.startDate)}
+                          onChange={(e) => {
                             setFlights({
                               ...flights,
                               flight_date_start: e.target.value
@@ -365,7 +373,6 @@ function SelectedCircuit({
                     <tr>
                       <td>
                         <EditableInput
-
                           text={flights?.from_to_end}
                           onTextChange={(newText) => {
                             setFlights({ ...flights, from_to_end: newText })
@@ -374,7 +381,6 @@ function SelectedCircuit({
                         <input
                           className="border-0"
                           type="date"
-
                           value={formatDate(flights?.flight_date_end) || formatDate(newClient?.endDate)}
                           onChange={(e) => {
                             setFlights({
