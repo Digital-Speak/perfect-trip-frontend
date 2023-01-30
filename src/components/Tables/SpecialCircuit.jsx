@@ -240,7 +240,6 @@ function SelectedCircuit({
                             value={moment(newCircuitRow.endedAt).format("MM/DD/YYYY")}
                             onChange={(newValue) => {
                               const newDate = new Date(newValue.$d);
-                              console.log(newDate);
                               setNewCircuitRow({
                                 ...newCircuitRow,
                                 endedAt: newDate

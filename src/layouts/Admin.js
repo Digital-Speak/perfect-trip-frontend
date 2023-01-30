@@ -71,7 +71,7 @@ function Admin(props) {
                       />
                     );
                   })}
-                  <Redirect from='*' to='/admin/dashboard' />
+                  <Redirect from='*' to='/admin/newfolder' />
                 </Switch>
                 <Footer fluid />
               </div>

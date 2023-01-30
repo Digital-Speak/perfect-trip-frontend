@@ -35,7 +35,7 @@ function Sidebar(props) {
     >
       <div className="logo">
         <a
-          href={`${process.env.REACT_APP_CLIENT_URL}/admin/dashboard`}
+          href={`${process.env.REACT_APP_CLIENT_URL}/admin/newfolder`}
           className="simple-text logo-normal"
         >
           <img alt='logo' style={{width:200,paddingLeft:15, opacity:.9}} src={logoBorder} />

@@ -40,9 +40,6 @@ function Filters() {
   if (filterFolders.circuit == -1) {
    setList(listBackup);
 
-   console.log(new Date(listBackup[0].startAt), new Date(filterFolders.from));
-   console.log(new Date(listBackup[0].startAt), new Date(filterFolders.endAt));
-   // console.log(listBackup.filter((item) =>
    //  new Date(item.startAt) >= new Date(filterFolders.from)
    //  &&
    //  new Date(item.endAt) <= new Date(filterFolders.from)

@@ -77,8 +77,6 @@ function Hotels() {
 
   const loadDossierData = async (filters) => {
     const payload = await getDossier(filters);
-    console.log(payload);
-    console.log(payload);
     if (!payload?.success) return false;
     setDataSource({ data: payload?.dossiers })
   }

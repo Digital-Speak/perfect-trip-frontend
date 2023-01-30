@@ -441,9 +441,6 @@ function AddNewFolder() {
                         color="primary"
                         onClick={async () => {
                           try {
-                            console.log(newClient.circuit.id)
-                            console.log(circuit)
-                            console.log(parseInt(newClient.circuit.id) !== -99)
                             const hotels_dossier = [];
                             if (parseInt(newClient.circuit.id) !== -99) {
                               circuit.forEach((item) => {
