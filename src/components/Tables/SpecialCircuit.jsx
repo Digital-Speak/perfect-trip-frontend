@@ -59,6 +59,8 @@ function SelectedCircuit({
         startedAt: newClient?.startDate,
         endedAt: new Date(new Date(newClient?.startDate).setDate(newClient?.startDate.getDate() + 1))
       })
+
+      setFlights({ ...flights, flight_date_end: new Date(new Date(newClient?.startDate).setDate(newClient?.startDate.getDate() + 1)) })
     } else if (parseInt(specialCircuitsData?.length) !== 0) {
       const newData = [];
       specialCircuitsData.forEach((item, index) => {
