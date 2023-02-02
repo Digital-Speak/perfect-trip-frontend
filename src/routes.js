@@ -7,6 +7,7 @@ import Hotels from "views/Hotels";
 import Login from "views/Login";
 import Settings from "views/Settings";
 import SetNewPassword from "views/password/SetNew";
+import ImportExcel from "views/ImportExcel";
 
 var routes = [
   {
@@ -74,5 +75,14 @@ var routes = [
     layout: "/auth",
     show: false,
   },
+
+  {
+    path: "/import",
+    name: "Import",
+    icon: "nc-icon nc-settings",
+    component: ImportExcel,
+    layout: "/admin",
+    show: true,
+  }
 ];
 export default routes;
