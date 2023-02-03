@@ -11,6 +11,19 @@ const addNewDossier = async (body) => {
  return await payload.json();
 }
 
+const importDossierApi = async (body) => {
+  const payload = await fetch(`${process.env.REACT_APP_API_URL}import`, {
+   method: "POST",
+   headers: {
+    "content-Type": "application/json",
+    origin: `${process.env.REACT_APP_CLIENT_URL}`,
+    authorization: `Bearer ${sessionStorage.getItem('jat')}`
+   },
+   body: JSON.stringify(body)
+  });
+  return await payload.json();
+ }
+
 const updateDossier = async (body) => {
  const payload = await fetch(`${process.env.REACT_APP_API_URL}dossier/`, {
   method: "PUT",
@@ -82,5 +95,6 @@ export {
  getDossier,
  getOneDossier,
  getListDossier,
- removeDossier
+ removeDossier,
+ importDossierApi
 }
