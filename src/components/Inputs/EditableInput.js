@@ -3,7 +3,7 @@ import {
    Input,
 } from "reactstrap";
 
-function EditableInput({ t, text = "ssss", onTextChange, style = {}, disabled = false }) {
+function EditableInput({ t, text = "-", onTextChange, style = {}, disabled = false }) {
    const [editMode, setEditMode] = useState(false)
    const [inputValue, setInputValue] = useState(text)
 
