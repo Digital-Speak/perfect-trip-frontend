@@ -162,27 +162,47 @@ function SelectedCircuit({
           }
         })
       } else {
-        Object.keys(grouped).forEach((item, index) => {
-          let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(circuitDetails[index]?.number_of_nights)));
+        console.log(circuitDetails);
+        circuitDetails?.forEach((item, index) => {
           newData.push({
-            id: circuitDetails[index].city_id,
-            city: circuitDetails[index].city,
-            hotels: grouped[item],
-            regimgeData: circuitDetails[index].regime,
-            regime: renderRegime(circuitDetails[index].city_id, circuitDetails[index].regime),
-            selectedHotel: circuitDetails[index].hotel,
-            fromForServer: startDate,
-            toForServer: endDate,
-            from: `${(new Date(startDate).getDate() < 10 ? "0" : "") + new Date(startDate).getDate()}
+            id: item.city_id,
+            city: item.city,
+            hotels: [],
+            regimgeData: item.regime,
+            regime: renderRegime(item.city_id, item.regime),
+            selectedHotel: item.hotel,
+            fromForServer: item.start_date,
+            toForServer: item.end_date,
+            from: `${(new Date(item.start_date).getDate() < 10 ? "0" : "") + new Date(item.start_date).getDate()}
                 - 
-                  ${new Date(startDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`,
+                  ${new Date(item.start_date).toLocaleString('default', { month: 'long' }).substring(0, 3)}`,
             to:
-              `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
+              `${(new Date(item.end_date).getDate() < 10 ? "0" : "") + new Date(item.end_date).getDate()} 
                 - 
-                ${new Date(endDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
+                ${new Date(item.end_date).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
           })
-          startDate = endDate;
         })
+        // Object.keys(grouped).forEach((item, index) => {
+        //   let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(circuitDetails[index]?.number_of_nights)));
+        //   newData.push({
+        //     id: circuitDetails[index].city_id,
+        //     city: circuitDetails[index].city,
+        //     hotels: grouped[item],
+        //     regimgeData: circuitDetails[index].regime,
+        //     regime: renderRegime(circuitDetails[index].city_id, circuitDetails[index].regime),
+        //     selectedHotel: circuitDetails[index].hotel,
+        //     fromForServer: startDate,
+        //     toForServer: endDate,
+        //     from: `${(new Date(startDate).getDate() < 10 ? "0" : "") + new Date(startDate).getDate()}
+        //         - 
+        //           ${new Date(startDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`,
+        //     to:
+        //       `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
+        //         - 
+        //         ${new Date(endDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
+        //   })
+        //   startDate = endDate;
+        // })
       }
       setCircuit(newData);
     } else {

@@ -21,7 +21,7 @@ import { getHotels } from "api/hotel";
 import moment from "moment";
 import { message } from "antd";
 
-function SelectedCircuit({
+function SpecialCircuit({
   t,
   cities,
   circuitDates,
@@ -433,4 +433,4 @@ function SelectedCircuit({
   );
 }
 
-export default SelectedCircuit;
+export default SpecialCircuit;

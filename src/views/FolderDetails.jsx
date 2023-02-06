@@ -204,6 +204,7 @@ function FolderDetails() {
           nbrType.forEach((item) => totalNbrPax = totalNbrPax + item.nbr);
         }
 
+        console.log(payload?.circuits)
         setCircuitDetails(payload?.circuits);
 
         setTargetFolder({
