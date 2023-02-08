@@ -162,7 +162,6 @@ function SelectedCircuit({
           }
         })
       } else {
-        console.log(circuitDetails);
         circuitDetails?.forEach((item, index) => {
           newData.push({
             id: item.city_id,
@@ -182,28 +181,18 @@ function SelectedCircuit({
                 ${new Date(item.end_date).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
           })
         })
-        // Object.keys(grouped).forEach((item, index) => {
-        //   let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(circuitDetails[index]?.number_of_nights)));
-        //   newData.push({
-        //     id: circuitDetails[index].city_id,
-        //     city: circuitDetails[index].city,
-        //     hotels: grouped[item],
-        //     regimgeData: circuitDetails[index].regime,
-        //     regime: renderRegime(circuitDetails[index].city_id, circuitDetails[index].regime),
-        //     selectedHotel: circuitDetails[index].hotel,
-        //     fromForServer: startDate,
-        //     toForServer: endDate,
-        //     from: `${(new Date(startDate).getDate() < 10 ? "0" : "") + new Date(startDate).getDate()}
-        //         - 
-        //           ${new Date(startDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`,
-        //     to:
-        //       `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
-        //         - 
-        //         ${new Date(endDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
-        //   })
-        //   startDate = endDate;
-        // })
       }
+
+      setFlights({
+        ...flights,
+        flight_date_end: newData[parseInt(newData.length - 1)]?.toForServer,
+        city_id_start: newData[0]?.id,
+        city_id_end: newData[newData.length - 1]?.id,
+        from_end: newData[parseInt(newData?.length - 1)]?.selectedHotel,
+        to_start: newData[0]?.selectedHotel,
+        flight_date_start: newData[0]?.fromForServer,
+      })
+
       setCircuit(newData);
     } else {
       setCircuit([])
@@ -275,12 +264,6 @@ function SelectedCircuit({
                   <tbody>
                     <tr>
                       <td>
-                        {/* <EditableInput
-                          disabled={disabled}
-                          text={flights?.from_to_start}
-                          onTextChange={(newText) => {
-                            setFlights({ ...flights, from_to_start: newText })
-                          }} /> */}
                         {flights?.from_to_start}
                       </td>
                       <td>
@@ -299,6 +282,7 @@ function SelectedCircuit({
                       <td>
                         <CustomEditableSelect
                           data={cities?.length !== 0 ? cities : []}
+                          disabled={disabled}
                           text={cities?.filter(city => parseInt(city.id) === parseInt(flights?.city_id_start))[0]?.name}
                           id={flights.city_id_start}
                           cb={(name, id) => {
@@ -314,19 +298,21 @@ function SelectedCircuit({
                         disabled={disabled}
                         text={flights?.from_start}
                         onTextChange={(newText) => {
-                          if (newText == "") return;
+                          if (newText === "") return;
                           setFlights({ ...flights, from_start: newText })
                         }} /></td>
                       <td><EditableInput
+                        disabled={disabled}
                         text={circuit[0]?.selectedHotel || flights?.to_start}
                         onTextChange={(newText) => {
-                          if (newText == "") return;
+                          if (newText === "") return;
                           setFlights({ ...flights, to_start: newText })
                         }} /></td>
                       <td><EditableInput
                         text={flights?.flight_start}
+                        disabled={disabled}
                         onTextChange={(newText) => {
-                          if (newText == "") return;
+                          if (newText === "") return;
                           setFlights({ ...flights, flight_start: newText })
                         }} /></td>
                       <td><input
@@ -336,7 +322,7 @@ function SelectedCircuit({
                         disabled={disabled}
                         value={flights?.flight_time_start}
                         onChange={(e) => {
-                          if (e.target.value == "") return;
+                          if (e.target.value === "") return;
                           setFlights({
                             ...flights,
                             flight_time_start: e.target.value,
@@ -347,12 +333,6 @@ function SelectedCircuit({
                     </tr>
                     <tr>
                       <td>
-                        {/* <EditableInput
-                          disabled={disabled}
-                          text={flights?.from_to_end}
-                          onTextChange={(newText) => {
-                            setFlights({ ...flights, from_to_end: newText })
-                          }} /> */}
                         {flights?.from_to_end}
                       </td>
                       <td>
@@ -370,6 +350,7 @@ function SelectedCircuit({
                       </td>
                       <td><CustomEditableSelect
                         data={cities?.length !== 0 ? cities : []}
+                        disabled={disabled}
                         text={cities?.filter(city => parseInt(city.id) === parseInt(flights?.city_id_end))[0]?.name}
                         id={flights?.city_id_end}
                         cb={(name, id) => {
