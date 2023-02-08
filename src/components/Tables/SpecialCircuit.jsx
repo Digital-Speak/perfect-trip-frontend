@@ -340,7 +340,7 @@ function SpecialCircuit({
                       <td>
                         {cities?.length !== 0 && <CustomEditableSelect
                           data={cities?.length !== 0 ? cities : []}
-                          text={cities[0]?.name}
+                          text={cities?.filter(city => parseInt(city.id) === parseInt(flights?.city_id_start))[0]?.name}
                           id={flights.city_id_start}
                           cb={(name, id) => {
                             setFlights({ ...flights, city_id_start: id })
@@ -392,7 +392,7 @@ function SpecialCircuit({
                       </td>
                       <td>{cities.length !== 0 && <CustomEditableSelect
                         data={cities?.length !== 0 ? cities : []}
-                        text={cities[0]?.name}
+                        text={cities?.filter(city => parseInt(city.id) === parseInt(flights?.city_id_end))[0]?.name}
                         id={flights?.city_id_end}
                         cb={(name, id) => {
                           setFlights({ ...flights, city_id_end: id })
