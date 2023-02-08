@@ -194,8 +194,8 @@ function FolderDetails() {
             nbrType.push({
               label: item.typepax,
               plus: plus,
-              dispaly: item.nbr,
-              nbr: parseInt(item.nbr) * parseInt(plus),
+              dispaly: parseInt(item.nbr) / parseInt(plus),
+              nbr: parseInt(item.nbr),
             })
           })
 
