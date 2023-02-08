@@ -219,7 +219,7 @@ function AddNewFolder() {
               <CardBody>
                 <Form>
                   <Row>
-                    <Col className="" md="4">
+                    <Col className="" md="2">
                       <FormGroup>
                         <label>{t("Folder-Number")}</label>
                         <Input
@@ -233,7 +233,20 @@ function AddNewFolder() {
                         />
                       </FormGroup>
                     </Col>
-                    <Col className="" md="4">
+                    <Col className="" md="5">
+                      <FormGroup>
+                        <label>{t("Client-Ref")}</label>
+                        <Input
+                          defaultValue=""
+                          value={newClient?.refClient}
+                          id="refClient"
+                          style={{ "height": "55px" }}
+                          type="text"
+                          onChange={(event) => { setNewClient({ ...newClient, refClient: event.target.value }) }}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col className="" md="5">
                       <FormGroup>
                         <label>{t("Agency")}</label>
                         <Autocomplete
@@ -249,19 +262,6 @@ function AddNewFolder() {
                               setNewClient({ ...newClient, agency: { name: newInputValue, id: agencyId[0].id } })
 
                           }}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="" md="4">
-                      <FormGroup>
-                        <label>{t("Client-Ref")}</label>
-                        <Input
-                          defaultValue=""
-                          value={newClient?.refClient}
-                          id="refClient"
-                          style={{ "height": "55px" }}
-                          type="text"
-                          onChange={(event) => { setNewClient({ ...newClient, refClient: event.target.value }) }}
                         />
                       </FormGroup>
                     </Col>

@@ -140,7 +140,7 @@ function FolderDetails() {
 
   const clearInputs = async () => {
     setTargetFolder({
-      refClient: "",
+      dossierNum: "",
       fullName: "",
       agency: {
         name: null,
@@ -177,20 +177,21 @@ function FolderDetails() {
   }
 
   const getTargetDossier = async (value) => {
-    setTargetFolder({ ...targetFolder, folderNumber: value })
+    setTargetFolder({ ...targetFolder, refClient: value })
     const payload = await getOneDossier({
-      id: value
+      ref_client: value
     });
+
     if (payload?.success) {
       if (payload?.data.length !== 0) {
         const nbrType = [];
         if (payload?.nbrpaxforhbtype?.length != 0) {
           payload?.nbrpaxforhbtype.forEach((item) => {
             let plus = 0;
-            if (item.typepax == "DBL") plus = 2;
-            if (item.typepax == "TWIN") plus = 2;
-            if (item.typepax == "TRPL") plus = 3;
-            if (item.typepax == "SGL") plus = 1;
+            if (item?.typepax === "DBL") plus = 2;
+            if (item?.typepax === "TWIN") plus = 2;
+            if (item?.typepax === "TRPL") plus = 3;
+            if (item?.typepax === "SGL") plus = 1;
             nbrType.push({
               label: item.typepax,
               plus: plus,
@@ -206,7 +207,6 @@ function FolderDetails() {
 
         setCircuitDetails(payload?.circuits);
         setTargetFolder({
-          refClient: payload?.data[0]?.client_ref,
           fullName: payload?.data[0]?.client_name,
           folderNumber: payload?.data[0]?.dossierNum,
           agency: {
@@ -295,25 +295,37 @@ function FolderDetails() {
               <CardBody >
                 <Form className={`${targetFolder.deleted == true && 'deletedDossier'}`}>
                   <Row>
-                    <Col className="" md="4">
+                    <Col className="" md="2">
                       <FormGroup>
                         <label>{t("Folder-Number")}</label>
                         <Input
+                          disabled
                           value={targetFolder?.folderNumber}
                           style={{ "height": "55px" }}
                           id="firstname"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col className="" md="5">
+                      <FormGroup>
+                        <label>{t("Client-Ref")}</label>
+                        <Input
+                          value={targetFolder?.refClient}
+                          id="refClient"
+                          style={{ "height": "55px" }}
                           type="text"
                           onChange={async (event) => {
                             if (event.target.value === "") {
                               clearInputs();
                             } else {
-                              await getTargetDossier(event.target.value)
+                              await getTargetDossier(event.target.value);
                             }
                           }}
                         />
                       </FormGroup>
                     </Col>
-                    <Col className="" md="4">
+                    <Col className="" md="5">
                       <FormGroup>
                         <label>{t("Agency")}</label>
                         <Autocomplete
@@ -330,19 +342,6 @@ function FolderDetails() {
                               setTargetFolder({ ...targetFolder, agency: { name: newInputValue, id: agencyId[0].id } })
 
                           }}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="" md="4">
-                      <FormGroup>
-                        <label>{t("Client-Ref")}</label>
-                        <Input
-                          disabled={!isInEditeMode}
-                          value={targetFolder?.refClient}
-                          id="refClient"
-                          style={{ "height": "55px" }}
-                          type="text"
-                          onChange={(event) => { setTargetFolder({ ...targetFolder, refClient: event.target.value }) }}
                         />
                       </FormGroup>
                     </Col>
