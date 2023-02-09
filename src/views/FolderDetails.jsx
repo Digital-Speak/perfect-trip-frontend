@@ -204,8 +204,7 @@ function FolderDetails() {
           let totalNbrPax = 0;
           nbrType.forEach((item) => totalNbrPax = totalNbrPax + item.nbr);
         }
-
-        setCircuitDetails(payload?.circuits);
+        setCircuitDetails(payload?.circuits?.sort((a, b) => new Date(a.start_date) - new Date(b.start_date)));
         setTargetFolder({
           fullName: payload?.data[0]?.client_name,
           folderNumber: payload?.data[0]?.dossierNum,
