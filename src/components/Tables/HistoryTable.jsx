@@ -34,7 +34,7 @@ function HistoryTable() {
             <CardTitle tag="h4">{t("History")}</CardTitle>
           </CardHeader>
           <CardBody>
-            <Table responsive style={{ borderBottomWidth: 1, borderBottomColor: "gray" }}>
+            <Table striped responsive style={{ borderBottomWidth: 1, borderBottomColor: "gray" }}>
               <thead className="text-primary">
                 <tr>
                   <th>{t("Time")}</th>
@@ -48,10 +48,10 @@ function HistoryTable() {
                   admins?.length !== 0 ?
                     admins.map((admin) => (
                       <tr>
-                        <td style={{ backgroundColor: "	#F0F0F0" }}>{"-"}</td>
-                        <td style={{ backgroundColor: "	#F0F0F0" }}>{"-"}</td>
-                        <td style={{ backgroundColor: "	#F0F0F0" }}>{"-"}</td>
-                        <td style={{ backgroundColor: "	#F0F0F0" }}>{"-"}</td>
+                        <td >{"-"}</td>
+                        <td >{"-"}</td>
+                        <td >{"-"}</td>
+                        <td >{"-"}</td>
                       </tr>
                     )) : (
                       <tr>

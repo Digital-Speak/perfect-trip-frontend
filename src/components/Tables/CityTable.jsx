@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, CardBody, CardHeader, CardTitle, Col, FormGroup, Input, Row, Table } from 'reactstrap'
 import { useTranslation } from 'react-i18next';
-// import ReactHTMLTableToExcel from 'html-to-excel-react';
 import EditableInput from "../Inputs/EditableInput";
 import { getCities } from 'api/city';
 import { addCityApi } from 'api/city';
 import { editCityApi } from 'api/city';
 import { deleteCityApi } from 'api/city';
+import moment from 'moment';
 
 function CityTable() {
-
   const { t } = useTranslation();
   const [cities, setCities] = useState([]);
   const [deleteCityId, setDeleteCityId] = useState(null);
@@ -24,13 +23,14 @@ function CityTable() {
 
   const handleAdd = async (addCity) => {
     if (addCity && addCity !== "") {
-      const data = await addCityApi({name:addCity});
+      const data = await addCityApi({ name: addCity });
       if (data?.success) {
         setNewCity("");
         loadData();
       }
     }
   }
+
   const handleEdit = async (editCity) => {
     if (editCity?.name && editCity?.name !== "") {
       const data = await editCityApi(editCity);
@@ -53,64 +53,8 @@ function CityTable() {
     loadData();
   }, [])
 
-
   return (
     <Row>
-      <Col >
-      <div>
-                {/* <ReactHTMLTableToExcel
-                    id="test-table-xls-button"
-                    className="download-table-xls-button"
-                    table="table-to-xls"
-                    filename="tablexls"
-                    sheet="tablexls"
-                    buttonText="Download as XLS"/> */}
-                {/* <table className='d-none' id="table-to-xls">
-              <thead className="text-primary">
-              <tr></tr>
-              <tr></tr>
-              <tr></tr>
-              <tr></tr>
-              <tr><td></td><td></td><td></td><td></td><td></td><td colSpan={5} style={{color:"red",fontSize:30,fontWeight:"bold"}} >Cities</td><td></td></tr>
-                <tr>
-                  <th>{t("Save")}</th>
-                  <th>{t("Added-at")}</th>
-                  <th>{t("updated-at")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  cities?.length !== 0 &&
-                  cities.map((city) => (
-                    <tr>
-                      <td>{city?.name}</td>
-                      <td style={{ backgroundColor: "	#F0F0F0" }}>{city?.created_at}</td>
-                      <td style={{ backgroundColor: "	#F0F0F0" }}>{city?.updated_at}</td>
-                    </tr>
-                  ))
-                }
-                <tr ><td></td></tr>
-                <tr style={{ marginTop: "30px" }}>
-                  <td><EditableInput style={newCity==="New city" ? {color: "#C0C0C0"} :{}} text={newCity} onTextChange={(text) => {
-                    setNewCity(text);
-                   }} /></td>
-                  <td style={{ backgroundColor: "	#F0F0F0" }}></td>
-                  <td style={{ backgroundColor: "	#F0F0F0" }}></td>
-                  <td>
-                    <div onClick={() => {
-                      handleAdd(newCity)
-                     }} type="button" className='text-info' >
-                      <i className="fa fa-solid fa-plus mr-2 text-info" />
-                      Add
-                    </div>
-                  </td>
-                </tr>
-                <tr ><td></td></tr>
-              </tbody>
-            </table> */}
-
-            </div>
-      </Col>
       <Col md="12">
         <Card>
           <CardHeader>
@@ -151,12 +95,12 @@ function CityTable() {
             <CardTitle tag="h4">{t("Cities")}</CardTitle>
           </CardHeader>
           <CardBody>
-            <Table responsive style={{ borderBottomWidth: 1, borderBottomColor: "gray" }}>
+            <Table striped responsive style={{ borderBottomWidth: 1, borderBottomColor: "gray" }}>
               <thead className="text-primary">
                 <tr>
                   <th>{t("name")}</th>
-                  <th>{t("Added-at")}</th>
-                  <th>{t("Updated-at")}</th>
+                  <th style={{ textAlign: "center" }}>{t("Added-at")}</th>
+                  <th style={{ textAlign: "center" }}>{t("Updated-at")}</th>
                   <th>{t("status")}</th>
                 </tr>
               </thead>
@@ -173,11 +117,11 @@ function CityTable() {
                           })
                         }
                       }} /></td>
-                      <td style={{ backgroundColor: "	#F0F0F0" }}>{city?.created_at}</td>
-                      <td style={{ backgroundColor: "	#F0F0F0" }}>{city?.updated_at}</td>
+                      <td style={{textAlign: "center"}}>{moment(city?.created_at).format("DD-MM-YYYY HH:MM")}</td>
+                      <td style={{ textAlign: "center" }}>{moment(city?.updated_at).format("DD-MM-YYYY HH:MM")}</td>
                       <td>
-                        <div onClick={() => { 
-                           setDeleteCityId(city?.id);
+                        <div onClick={() => {
+                          setDeleteCityId(city?.id);
                         }} data-toggle="modal" data-target={deleteCityId === city?.id && "#exampleModal"} type="button" className='text-danger' >
                           <i className="fa fa-solid fa-trash-o mr-2 text-danger" />
                           {t('Remove')}
@@ -186,13 +130,12 @@ function CityTable() {
                     </tr>
                   ))
                 }
-                <tr ><td></td></tr>
               </tbody>
             </Table>
           </CardBody>
         </Card>
       </Col>
-      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">

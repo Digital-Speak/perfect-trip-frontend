@@ -38,7 +38,7 @@ function Sidebar(props) {
           href={`${process.env.REACT_APP_CLIENT_URL}/admin/newfolder`}
           className="simple-text logo-normal"
         >
-          <img alt='logo' style={{width:200,paddingLeft:15, opacity:.9}} src={logoBorder} />
+          <img alt='logo' style={{ width: 200, paddingLeft: 15, opacity: .9 }} src={logoBorder} />
         </a>
       </div>
       <div className="sidebar-wrapper position-relative" ref={sidebar}>
@@ -70,7 +70,7 @@ function Sidebar(props) {
               to={'/admin/settings'}
               className="nav-link"
               activeClassName="active"
-            ><p> <i className="fa fa-cogs" />{t("settings")}</p>
+            ><p><i className="fa fa-cogs" />{t("settings")}</p>
             </NavLink>
           </li>
         </Nav>

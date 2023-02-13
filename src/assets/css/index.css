@@ -1,23 +1,27 @@
 @font-face {
-  font-family: "lato-black";   /*Can be any text*/
+  font-family: "lato-black";
+  /*Can be any text*/
   src: local("Lato-Black"),
     url("../fonts/Lato/Lato-Black.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "lato-BlackItalic";   /*Can be any text*/
+  font-family: "lato-BlackItalic";
+  /*Can be any text*/
   src: local("Lato-BlackItalic"),
     url("../fonts/Lato/Lato-BlackItalic.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "lato-Bold";   /*Can be any text*/
+  font-family: "lato-Bold";
+  /*Can be any text*/
   src: local("Lato-Bold"),
     url("../fonts/Lato/Lato-Bold.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "lato-BoldItalic";   /*Can be any text*/
+  font-family: "lato-BoldItalic";
+  /*Can be any text*/
   src: local("Lato-BoldItalic"),
     url("../fonts/Lato/Lato-BoldItalic.ttf") format("truetype");
 }
@@ -25,37 +29,51 @@
 
 
 @font-face {
-  font-family: "lato-Italic";   /*Can be any text*/
+  font-family: "lato-Italic";
+  /*Can be any text*/
   src: local("Lato-Italic"),
     url("../fonts/Lato/Lato-Italic.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "lato-Light";   /*Can be any text*/
+  font-family: "lato-Light";
+  /*Can be any text*/
   src: local("Lato-Light"),
     url("../fonts/Lato/Lato-Light.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "lato-LightItalic";   /*Can be any text*/
+  font-family: "lato-LightItalic";
+  /*Can be any text*/
   src: local("Lato-LightItalic"),
     url("../fonts/Lato/Lato-LightItalic.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "lato-Regular";   /*Can be any text*/
+  font-family: "lato-Regular";
+  /*Can be any text*/
   src: local("Lato-Regular"),
     url("../fonts/Lato/Lato-Regular.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "lato-Thin";   /*Can be any text*/
+  font-family: "lato-Thin";
+  /*Can be any text*/
   src: local("Lato-Thin"),
     url("../fonts/Lato/Lato-Thin.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "lato-ThinItalic";   /*Can be any text*/
+  font-family: "lato-ThinItalic";
+  /*Can be any text*/
   src: local("Lato-ThinItalic"),
     url("../fonts/Lato/Lato-ThinItalic.ttf") format("truetype");
+}
+
+.cellHoverMode:hover {
+  color: red
+}
+
+.rowHoverMode:hover {
+  background-color: rgba(134, 134, 134, 0.197)
 }

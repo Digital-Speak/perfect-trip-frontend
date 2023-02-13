@@ -11,10 +11,13 @@ import {
   Input,
   Button
 } from "reactstrap";
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 import _ from "lodash"
 import { useTranslation } from "react-i18next";
 import { message } from "antd";
 import { getCiruitsApi, addCiruitsApi } from "api/circuit_city";
+import { addCiruitApi } from "api/circuit";
 import { getCities } from "api/city";
 import { getCircuit } from "api/dashboard";
 
@@ -22,13 +25,18 @@ function CircuitTable() {
   const { t } = useTranslation();
   const [cities, setCities] = useState([]);
   const [circuitData, setCircuitData] = useState([]);
+  const [circuitData_, setCircuitData_] = useState([]);
   const [circuits, setCircuits] = useState([]);
   const [circuitsBackUp, setCircuitsBackUp] = useState([]);
+  const [newCircRecord, setNewCircRecord] = useState({
+    name: "",
+  });
+
   const [newCircuit, setNewCircuit] = useState({
     circuit_id: -1,
     city_id: -1,
     cat: "L",
-    number_of_nights: 0,
+    number_of_nights: 1,
   });
 
   const loadData = async () => {
@@ -36,19 +44,28 @@ function CircuitTable() {
     const circuitsData = await getCircuit();
     const dataCircuits = await getCiruitsApi();
     setNewCircuit({
-      circuit_id: dataCircuits?.circuits_cities[0]?.id,
-      cat: "L",
+      ...newCircuit,
       city_id: _cities?.cities[0]?.id,
-      number_of_nights: 0,
-    })
+      number_of_nights: 1,
+    });
+
     setCities(_cities?.cities);
-    setCircuitData(circuitsData?.circuits);
+
+    setCircuitData_(circuitsData?.circuits);
+
+    const dataAPP = []
+    circuitsData?.circuits.forEach((item) => {
+      dataAPP.push({ label: item?.name });
+    });
+
+    setCircuitData(dataAPP);
     setCircuits(dataCircuits?.circuits_cities);
+
     const data = dataCircuits?.circuits_cities;
     data.map((item) => item.show = false)
     let grouped = _.mapValues(_.groupBy(data, 'circuit_id'), clist => clist.map(data => _.omit(data, 'circuit_id')));
     setCircuits(grouped);
-    setCircuitsBackUp(grouped)
+    setCircuitsBackUp(grouped);
   };
 
   const handleAdd = async () => {
@@ -63,8 +80,7 @@ function CircuitTable() {
     }
   };
 
-   const [messageApi, contextHolder] = message.useMessage();
-
+  const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     loadData();
@@ -82,18 +98,37 @@ function CircuitTable() {
             <Row>
               <Col className="" md="3" style={{ height: "120px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <FormGroup>
-                  <label>{t("Circuits")}</label>
-                  <select
-                    className="form-control"
-                    style={{ height: "55px" }}
-                    value={newCircuit.circuit_id}
-                    onChange={(event) => {
-                      setNewCircuit({ ...newCircuit, circuit_id: event?.target?.value })
-                    }} name="" id="">
-                    {circuitData?.map((item) => (
-                      <option value={item.id}>{item.name}</option>
-                    ))}
-                  </select>
+                  <label>{t("Circuits")}:
+                    <span style={{
+                      marginLeft: "5px",
+                      fontWeight: "bolder",
+                      fontSize: "12px",
+                      fontStyle: "italic"
+                    }}>
+                      {newCircRecord?.name !== "" ? t('New') : ""}
+                    </span>
+                  </label>
+                  <Autocomplete
+                    freeSolo
+                    id="circuit"
+                    options={circuitData}
+                    sx={{ width: "auto" }}
+                    value={newCircuit.circuit_name}
+                    renderInput={(params) => <TextField {...params} label={t("Select")} />}
+                    onInputChange={async (event, newInputValue) => {
+                      const exist = circuitData_.filter((item) => item.name === newInputValue);
+                      if (exist.length !== 0) {
+                        setNewCircuit({ ...newCircuit, circuit_id: exist[0]?.id, circuit_name: exist[0]?.name })
+                        setNewCircRecord({
+                          name: ""
+                        });
+                      } else {
+                        setNewCircRecord({
+                          name: newInputValue
+                        });
+                      }
+                    }}
+                  />
                 </FormGroup>
               </Col>
               <Col className="" md="3" style={{ height: "120px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
@@ -106,7 +141,7 @@ function CircuitTable() {
                       setNewCircuit({ ...newCircuit, city_id: event?.target?.value })
                     }} name="" id="">
                     {cities?.map((item) => (
-                      <option value={item.id}>{item.name}</option>
+                      <option value={item.id} key={item.id}>{item.name}</option>
                     ))}
                   </select>
                 </FormGroup>
@@ -117,7 +152,9 @@ function CircuitTable() {
                   <Input
                     value={newCircuit.number_of_nights}
                     type="number"
+                    min={1}
                     onChange={(event) => {
+                      if (event?.target?.value === "") return;
                       setNewCircuit({ ...newCircuit, number_of_nights: event?.target?.value })
                     }}
                     style={{ height: "54px", display: "flex", flexDirection: "column", justifyContent: "center" }} />
@@ -128,17 +165,62 @@ function CircuitTable() {
                   <label style={{ opacity: 0 }}>.</label>
                   <Button onClick={async () => {
                     try {
-                      if (newCircuit.circuit_id != -1 && newCircuit.city_id != -1 && newCircuit.number_of_nights != 0 && newCircuit.number_of_nights != "") {
-                        await handleAdd();
-                        messageApi.open({
-                          type: 'success',
-                          content: t("The circuit has been added successfully"),
+                      if (newCircRecord.name !== "" && newCircRecord.name !== undefined) {
+                        const newCirc = await addCiruitApi({
+                          name: newCircRecord.name
                         });
+
+                        if (newCirc?.success === true && newCirc?.message === "Circuit added successfully") {
+                          if (newCirc?.circuit[0].id === -1
+                            || newCircuit.city_id === -1
+                            || newCircuit.number_of_nights === 0
+                            || newCircuit.number_of_nights <= 0
+                            || newCircuit.number_of_nights === ""
+                          ) return messageApi.open({
+                            type: 'error',
+                            content: t("Please fill all the inputs"),
+                          });
+
+                          const data = await addCiruitsApi({
+                            circuit_id: newCirc?.circuit[0].id,
+                            city_id: newCircuit.city_id,
+                            number_of_nights: newCircuit.number_of_nights,
+                          });
+
+                          if (data?.success) {
+                            messageApi.open({
+                              type: 'success',
+                              content: t("The circuit has been added successfully"),
+                            });
+                            setNewCircRecord("");
+                            setNewCircuit({
+                              ...newCircuit,
+                              circuit_id: newCirc?.circuit[0].id,
+                              circuit_name: newCirc?.circuit[0].name,
+                            });
+
+                            await loadData();
+                          }
+                        }
                       } else {
-                        messageApi.open({
-                          type: 'error',
-                          content: t("Please fill all the inputs"),
-                        });
+                        if (
+                          newCircuit.circuit_id !== -1
+                          && newCircuit.city_id !== -1
+                          && newCircuit.number_of_nights !== ""
+                          && newCircuit.number_of_nights !== 0
+                          && newCircuit.number_of_nights > 0
+                        ) {
+                          await handleAdd();
+                          messageApi.open({
+                            type: 'success',
+                            content: t("The circuit has been added successfully"),
+                          });
+                        } else {
+                          messageApi.open({
+                            type: 'error',
+                            content: t("Please fill all the inputs"),
+                          });
+                        }
                       }
                     } catch (error) {
                       messageApi.open({
@@ -155,7 +237,7 @@ function CircuitTable() {
       </Col>
       <Col md="12">
         {circuits && circuits?.length !== 0 && Object.keys(circuits).map((key) => (
-          <Card>
+          <Card key={key}>
             <CardHeader>
               <CardTitle tag="h4" style={{
                 "display": "flex",
@@ -196,8 +278,8 @@ function CircuitTable() {
                   </tr>
                 </thead>
                 <tbody>
-                  {circuits[key] && circuits[key]?.length !== 0 && circuits[key].map((item) => (
-                    <tr>
+                  {circuits[key] && circuits[key]?.length !== 0 && circuits[key].map((item, index) => (
+                    <tr key={index}>
                       <td style={{ "textAlign": "left" }}>{item?.city}</td>
                       <td style={{ "textAlign": "left" }}>{item?.hotel}</td>
                       <td style={{ "textAlign": "left" }}>{item?.cat}</td>

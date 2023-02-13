@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import EditableInput from "../Inputs/EditableInput"
 import { getAgencies } from 'api/agency';
 import { editAgencyApi, deleteAgencyApi, addAgencyApi } from 'api/agency';
+import moment from 'moment';
 
 function AgencyTable() {
 
@@ -50,7 +51,6 @@ function AgencyTable() {
     loadData();
   }, [])
 
-
   return (
     <Row>
       <Col md="12">
@@ -93,12 +93,12 @@ function AgencyTable() {
             <CardTitle tag="h4">{t("Agencies")}</CardTitle>
           </CardHeader>
           <CardBody>
-            <Table responsive style={{ borderBottomWidth: 1, borderBottomColor: "gray" }}>
+            <Table striped responsive style={{ borderBottomWidth: 1, borderBottomColor: "gray" }}>
               <thead className="text-primary">
                 <tr>
                   <th>{t("name")}</th>
-                  <th>{t("Added-at")}</th>
-                  <th>{t("Updated-at")}</th>
+                  <th style={{ textAlign: "center" }}>{t("Added-at")}</th>
+                  <th style={{ textAlign: "center" }}>{t("Updated-at")}</th>
                   <th>{t("status")}</th>
                 </tr>
               </thead>
@@ -115,12 +115,12 @@ function AgencyTable() {
                           })
                         }
                       }} /></td>
-                      <td style={{ backgroundColor: "	#F0F0F0" }}>{agency?.created_at}</td>
-                      <td style={{ backgroundColor: "	#F0F0F0" }}>{agency?.updated_at}</td>
+                      <td style={{ textAlign: "center" }}>{moment(agency?.created_at).format("DD-MM-YYYY HH:MM")}</td>
+                      <td style={{ textAlign: "center" }}>{moment(agency?.updated_at).format("DD-MM-YYYY HH:MM")}</td>
                       <td>
                         <div onClick={() => {
-                           setDeleteAgencyId(agency?.id);
-                          }} data-toggle="modal" data-target={deleteAgencyId === agency?.id && "#exampleModal"} type="button" className='text-danger' >
+                          setDeleteAgencyId(agency?.id);
+                        }} data-toggle="modal" data-target={deleteAgencyId === agency?.id && "#exampleModal"} type="button" className='text-danger' >
                           <i className="fa fa-solid fa-trash-o mr-2 text-danger" />
                           {t("Remove")}
                         </div>
@@ -134,7 +134,7 @@ function AgencyTable() {
           </CardBody>
         </Card>
       </Col>
-      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">

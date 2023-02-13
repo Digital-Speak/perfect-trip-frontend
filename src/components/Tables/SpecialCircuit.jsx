@@ -42,14 +42,15 @@ function SpecialCircuit({
     },
     hotel: {
       name: "",
-      id: -1
+      id: -1,
+      list: []
     },
     regime: {
       name: "",
     },
     startedAt: new Date(),
     endedAt: new Date()
-  })
+  });
 
   useEffect(() => {
     if (newClient?.startDate == null) return;
@@ -75,7 +76,7 @@ function SpecialCircuit({
     }
   }, [newClient?.startDate])
 
-  const renderCities = () => {
+  const renderCities = (defaultValue = newCircuitRow.city.name, edit = false, id = -1) => {
     const data = []
     cities.forEach(city => {
       data.push({
@@ -87,8 +88,8 @@ function SpecialCircuit({
       id="cities"
       options={data}
       sx={{ width: "auto" }}
-      value={newCircuitRow.city.name}
-      inputValue={newCircuitRow.city.name}
+      value={defaultValue}
+      inputValue={defaultValue}
       disableClearable={true}
       renderInput={(params) =>
         <TextField
@@ -102,29 +103,82 @@ function SpecialCircuit({
         const targetCity = cities.filter((city => city.name === newInputValue));
         if (parseInt(targetCity.length) !== 0) {
           const payload = await getHotels();
+          const listOfHotels = payload?.hotels?.filter((hotel) =>
+            hotel?.stars?.split("")[1] === newClient?.cat?.id && parseInt(hotel?.city_id) === parseInt(targetCity[0]?.id)
+          );
           if (!payload.success) return setHotels([]);
-          if (payload.success) {
-            setHotels(payload?.hotels?.filter((hotel) =>
-              hotel?.stars?.split("")[1] === newClient?.cat?.id && parseInt(hotel?.city_id) === parseInt(targetCity[0]?.id)
-            ));
-          };
-          setNewCircuitRow({
-            ...newCircuitRow,
-            city: {
-              id: targetCity[0]?.id,
-              name: targetCity[0]?.name
-            },
-            hotel: {
-              id: -1,
-              name: ""
-            }
-          })
+          setHotels(listOfHotels);
+          if (edit === false) {
+            if (payload.success) {
+              setNewCircuitRow({
+                ...newCircuitRow,
+                city: {
+                  id: targetCity[0]?.id,
+                  name: targetCity[0]?.name
+                },
+                hotel: {
+                  id: -1,
+                  name: "",
+                  list: listOfHotels
+                }
+              });
+            };
+          } else {
+            updateFeild(id, targetCity[0]?.name, "cityName");
+            
+          }
         }
       }}
     />
   }
 
-  const renderHotels = (editModeVal = false) => {
+  const renderEndDate = (defaultValue = newCircuitRow.endedAt, edit = false, id = -1) => {
+    return (
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker
+          inputFormat={"DD/MM/YYYY"}
+          value={moment(defaultValue).format("MM/DD/YYYY")}
+          onChange={(newValue) => {
+            const newDate = new Date(newValue.$d);
+            if (edit === false) {
+              setNewCircuitRow({
+                ...newCircuitRow,
+                endedAt: newDate
+              })
+            } else {
+              updateFeild(id, newDate, "to");
+            }
+          }}
+          renderInput={(params) => <TextField style={{ "width": "100%" }} {...params} />}
+        />
+      </LocalizationProvider>
+    )
+  }
+
+  const renderStartDate = (defaultValue = newCircuitRow.startedAt, edit = false, id = -1) => {
+    return (
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker
+          inputFormat={"DD/MM/YYYY"}
+          value={moment(defaultValue).format("MM/DD/YYYY")}
+          onChange={(newValue) => {
+            const newDate = new Date(newValue.$d);
+            if (edit === false) {
+              setNewCircuitRow({
+                ...newCircuitRow,
+                startedAt: newDate
+              })
+            } else {
+              updateFeild(id, newDate, "from");
+            }
+          }}
+          renderInput={(params) => <TextField style={{ "width": "100%" }} {...params} />}
+        />
+      </LocalizationProvider>
+    )
+  }
+
+  const renderHotels = (defaultValue = newCircuitRow.hotel.name, edit = false, id = -1) => {
     const data = []
     hotels.forEach(hotel => {
       data.push({
@@ -136,8 +190,8 @@ function SpecialCircuit({
       id="hotels"
       options={data}
       sx={{ width: "auto" }}
-      inputValue={newCircuitRow.hotel.name}
-      value={newCircuitRow.hotel.name}
+      inputValue={defaultValue}
+      value={defaultValue}
       disableClearable={true}
       renderInput={(params) =>
         <TextField
@@ -149,25 +203,32 @@ function SpecialCircuit({
       onInputChange={(event, newInputValue) => {
         const targetHotel = hotels.filter((hotel => hotel.name === newInputValue));
         if (parseInt(targetHotel.length) !== 0) {
-          setNewCircuitRow({
-            ...newCircuitRow, hotel: {
-              id: targetHotel[0]?.id,
-              name: targetHotel[0]?.name
-            }
-          })
+          if (edit === false) {
+            setNewCircuitRow({
+              ...newCircuitRow,
+              hotel: {
+                id: targetHotel[0]?.id,
+                name: targetHotel[0]?.name
+              }
+            })
+          }
+          else {
+            updateFeild(id, targetHotel[0].id, "hotel_id");
+            updateFeild(id, targetHotel[0].name, "hotel_name");
+          }
         }
       }}
     />
   }
 
-  const renderRegimes = (editModeVal = false) =>
+  const renderRegimes = (defaultValue = newCircuitRow.regime.name, edit = false, id = -1) =>
     <Autocomplete
       freeSolo
       id="regimes"
       options={[{ label: "PC" }, { label: "DP" }, { label: "BB" }]}
       sx={{ width: "auto" }}
-      inputValue={newCircuitRow.regime.name}
-      value={newCircuitRow.regime.name}
+      inputValue={defaultValue}
+      value={defaultValue}
       renderInput={(params) =>
         <TextField
           fullWidth
@@ -177,11 +238,16 @@ function SpecialCircuit({
             type: 'search',
           }} />}
       onInputChange={(event, newInputValue) => {
-        setNewCircuitRow({
-          ...newCircuitRow, regime: {
-            name: newInputValue
-          }
-        })
+        if (edit === false) {
+          setNewCircuitRow({
+            ...newCircuitRow,
+            regime: {
+              name: newInputValue
+            }
+          })
+        } else {
+          updateFeild(id, newInputValue, "regime");
+        }
       }} />
 
   const formatDate = (unformatted) => {
@@ -194,6 +260,71 @@ function SpecialCircuit({
 
     return yyyy + '-' + mm + '-' + dd;
   }
+
+  const addForm = () => {
+    return <tr>
+      <td style={{ width: "20%" }}>{renderCities()}</td>
+      <td style={{ width: "20%" }}>{renderHotels()}</td>
+      <td style={{ width: "20%" }}>{renderStartDate()}</td>
+      <td style={{ width: "20%" }}>{renderEndDate()}</td>
+      <td style={{ width: "20%" }}>{renderRegimes()}</td>
+      <td style={{ width: "20%" }}>
+        <Button onClick={() => {
+          if (
+            parseInt(newCircuitRow.city.id) === -1
+            || parseInt(newCircuitRow.hotel.id) === -1
+            || newCircuitRow.regime.name === ""
+          ) {
+            message.error("Merci de remplir tous les champs");
+            return;
+          }
+
+          setNewClient({ ...newClient, endDate: newCircuitRow?.endedAt })
+          setNewCircuitRow({
+            ...newCircuitRow,
+            city: {
+              name: "",
+              id: -1
+            },
+            hotel: {
+              name: "",
+              id: -1,
+              list: []
+            },
+            regime: {
+              name: "",
+            },
+            startedAt: newCircuitRow?.endedAt,
+            endedAt: new Date(new Date(newCircuitRow?.endedAt).setDate(newCircuitRow?.endedAt?.getDate() + 1))
+          });
+
+          setSpecialCircuitsData([...specialCircuitsData, {
+            id: specialCircuitsData.length + 1,
+            cityName: newCircuitRow.city.name,
+            cityId: newCircuitRow.city.id,
+            dossier_num: newClient.folderNumber,
+            extra_nights: 0,
+            from: newCircuitRow.startedAt,
+            hotel_id: newCircuitRow.hotel.id,
+            hotel_name: newCircuitRow.hotel.name,
+            regime: newCircuitRow.regime.name,
+            to: newCircuitRow.endedAt,
+            hotelList: newCircuitRow.hotel.list
+          }]);
+        }} className="btn btn-success">{t("+")}</Button>
+      </td>
+    </tr>
+  }
+
+  const updateFeild = (id, value, filed) => {
+    setSpecialCircuitsData((prev) => Object.assign([], {
+      ...prev, [id - 1]: {
+        ...specialCircuitsData[id - 1],
+        [filed]: value
+      }
+    }));
+  }
+
   return (
     <>
       <div className={`content`}>
@@ -215,82 +346,16 @@ function SpecialCircuit({
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td style={{ width: "20%" }}>{renderCities(true)}</td>
-                      <td style={{ width: "20%" }}>{renderHotels(true)}</td>
-                      <td style={{ width: "20%" }}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
-                            inputFormat={"DD/MM/YYYY"}
-                            disabled={parseInt(specialCircuitsData.length) !== 0}
-                            value={moment(newCircuitRow.startedAt).format("MM/DD/YYYY")}
-                            onChange={(newValue) => {
-                              const newDate = new Date(newValue.$d);
-                              setNewCircuitRow({
-                                ...newCircuitRow,
-                                startedAt: newDate
-                              })
-                            }}
-                            renderInput={(params) => <TextField style={{ "width": "100%" }} {...params} />}
-                          />
-                        </LocalizationProvider>
-                      </td>
-                      <td style={{ width: "20%" }}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
-                            inputFormat={"DD/MM/YYYY"}
-                            value={moment(newCircuitRow.endedAt).format("MM/DD/YYYY")}
-                            onChange={(newValue) => {
-                              const newDate = new Date(newValue.$d);
-                              setNewCircuitRow({
-                                ...newCircuitRow,
-                                endedAt: newDate
-                              })
-                            }}
-                            renderInput={(params) => <TextField style={{ "width": "100%" }} {...params} />}
-                          />
-                        </LocalizationProvider>
-                      </td >
-                      <td style={{ width: "20%" }}>{renderRegimes(true)}</td>
-                      <td style={{ width: "20%" }}><Button onClick={() => {
-                        if (
-                          parseInt(newCircuitRow.city.id) === -1
-                          || parseInt(newCircuitRow.hotel.id) === -1
-                          || newCircuitRow.regime.name === ""
-                        ) {
-                          message.error("Error");
-                          return;
-                        }
-                        setNewClient({ ...newClient, endDate: newCircuitRow?.endedAt })
-                        setNewCircuitRow({
-                          ...newCircuitRow,
-                          startedAt: newCircuitRow?.endedAt,
-                          endedAt: new Date(new Date(newCircuitRow?.endedAt).setDate(newCircuitRow?.endedAt?.getDate() + 1))
-                        })
-                        setSpecialCircuitsData([...specialCircuitsData, {
-                          id: specialCircuitsData.length + 1,
-                          cityName: newCircuitRow.city.name,
-                          cityId: newCircuitRow.city.id,
-                          dossier_num: newClient.folderNumber,
-                          extra_nights: 0,
-                          from: newCircuitRow.startedAt,
-                          hotel_id: newCircuitRow.hotel.id,
-                          hotel_name: newCircuitRow.hotel.name,
-                          regime: newCircuitRow.regime.name,
-                          to: newCircuitRow.endedAt,
-                        }])
-
-                      }} className="btn btn-success">{t("+")}</Button></td>
-                    </tr>
-                    {parseInt(specialCircuitsData.length) !== 0 && specialCircuitsData?.map(element =>
+                    {addForm()}
+                    {parseInt(specialCircuitsData.length) !== 0 && specialCircuitsData?.map((element) =>
                       <tr>
-                        <td style={{ width: "20%" }}>{element.cityName}</td>
-                        <td style={{ width: "20%" }}>{element.hotel_name}</td>
-                        <td style={{ width: "20%" }}>{moment(element.from).format("DD / MM / Y")}</td>
-                        <td style={{ width: "20%" }}>{moment(element.to).format("DD / MM / Y")}</td>
-                        <td style={{ width: "20%" }}>{element.regime}</td>
+                        <td style={{ width: "20%" }}>{renderCities(element.cityName, true, element.id)}</td>
+                        <td style={{ width: "20%" }}>{renderHotels(element.hotel_name, true, element.id)}</td>
+                        <td style={{ width: "20%" }}>{renderStartDate(element.from, true, element.id)}</td>
+                        <td style={{ width: "20%" }}>{renderEndDate(element.to, true, element.id)}</td>
+                        <td style={{ width: "20%" }}>{renderRegimes(element.regime, true, element.id)}</td>
                         <td style={{ width: "20%" }}><Button onClick={() => {
-                          setSpecialCircuitsData([...specialCircuitsData?.filter((row) => parseInt(row.id) !== parseInt(element.id))])
+                          setSpecialCircuitsData([...specialCircuitsData?.filter((row) => parseInt(row.id) !== parseInt(element.id))]);
                         }} className="btn btn-danger">{t("-")}</Button></td>
                       </tr>
                     )}

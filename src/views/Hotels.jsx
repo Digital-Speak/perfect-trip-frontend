@@ -19,14 +19,16 @@ import { useTranslation } from 'react-i18next';
 import { getCities } from "../api/city";
 import { getHotels } from "../api/hotel";
 import { getDossier } from "../api/dossier";
+import { useHistory } from 'react-router-dom';
 import moment from "moment/moment";
 
 function Hotels() {
   const { t } = useTranslation();
+  const { push } = useHistory()
   const [dataSource, setDataSource] = useState({ keys: [], data: [] });
   const [dates, setDates] = useState({
     start: new Date(),
-    end: new Date().setMonth(new Date().getMonth() + 1),
+    end: new Date(new Date().setMonth(new Date().getMonth() + 1)),
   })
 
   const [cities, setCities] = useState({
@@ -82,10 +84,7 @@ function Hotels() {
   }
 
   useEffect(() => {
-    loadAppData()
-  }, []);
-
-  useEffect(() => {
+    loadAppData();
     loadDossierData(
       {
         starts_at: dates.start,
@@ -110,7 +109,8 @@ function Hotels() {
   useEffect(() => {
     const newMappedData = [{ label: t("All") }, ...hotels?.dataSource
       .filter((item) => parseInt(item.city_id) === selectedCity.id)
-      .map((item) => { return { label: item.name } })]
+      .map((item) => { return { label: item.name } })];
+
     setHotels({
       ...hotels,
       mapedData: newMappedData
@@ -195,14 +195,24 @@ function Hotels() {
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                           value={dates.start}
+                          maxDate={dates.end}
                           inputFormat={"DD/MM/YYYY"}
+                          InputProps={{
+                            disabled: true,
+                          }}
                           onChange={(newValue) => {
                             const newDate = new Date(newValue.$d);
-                            // TODO: Handle the dates excaption
-                            // if (dates.end > newDate) return;
-                            setDates({ ...dates, start: newDate });
+                            if (moment(newDate).isSameOrBefore(moment(dates.start))) {
+                              setDates({ ...dates, start: newDate });
+                            }
                           }}
-                          renderInput={(params) => <TextField fullWidth {...params} />}
+                          renderInput={(params) =>
+                            <TextField
+                              disabled={true}
+                              fullWidth {...params}
+                              onKeyDown={(e) => {
+                                e.preventDefault();
+                              }} />}
                         />
                       </LocalizationProvider>
                     </FormGroup>
@@ -213,13 +223,25 @@ function Hotels() {
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                           value={dates.end}
+                          minDate={dates.start}
+                          InputProps={{
+                            disabled: true,
+                          }}
                           inputFormat={"DD/MM/YYYY"}
                           onChange={(newValue) => {
-                            // TODO: Handle the dates excaption
                             const newDate = new Date(newValue.$d);
-                            setDates({ ...dates, end: newDate });
+                            if (moment(newDate).isSameOrAfter(moment(dates.start))) {
+                              setDates({ ...dates, end: newDate });
+                            }
                           }}
-                          renderInput={(params) => <TextField fullWidth {...params} />}
+                          renderInput={(params) =>
+                            <TextField
+                              disabled={true}
+                              fullWidth {...params}
+                              onKeyDown={(e) => {
+                                e.preventDefault();
+                              }}
+                            />}
                         />
                       </LocalizationProvider>
                     </FormGroup>
@@ -235,7 +257,7 @@ function Hotels() {
               <CardBody>
                 <Row>
                   <Col>
-                    <Table responsive>
+                    <Table responsive striped>
                       <thead className="text-primary">
                         <tr>
                           <th style={{ textAlign: "center" }}>{t("From")}{"-"}{t("To")}</th>
@@ -245,6 +267,7 @@ function Hotels() {
                           <th style={{ textAlign: "center" }}>{t("FullName")}</th>
                           <th style={{ textAlign: "center" }}>{t("N° Pax")}</th>
                           <th style={{ textAlign: "center" }}>{t("Note")}</th>
+                          <th style={{ textAlign: "center" }}>{t("Details")}</th>
                         </tr>
                       </thead>
                       <tbody style={{
@@ -252,7 +275,7 @@ function Hotels() {
                       }}>
                         {
                           dataSource.data.map((item) => (
-                            <tr>
+                            <tr className="rowHoverMode">
                               <td style={{ justifyContent: "center", display: "flex", }}>
                                 {new Date(item.startAt).toLocaleString('default', { month: 'long' }).substring(0, 3)}
                                 -
@@ -272,6 +295,16 @@ function Hotels() {
                                 ))}
                               </td>
                               <td style={{ textAlign: "center" }}>{item.note}</td>
+                              <td style={{ textAlign: "center" }} onClick={() => {
+                              }}><i className="fa fa-envelope cellHoverMode"
+                                style={{
+                                  cursor: "pointer",
+                                }}
+                                onClick={() => {
+                                  sessionStorage.setItem("TargetFolder", item?.clientRef);
+                                  push("/admin/details")
+                                }}
+                                /></td>
                             </tr>
                           ))
                         }

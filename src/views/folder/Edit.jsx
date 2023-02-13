@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Button, Card, CardHeader, CardBody, CardTitle, FormGroup, Form, Input, Row, Col } from "reactstrap";
 import { useTranslation } from 'react-i18next';
-import { getCircuit, postData } from "../api/dashboard";
-import { getAgencies } from "../api/agency";
-import { addNewDossier, getOneDossier, removeDossier } from "../api/dossier";
+import { getCircuit, postData } from "../../api/dashboard";
+import { getAgencies } from "../../api/agency";
+import { updateFolder, getOneDossier, removeDossier } from "../../api/dossier";
 import { getCities } from "api/city";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { message } from 'antd';
 import Autocomplete from '@mui/material/Autocomplete';
-import cats from "../assets/data/cats.json";
+import cats from "../../assets/data/cats.json";
 import ReactHTMLTableToExcel from 'html-to-excel-react';
-import PaxNumber from "../components/Tables/Pax-Number";
+import PaxNumber from "../../components/Tables/Pax-Number";
 import moment from "moment/moment";
-import SelectedCircuit from "../components/Tables/SelectedCircuit";
+import SelectedCircuitEdit from "../../components/Tables/SelectedCircuitEdit";
 import TextField from '@mui/material/TextField';
-import '../assets/css/views/folderDetails.css';
+import '../../assets/css/views/folderDetails.css';
 
-
-function FolderDetails() {
+export default function Edit() {
   const { t } = useTranslation();
   const [circuitsServerData, setCircuitsServerData] = useState([]);
   const [agencesServerData, setAgencesServerData] = useState([]);
@@ -72,6 +71,8 @@ function FolderDetails() {
 
   const [targetFolder, setTargetFolder] = useState({
     folderNumber: null,
+    refClient: null,
+    newClientRef: null,
     agency: {
       name: null,
       id: null
@@ -141,6 +142,7 @@ function FolderDetails() {
   const clearInputs = async () => {
     setTargetFolder({
       dossierNum: "",
+      newClientRef: "",
       fullName: "",
       agency: {
         name: null,
@@ -177,11 +179,10 @@ function FolderDetails() {
   }
 
   const getTargetDossier = async (value) => {
-    setTargetFolder({ ...targetFolder, refClient: value })
+    setTargetFolder({ ...targetFolder, refClient: value });
     const payload = await getOneDossier({
       ref_client: value
     });
-
     if (payload?.success) {
       if (payload?.data.length !== 0) {
         const nbrType = [];
@@ -204,9 +205,14 @@ function FolderDetails() {
           let totalNbrPax = 0;
           nbrType.forEach((item) => totalNbrPax = totalNbrPax + item.nbr);
         }
+
         setCircuitDetails(payload?.circuits?.sort((a, b) => new Date(a.start_date) - new Date(b.start_date)));
+        console.log(targetFolder);
         setTargetFolder({
+          ...targetFolder,
+          refClient: value,
           fullName: payload?.data[0]?.client_name,
+          newClientRef: payload?.data[0]?.client_ref,
           folderNumber: payload?.data[0]?.dossierNum,
           agency: {
             name: payload?.data[0]?.agency,
@@ -256,6 +262,15 @@ function FolderDetails() {
   useEffect(() => {
     if (circuit.length === 0) loadData();
   }, []);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("TargetFolder") != "null") {
+      const targetRef = sessionStorage.getItem("TargetFolder");
+      setTargetFolder({ ...targetFolder, refClient: targetRef })
+      sessionStorage.setItem("TargetFolder", "null");
+      getTargetDossier(targetRef);
+    }
+  }, [sessionStorage.getItem("TargetFolder")])
 
   useEffect(() => {
     if (targetFolder?.circuit !== "" && targetFolder?.cat !== "") {
@@ -308,7 +323,11 @@ function FolderDetails() {
                     </Col>
                     <Col className="" md="5">
                       <FormGroup>
-                        <label>{t("Client-Ref")}</label>
+                        <label>{t("Client-Ref")}: <span style={{
+                          fontWeight: "bolder",
+                          fontSize: "15px",
+                          fontStyle: "italic"
+                        }}>{targetFolder.newClientRef}</span></label>
                         <Input
                           value={targetFolder?.refClient}
                           id="refClient"
@@ -484,7 +503,7 @@ function FolderDetails() {
                   </Row>
                   <Row>
                     <Col md="12">
-                      <SelectedCircuit
+                      <SelectedCircuitEdit
                         disabled={!isInEditeMode}
                         circuitDates={{ start: targetFolder?.startDate, end: targetFolder?.endDate }}
                         setNewClient={setTargetFolder}
@@ -520,10 +539,14 @@ function FolderDetails() {
                                 hotels_dossier.push({
                                   dossier_num: targetFolder.folderNumber,
                                   hotel_id: hotels_dossier_item[0].hotelId,
-                                  extra_nights: targetFolder.extraNights
+                                  from: item?.fromForServer,
+                                  to: item?.toForServer,
+                                  id: item?.dossier_hotel_id,
+                                  regime: item?.regime
                                 })
                               });
-
+                              console.log(hotels_dossier);
+                              return;
                               if (
                                 targetFolder?.folderNumber === "ERROR" ||
                                 targetFolder?.refClient === null ||
@@ -534,36 +557,51 @@ function FolderDetails() {
                                 targetFolder?.endDate === null ||
                                 targetFolder?.typeOfHb === null ||
                                 targetFolder?.agency?.id === null ||
-                                targetFolder?.nbrPax === null ||
-                                hotels_dossier.length === null
+                                targetFolder?.nbrPax === null
+                                // hotels_dossier.length === null
                               ) {
-
                                 return messageApi.open({
                                   type: 'error',
                                   content: t("Please fill all the inputs"),
                                 });
                               }
-
-                              const payload = await addNewDossier({
+                              // console.log({
+                              //   dossier_num: targetFolder.folderNumber,
+                              //   ref_client: targetFolder.refClient,
+                              //   new_ref_client: targetFolder.newClientRef,
+                              //   name: targetFolder.fullName,
+                              //   category: targetFolder.cat.id,
+                              //   starts_at: targetFolder.startDate,
+                              //   ends_at: targetFolder.endDate,
+                              //   agency_id: targetFolder.agency.id,
+                              //   circuit_id: targetFolder.circuit.id,
+                              //   // hotels_dossier: hotels_dossier,
+                              //   typeOfHb: targetFolder.typeOfHb,
+                              //   nbrPax: targetFolder?.nbrPax,
+                              //   note: targetFolder.note,
+                              //   ...flights
+                              // });
+                              const payload = await updateFolder({
                                 dossier_num: targetFolder.folderNumber,
                                 ref_client: targetFolder.refClient,
+                                new_ref_client: targetFolder.newClientRef,
                                 name: targetFolder.fullName,
                                 category: targetFolder.cat.id,
                                 starts_at: targetFolder.startDate,
                                 ends_at: targetFolder.endDate,
                                 agency_id: targetFolder.agency.id,
                                 circuit_id: targetFolder.circuit.id,
-                                hotels_dossier: hotels_dossier,
+                                // hotels_dossier: hotels_dossier,
                                 typeOfHb: targetFolder.typeOfHb,
                                 nbrPax: targetFolder?.nbrPax,
                                 note: targetFolder.note,
                                 ...flights
                               });
-
+                              return;
                               if (payload?.success) {
                                 messageApi.open({
                                   type: 'success',
-                                  content: t("Folder has been added successfully"),
+                                  content: t("Folder has been edited successfully"),
                                 });
                                 clearInputs();
                                 window.scroll({
@@ -741,4 +779,3 @@ const styles = {
     height: '40px',
   }
 }
-export default FolderDetails;

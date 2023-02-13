@@ -39,26 +39,9 @@ function Filters() {
  const filter = async () => {
   if (filterFolders.circuit == -1) {
    setList(listBackup);
-
-   //  new Date(item.startAt) >= new Date(filterFolders.from)
-   //  &&
-   //  new Date(item.endAt) <= new Date(filterFolders.from)
-   // ));
-   // setFilterFolders({
-   //  ...filterFolders,
-   //  circuit: -1
-   // })
   } else {
-   setList(listBackup.filter((item) =>
-    item.circuit_id == filterFolders.circuit
-    // &&
-    // new Date(item.startAt) >= new Date(filterFolders.from)
-    // &&
-    // new Date(item.endAt) <= new Date(filterFolders.from)
-   ));
+   setList(listBackup.filter((item) => item.circuit_id == filterFolders.circuit));
   }
-
-
  }
  useEffect(() => {
   loadData();

@@ -12,7 +12,6 @@ import CityTable from "components/Tables/CityTable";
 import HotelTable from "components/Tables/HotelTable";
 import CircuitTable from "components/Tables/CircuitTable";
 
-
 function Config() {
   const { t } = useTranslation();
   const [sector, setSector] = useState("hotel");

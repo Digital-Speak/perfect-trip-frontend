@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { Button, Card, CardHeader, CardBody, CardTitle, FormGroup, Form, Input, Row, Col } from "reactstrap";
 import { useTranslation } from 'react-i18next';
-import { getCircuit, postData } from "../api/dashboard";
-import { getAgencies } from "../api/agency";
-import { getlastId } from "../api/auth";
-import { addNewDossier } from "../api/dossier";
+import { getCircuit, postData } from "../../api/dashboard";
+import { getAgencies } from "../../api/agency";
+import { getlastId } from "../../api/auth";
+import { addNewDossier } from "../../api/dossier";
 import { getCities } from "api/city";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { message } from 'antd';
 import Autocomplete from '@mui/material/Autocomplete';
-import cats from "../assets/data/cats.json";
+import cats from "../../assets/data/cats.json";
 import ReactHTMLTableToExcel from 'html-to-excel-react';
-import PaxNumber from "../components/Tables/Pax-Number";
-import SelectedCircuit from "../components/Tables/SelectedCircuit";
-import SpecialCircuit from "../components/Tables/SpecialCircuit";
+import PaxNumber from "../../components/Tables/Pax-Number";
+import SelectedCircuit from "../../components/Tables/SelectedCircuit";
+import SpecialCircuit from "../../components/Tables/SpecialCircuit";
 import TextField from '@mui/material/TextField';
-
 import moment from "moment/moment";
 
-function AddNewFolder() {
+export default function New() {
   const { t } = useTranslation();
   const [circuitsServerData, setCircuitsServerData] = useState([]);
   const [agencesServerData, setAgencesServerData] = useState([]);
@@ -305,7 +304,7 @@ function AddNewFolder() {
                               ...newClient,
                               cat: {
                                 name: newInputValue,
-                                id: newInputValue === "5 ⭐ L" ? "L" : newInputValue === "4 ⭐ A" ? "A" : "B"
+                                id: newInputValue === "5 ⭐ L" ? "L" : newInputValue === "4 ⭐ A" ? "A" : newInputValue === "4 ⭐ B" ? "B" : 'X'
                               }
                             })
                           }}
@@ -498,7 +497,7 @@ function AddNewFolder() {
                               flight_date_start: String(flights.flight_date_start),
                               flight_date_end: String(flights.flight_date_end),
                             });
-
+                            console.log(payload)
                             if (payload?.success) {
                               messageApi.open({
                                 type: 'success',
@@ -618,4 +617,3 @@ const styles = {
     height: '40px',
   }
 }
-export default AddNewFolder;

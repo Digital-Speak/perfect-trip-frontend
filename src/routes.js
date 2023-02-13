@@ -1,20 +1,20 @@
-import AddNewFolder from "views/AddNewFolder";
+import New from "views/folder/New";
+import Edit from "views/folder/Edit";
 import Config from "views/Config";
-import FolderDetails from "views/FolderDetails";
 import ForgotPassword from "views/password/Forgot";
 import Flight from "views/Flight";
 import Hotels from "views/Hotels";
 import Login from "views/Login";
 import Settings from "views/Settings";
 import SetNewPassword from "views/password/SetNew";
-import ImportExcel from "views/ImportExcel";
+import Import from "views/Import";
 
 var routes = [
   {
     path: "/newfolder",
     name: "new folder",
     icon: "nc-icon nc-bank",
-    component: AddNewFolder,
+    component: New,
     layout: "/admin",
     show: true,
   },
@@ -22,15 +22,7 @@ var routes = [
     path: "/details",
     name: "filter",
     icon: "fa fa-envelope",
-    component: FolderDetails,
-    layout: "/admin",
-    show: true,
-  },
-  {
-    path: "/flights",
-    name: "Flights",
-    icon: "fa fa-plane",
-    component: Flight,
+    component: Edit,
     layout: "/admin",
     show: true,
   },
@@ -39,6 +31,14 @@ var routes = [
     name: "Hotels",
     icon: "fa fa-filter",
     component: Hotels,
+    layout: "/admin",
+    show: true,
+  },
+  {
+    path: "/flights",
+    name: "Flights",
+    icon: "fa fa-plane",
+    component: Flight,
     layout: "/admin",
     show: true,
   },
@@ -75,12 +75,11 @@ var routes = [
     layout: "/auth",
     show: false,
   },
-
   {
     path: "/import",
-    name: "Import",
-    icon: "nc-icon nc-settings",
-    component: ImportExcel,
+    name: "Import Folders",
+    icon: "nc-icon nc-single-copy-04",
+    component: Import,
     layout: "/admin",
     show: true,
   }

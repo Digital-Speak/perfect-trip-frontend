@@ -13,7 +13,6 @@ var ps;
 function Admin(props) {
   const { push } = useHistory()
   const mainPanel = useRef();
-  const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
 
   const refreshToken = async () => {

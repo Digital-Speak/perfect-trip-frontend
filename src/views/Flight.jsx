@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from 'react-router-dom';
 import {
   Card,
   CardHeader,
@@ -19,18 +20,19 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import ReactHTMLTableToExcel from 'html-to-excel-react';
 
-var moment = require("moment");
+const moment = require("moment");
 
 function Flight() {
   const { t } = useTranslation();
+  const { push } = useHistory()
   const [list, setList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
   const [cities, setCities] = useState([])
   const [filterState, setFilterState] = useState({
-    type: 1,
+    type: 3,
     cityId: -1,
-    from: moment(),
-    to: moment().add(1, "month")
+    from: moment(new Date()),
+    to: moment(new Date()).add(1, "month")
   });
 
   const loadData = async () => {
@@ -43,7 +45,7 @@ function Flight() {
       from: moment(),
       to: moment().add(1, "month")
     })
-    filter();
+    await filter();
   }
 
   const filter = () => {
@@ -52,6 +54,7 @@ function Flight() {
       if (parseInt(filterState.type) === 1) {
         const start_date = flight.flight_date_start;
         if (moment(start_date).isSameOrAfter(filterState.from, "day") && moment(start_date).isSameOrBefore(filterState.to, "day")) {
+
           if (parseInt(filterState.cityId) !== -1) {
             if (parseInt(flight.city_id_start) === parseInt(filterState.cityId)) {
               filtered.push(flight);
@@ -60,7 +63,7 @@ function Flight() {
             filtered.push(flight);
           }
         }
-      } else {
+      } else if (parseInt(filterState.type) === 2) {
         const end_date = flight.flight_date_end;
         if (moment(end_date).isSameOrAfter(filterState.from, "day") && moment(end_date).isSameOrBefore(filterState.to, "day")) {
           if (parseInt(filterState.cityId) !== -1) {
@@ -71,8 +74,26 @@ function Flight() {
             filtered.push(flight);
           }
         }
+      } else if (parseInt(filterState.type) === 3) {
+        const end_date = flight.flight_date_end;
+        const start_date = flight.flight_date_start;
+
+        if (moment(end_date).isSameOrAfter(filterState.from, "day") && moment(end_date).isSameOrBefore(filterState.to, "day") && moment(start_date).isSameOrAfter(filterState.from, "day") && moment(start_date).isSameOrBefore(filterState.to, "day")) {
+          if (parseInt(filterState.cityId) !== -1) {
+            if (
+              parseInt(flight.city_id_end) === parseInt(filterState.cityId)
+              ||
+              parseInt(flight.city_id_start) === parseInt(filterState.cityId)) {
+              filtered.push(flight);
+            }
+          } else if (parseInt(filterState.cityId) === -1) {
+            filtered.push(flight);
+          }
+        }
       }
+
       if (parseInt(index) === parseInt(list.length) - 1) {
+        console.log(filtered);
         setFilteredList([...filtered]);
       }
     })
@@ -97,6 +118,19 @@ function Flight() {
     filter()
   }, [filterState])
 
+
+  const getDetails = (item) => (
+    <td style={{ textAlign: "center" }} onClick={() => {
+    }}><i className="fa fa-envelope cellHoverMode"
+      style={{
+        cursor: "pointer",
+      }}
+      onClick={() => {
+        sessionStorage.setItem("TargetFolder", item?.clientRef);
+        push("/admin/details")
+      }}
+      /></td>
+  )
   return (
     <>
       <div className="content"
@@ -143,6 +177,7 @@ function Flight() {
                             type: event.target.value
                           })
                         }}>
+                        <option value={3}>{"Tout"}</option>
                         <option value={1}>{"APT / HOTEL"}</option>
                         <option value={2}>{"HOTEL / APT"}</option>
                       </select>
@@ -161,7 +196,7 @@ function Flight() {
                             cityId: event.target.value
                           })
                         }} name="" id="">
-                        <option value={-1}>{"All"}</option>
+                        <option value={-1}>{t("All")}</option>
                         {cities.length !== 0 && cities?.map((city) =>
                         (
                           <option value={city?.id}>{city?.name}</option>
@@ -179,6 +214,11 @@ function Flight() {
                       >
                         <DatePicker
                           value={filterState?.from}
+                          maxDate={filterState.to}
+
+                          InputProps={{
+                            disabled: true,
+                          }}
                           inputFormat={"DD/MM/YYYY"}
                           onChange={(newValue) => {
                             const newDate = new Date(newValue.$d);
@@ -187,7 +227,14 @@ function Flight() {
                               from: newDate
                             })
                           }}
-                          renderInput={(params) => <TextField fullWidth {...params} />}
+                          renderInput={(params) =>
+                            <TextField
+                              disabled={true}
+                              fullWidth {...params}
+                              onKeyDown={(e) => {
+                                e.preventDefault();
+                              }}
+                            />}
                         />
                       </LocalizationProvider>
                     </FormGroup>
@@ -196,11 +243,15 @@ function Flight() {
                     <label>{t("To")}</label>
                     <FormGroup>
                       <LocalizationProvider
-                        dateAdapter={AdapterDayjs}
-                      >
+                        dateAdapter={AdapterDayjs}>
                         <DatePicker
                           value={filterState?.to}
+                          minDate={filterState.from}
                           inputFormat={"DD/MM/YYYY"}
+
+                          InputProps={{
+                            disabled: true,
+                          }}
                           onChange={(newValue) => {
                             const newDate = new Date(newValue.$d);
                             setFilterState({
@@ -208,7 +259,14 @@ function Flight() {
                               to: formatDate(newDate)
                             })
                           }}
-                          renderInput={(params) => <TextField fullWidth {...params} />}
+                          renderInput={(params) =>
+                            <TextField
+                              disabled={true}
+                              fullWidth {...params}
+                              onKeyDown={(e) => {
+                                e.preventDefault();
+                              }}
+                            />}
                         />
                       </LocalizationProvider>
                     </FormGroup>
@@ -224,9 +282,10 @@ function Flight() {
               <CardBody>
                 <Row>
                   <Col>
-                    <Table responsive >
+                    <Table responsive striped >
                       <thead className="text-primary">
                         <tr>
+                          {filterState.type == 3 && <th style={{ textAlign: "center" }}>{t("Type")}</th>}
                           <th style={{ textAlign: "center" }}>{t("Date")}</th>
                           <th style={{ textAlign: "center" }}>{t("City")}</th>
                           <th style={{ textAlign: "center" }}>{t("From")}</th>
@@ -234,13 +293,14 @@ function Flight() {
                           <th style={{ textAlign: "center" }}>{t("Client-Name")}</th>
                           <th style={{ textAlign: "center" }}>{t("Flight")}</th>
                           <th style={{ textAlign: "center" }}>{t("Time")}</th>
+                          <th style={{ textAlign: "center" }}>{t("Details")}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {filteredList && filteredList?.length !== 0 && filteredList?.map((item, index) => (
                           <>
                             {filterState.type == 1 ?
-                              (<tr>
+                              (<tr className="rowHoverMode">
                                 <td style={{ textAlign: "center" }}>{moment(item?.flight_date_start).format("DD/MM/YYYY")}</td>
                                 <td style={{ textAlign: "center" }}>{item?.cityName1}</td>
                                 <td style={{ textAlign: "center" }}>{item?.from_start}</td>
@@ -248,19 +308,46 @@ function Flight() {
                                 <td style={{ textAlign: "center" }}>{item?.client_name}</td>
                                 <td style={{ textAlign: "center" }}>{item?.flight_start}</td>
                                 <td style={{ textAlign: "center" }}>{item?.flight_time_start}</td>
+                                {getDetails(item)}
                               </tr>)
-                              :
-                              (
-                                <tr>
-                                  <td style={{ textAlign: "center" }}>{moment(item?.flight_date_end).format("DD/MM/YYYY")}</td>
-                                  <td style={{ textAlign: "center" }}>{item?.cityName2}</td>
-                                  <td style={{ textAlign: "center" }}>{item?.from_end}</td>
-                                  <td style={{ textAlign: "center" }}>{item?.to_end}</td>
-                                  <td style={{ textAlign: "center" }}>{item?.client_name}</td>
-                                  <td style={{ textAlign: "center" }}>{item?.flight_end}</td>
-                                  <td style={{ textAlign: "center" }}>{item?.flight_time_end}</td>
-                                </tr>
-                              )
+                              : filterState.type == 2 ?
+                                (
+                                  <tr className="rowHoverMode">
+                                    <td style={{ textAlign: "center" }}>{moment(item?.flight_date_end).format("DD/MM/YYYY")}</td>
+                                    <td style={{ textAlign: "center" }}>{item?.cityName2}</td>
+                                    <td style={{ textAlign: "center" }}>{item?.from_end}</td>
+                                    <td style={{ textAlign: "center" }}>{item?.to_end}</td>
+                                    <td style={{ textAlign: "center" }}>{item?.client_name}</td>
+                                    <td style={{ textAlign: "center" }}>{item?.flight_end}</td>
+                                    <td style={{ textAlign: "center" }}>{item?.flight_time_end}</td>
+                                    {getDetails(item)}
+                                  </tr>
+                                ) : (
+                                  <>
+                                    <tr className="rowHoverMode">
+                                      <td style={{ textAlign: "center" }}>{item?.from_to_end}</td>
+                                      <td style={{ textAlign: "center" }}>{moment(item?.flight_date_end).format("DD/MM/YYYY")}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.cityName2}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.from_end}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.to_end}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.client_name}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.flight_end}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.flight_time_end}</td>
+                                      {getDetails(item)}
+                                    </tr>
+                                    <tr className="rowHoverMode">
+                                      <td style={{ textAlign: "center" }}>{item?.from_to_start}</td>
+                                      <td style={{ textAlign: "center" }}>{moment(item?.flight_date_start).format("DD/MM/YYYY")}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.cityName1}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.from_start}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.to_start}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.client_name}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.flight_start}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.flight_time_start}</td>
+                                      {getDetails(item)}
+                                    </tr>
+                                  </>
+                                )
                             }
                           </>
                         ))}
@@ -312,7 +399,9 @@ function Flight() {
           {filteredList && filteredList?.length !== 0 && filteredList?.map((item, index) => (
             <>
               {filterState.type == 1 ?
-                (<tr>
+                (<tr style={{
+                  backgroundColor: index % 2 === 0 ? "lightgray" : "white"
+                }}>
                   <td style={{ textAlign: "center" }} colSpan={1}>APT / HOTEL</td>
                   <td style={{ textAlign: "center" }} colSpan={1}>{moment(item?.flight_date_start).format("DD/MM/YYYY")}</td>
                   <td style={{ textAlign: "center" }} colSpan={1}>{item?.cityName1}</td>
@@ -322,19 +411,47 @@ function Flight() {
                   <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_start}</td>
                   <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_time_start}</td>
                 </tr>)
-                :
-                (
-                  <tr>
-                    <td style={{ textAlign: "center" }} colSpan={1}>HOTEL / APT</td>
-                    <td style={{ textAlign: "center" }} colSpan={1}>{moment(item?.flight_date_end).format("DD/MM/YYYY")}</td>
-                    <td style={{ textAlign: "center" }} colSpan={1}>{item?.cityName2}</td>
-                    <td style={{ textAlign: "center" }} colSpan={2}>{item?.from_end}</td>
-                    <td style={{ textAlign: "center" }} colSpan={2}>{item?.to_end}</td>
-                    <td style={{ textAlign: "center" }} colSpan={2}>{item?.client_name}</td>
-                    <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_end}</td>
-                    <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_time_end}</td>
-                  </tr>
-                )
+                : filterState.type == 2 ?
+                  (
+                    <tr style={{
+                      backgroundColor: index % 2 === 0 ? "lightgray" : "white"
+                    }}>
+                      <td style={{ textAlign: "center" }} colSpan={1}>HOTEL / APT</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{moment(item?.flight_date_end).format("DD/MM/YYYY")}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.cityName2}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.from_end}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.to_end}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.client_name}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_end}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_time_end}</td>
+                    </tr>
+                  ) :
+                  (<>
+                    <tr style={{
+                      backgroundColor: index % 2 === 0 ? "lightgray" : "white"
+                    }}>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.from_to_end}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{moment(item?.flight_date_end).format("DD/MM/YYYY")}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.cityName2}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.from_end}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.to_end}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.client_name}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_end}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_time_end}</td>
+                    </tr>
+                    <tr style={{
+                      backgroundColor: index % 2 === 0 ? "lightgray" : "white"
+                    }}>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.from_to_start}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{moment(item?.flight_date_start).format("DD/MM/YYYY")}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.cityName1}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.from_start}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.to_start}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.client_name}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_start}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_time_start}</td>
+                    </tr>
+                  </>)
               }
             </>
           ))}

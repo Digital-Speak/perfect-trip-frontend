@@ -8,7 +8,6 @@ import { deleteAdminApi } from 'api/auth';
 import { addSubAdminApi } from 'api/auth';
 
 function AdminsTable() {
-
   const { t } = useTranslation();
   const [admins, setAdmins] = useState([]);
   const [deleteSubAdminId, setDeleteSubAdminId] = useState(null);
@@ -37,6 +36,7 @@ function AdminsTable() {
       loadData();
     }
   }
+  
   const handleEdit = async (editAgency) => {
     if (editAgency?.name && editAgency?.name !== "") {
       const data = await editAgencyApi(editAgency);
@@ -68,7 +68,7 @@ function AdminsTable() {
           </CardHeader>
           <CardBody>
             <Row>
-              <Col className="" md="4" style={{height:"120px", display:"flex",flexDirection:"column", justifyContent:"center"}}>
+              <Col className="" md="4" style={{ height: "120px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <FormGroup>
                   <label>{t("name")}</label>
                   <Input
@@ -78,15 +78,15 @@ function AdminsTable() {
                     style={{ "height": "55px" }}
                     type="text"
                     onChange={(event) => {
-                        setNewAdmin({
-                          ...newAdmin,
-                          name: event.target.value
-                        });
-                      }}
+                      setNewAdmin({
+                        ...newAdmin,
+                        name: event.target.value
+                      });
+                    }}
                   />
                 </FormGroup>
               </Col>
-              <Col className="" md="4" style={{height:"120px", display:"flex",flexDirection:"column", justifyContent:"center"}}>
+              <Col className="" md="4" style={{ height: "120px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <FormGroup>
                   <label>{t("email")}</label>
                   <Input
@@ -96,18 +96,18 @@ function AdminsTable() {
                     style={{ "height": "55px" }}
                     type="text"
                     onChange={(event) => {
-                        setNewAdmin({
-                          ...newAdmin,
-                          email: event.target.value
-                        });
-                      }}
+                      setNewAdmin({
+                        ...newAdmin,
+                        email: event.target.value
+                      });
+                    }}
                   />
                 </FormGroup>
               </Col>
-              <Col className="" md="4" style={{height:"120px", display:"flex",flexDirection:"column", justifyContent:"center"}}>
+              <Col className="" md="4" style={{ height: "120px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <FormGroup>
-                <label style={{opacity:0}}>.</label>
-                <Button  onClick={handleAdd} className='btn btn-block bg-info text-white border-0'  style={{ "height": "50px" }}>{t('Add')}</Button>
+                  <label style={{ opacity: 0 }}>.</label>
+                  <Button onClick={handleAdd} className='btn btn-block bg-info text-white border-0' style={{ "height": "50px" }}>{t('Add')}</Button>
                 </FormGroup>
               </Col>
             </Row>
@@ -169,7 +169,7 @@ function AdminsTable() {
           </CardBody>
         </Card>
       </Col>
-      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">

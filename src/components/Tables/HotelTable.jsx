@@ -20,6 +20,7 @@ import { deleteHotelApi } from "api/hotel";
 import { getCities } from "api/city";
 import EditableSelect from "components/Inputs/EditableSelect";
 import CustomEditableSelect from "components/Inputs/CustomEditableSelect";
+import moment from 'moment';
 
 function HotelTable() {
   const { t } = useTranslation();
@@ -173,6 +174,7 @@ function HotelTable() {
           <CardBody>
             <Table
               responsive
+              striped
               style={{ borderBottomWidth: 1, borderBottomColor: "gray" }}
             >
               <thead className="text-primary">
@@ -180,8 +182,8 @@ function HotelTable() {
                   <th>{t("name")}</th>
                   <th>{t("cat")}</th>
                   <th>{t("hotel-location")}</th>
-                  <th>{t("Added-at")}</th>
-                  <th>{t("Updated-at")}</th>
+                  <th style={{ textAlign: "center" }}>{t("Added-at")}</th>
+                  <th style={{ textAlign: "center" }}>{t("Updated-at")}</th>
                   <th>{t("status")}</th>
                 </tr>
               </thead>
@@ -203,7 +205,6 @@ function HotelTable() {
                           }}
                         />
                       </td>
-                      {/* hotel number of stars cell */}
                       <td>
                         <EditableSelect
                           data={[
@@ -239,11 +240,11 @@ function HotelTable() {
                           }}
                         />
                       </td>
-                      <td style={{ backgroundColor: "	#F0F0F0" }}>
-                        {hotel?.created_at}
+                      <td style={{ textAlign: "center" }}>
+                        {moment(hotel?.created_at).format("DD-MM-YYYY HH:MM")}
                       </td>
-                      <td style={{ backgroundColor: "	#F0F0F0" }}>
-                        {hotel?.updated_at}
+                      <td style={{ textAlign: "center" }}>
+                        {moment(hotel?.updated_at).format("DD-MM-YYYY HH:MM")}
                       </td>
                       <td>
                         <div
@@ -273,7 +274,7 @@ function HotelTable() {
           </CardBody>
         </Card>
       </Col>
-      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
