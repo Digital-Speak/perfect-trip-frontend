@@ -533,20 +533,6 @@ export default function Edit() {
                           color="primary"
                           onClick={async () => {
                             try {
-                              const hotels_dossier = [];
-                              circuit.forEach((item) => {
-                                const hotels_dossier_item = hotels.filter((hotel) => hotel.cityName === item.city && hotel.hotelName === item.selectedHotel);
-                                hotels_dossier.push({
-                                  dossier_num: targetFolder.folderNumber,
-                                  hotel_id: hotels_dossier_item[0].hotelId,
-                                  from: item?.fromForServer,
-                                  to: item?.toForServer,
-                                  id: item?.dossier_hotel_id,
-                                  regime: item?.regime
-                                })
-                              });
-                              console.log(hotels_dossier);
-                              return;
                               if (
                                 targetFolder?.folderNumber === "ERROR" ||
                                 targetFolder?.refClient === null ||
@@ -558,29 +544,13 @@ export default function Edit() {
                                 targetFolder?.typeOfHb === null ||
                                 targetFolder?.agency?.id === null ||
                                 targetFolder?.nbrPax === null
-                                // hotels_dossier.length === null
                               ) {
                                 return messageApi.open({
                                   type: 'error',
                                   content: t("Please fill all the inputs"),
                                 });
                               }
-                              // console.log({
-                              //   dossier_num: targetFolder.folderNumber,
-                              //   ref_client: targetFolder.refClient,
-                              //   new_ref_client: targetFolder.newClientRef,
-                              //   name: targetFolder.fullName,
-                              //   category: targetFolder.cat.id,
-                              //   starts_at: targetFolder.startDate,
-                              //   ends_at: targetFolder.endDate,
-                              //   agency_id: targetFolder.agency.id,
-                              //   circuit_id: targetFolder.circuit.id,
-                              //   // hotels_dossier: hotels_dossier,
-                              //   typeOfHb: targetFolder.typeOfHb,
-                              //   nbrPax: targetFolder?.nbrPax,
-                              //   note: targetFolder.note,
-                              //   ...flights
-                              // });
+
                               const payload = await updateFolder({
                                 dossier_num: targetFolder.folderNumber,
                                 ref_client: targetFolder.refClient,
@@ -591,19 +561,18 @@ export default function Edit() {
                                 ends_at: targetFolder.endDate,
                                 agency_id: targetFolder.agency.id,
                                 circuit_id: targetFolder.circuit.id,
-                                // hotels_dossier: hotels_dossier,
+                                hotels_dossier: [],
                                 typeOfHb: targetFolder.typeOfHb,
                                 nbrPax: targetFolder?.nbrPax,
                                 note: targetFolder.note,
                                 ...flights
                               });
-                              return;
                               if (payload?.success) {
                                 messageApi.open({
                                   type: 'success',
                                   content: t("Folder has been edited successfully"),
                                 });
-                                clearInputs();
+                                getTargetDossier(targetFolder.refClient);
                                 window.scroll({
                                   top: 0,
                                   behavior: 'smooth'
