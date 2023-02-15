@@ -7,6 +7,7 @@ import Hotels from "views/Hotels";
 import Login from "views/Login";
 import Settings from "views/Settings";
 import SetNewPassword from "views/password/SetNew";
+import Filter from "views/folder/Filter";
 import Import from "views/Import";
 
 var routes = [
@@ -23,6 +24,14 @@ var routes = [
     name: "filter",
     icon: "fa fa-envelope",
     component: Edit,
+    layout: "/admin",
+    show: true,
+  },
+  {
+    path: "/filter/circ",
+    name: "Filtres Les circuits",
+    icon: "fa fa-circle-o-notch",
+    component: Filter,
     layout: "/admin",
     show: true,
   },

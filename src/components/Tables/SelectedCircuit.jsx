@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardHeader,
@@ -13,6 +13,7 @@ import _ from "lodash"
 import EditableSelect from "../Inputs/EditableSelect";
 import EditableDatePicker from "../Inputs/EditableDatePicker";
 import CustomEditableSelect from "components/Inputs/CustomEditableSelect";
+import { getHotels } from "api/hotel";
 
 function SelectedCircuit({
   t,
@@ -30,6 +31,17 @@ function SelectedCircuit({
   className,
   disabled = false,
 }) {
+  const [hotelData, setHotelData] = useState([]);
+
+  const loadData = async () => {
+    const payload = await getHotels();
+    if (!payload.success) setHotelData([]);
+    setHotelData(payload?.hotels);
+  }
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const renderRegime = (cityId, regime = "DP") => <EditableSelect
     data={[{ label: "PC" }, { label: "DP" }, { label: "BB" }]}
     text={regime}
@@ -40,15 +52,20 @@ function SelectedCircuit({
     }} />
 
   const renderHotel = (cityId, hotels, slectedHotel, targetCityName = "") => {
-    const newHotels = []
-    hotels.forEach(hotel => {
+    const newHotels = [];
+    hotelData?.filter((hotel) =>
+      newClient?.cat?.id !== "X" ?
+        hotel?.stars?.split("")[1] === newClient?.cat?.id &&
+        parseInt(hotel?.city_id) === parseInt(cityId) : true &&
+        parseInt(hotel?.city_id) === parseInt(cityId)
+    ).forEach(element => {
       newHotels.push({
-        label: hotel.hotelName
-      })
+        label: element.name
+      });
     });
     return <EditableSelect
       data={newHotels}
-      disabled={disabled}
+      disabled={false}
       text={slectedHotel}
       t={t}
       onTextChange={(data) => {
@@ -67,12 +84,12 @@ function SelectedCircuit({
               hotels: [...hotels, { ...hotels[0], hotelName: data }]
             })
           } else {
-            newCircuits.push(item)
+            newCircuits.push(item);
           }
-        })
+        });
 
-        addNewHotel(data, hotels[0].cityId)
-        setCircuit(newCircuits)
+        addNewHotel(data, hotels[0].cityId);
+        setCircuit(newCircuits);
       }} />
   }
 
@@ -86,8 +103,44 @@ function SelectedCircuit({
 
     return yyyy + '-' + mm + '-' + dd;
   }
+
   const renderCity = (city) => {
-    return city
+    const data = []
+    cities.forEach(city => {
+      data.push({
+        label: city.name
+      });
+    });
+
+    return <EditableSelect
+      data={data}
+      disabled={false}
+      text={city}
+      t={t}
+      onTextChange={(data) => {
+        const newCircuits = []
+        circuit.forEach(function (item) {
+          const targetCity = cities.filter((city => city.name === data));
+          const target = item.hotels.filter((hot) => hot.cityId === targetCity[0]?.city_id && hot.hotelName === data);
+          if (target.length !== 0 && item.hotels[0].cityId === targetCity[0]?.city_id) {
+            newCircuits.push({
+              ...item,
+              selectedHotel: data,
+            })
+          } else if (target.length === 0 && item.hotels[0].cityId === targetCity[0]?.city_id) {
+            newCircuits.push({
+              ...item,
+              selectedHotel: data,
+              hotels: [...hotels, { ...hotels[0], hotelName: data }]
+            })
+          } else {
+            newCircuits.push(item);
+          }
+        });
+
+        addNewHotel(data, hotels[0].cityId);
+        setCircuit(newCircuits);
+      }} />
   }
 
   const updateData = (id, field, data) => {

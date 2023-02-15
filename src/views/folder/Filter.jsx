@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from 'react-router-dom';
 import {
  Card,
  CardHeader,
@@ -14,11 +15,13 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TextField } from "@mui/material";
 import { useTranslation } from 'react-i18next';
-import { getListDossier } from "../api/dossier";
+import { getListDossier } from "../../api/dossier";
 import { getCircuit } from "api/dashboard";
 
 function Filters() {
  const { t } = useTranslation();
+ const { push } = useHistory()
+
  const [listBackup, setListBackup] = useState([])
  const [list, setList] = useState([])
  const [circuits, setCircuits] = useState([]);
@@ -37,16 +40,30 @@ function Filters() {
  }
 
  const filter = async () => {
-  if (filterFolders.circuit == -1) {
+  if (parseInt(filterFolders.circuit) === -1) {
    setList(listBackup);
   } else {
    setList(listBackup.filter((item) => item.circuit_id == filterFolders.circuit));
   }
  }
+
  useEffect(() => {
   loadData();
   filter();
  }, [])
+
+ const getDetails = (item) => (
+  <td style={{ textAlign: "center" }} onClick={() => {
+  }}><i className="fa fa-envelope cellHoverMode"
+   style={{
+    cursor: "pointer",
+   }}
+   onClick={() => {
+    sessionStorage.setItem("TargetFolder", item?.clientRef);
+    push("/admin/details")
+   }}
+   /></td>
+ )
 
  useEffect(() => {
   filter();
@@ -67,7 +84,7 @@ function Filters() {
        paddingBottom: "15px",
       }}>
        <CardHeader>
-        <CardTitle tag="h5">{t("List-Of-Folders")}</CardTitle>
+        <CardTitle tag="h5">{t("Filter Circuits")}</CardTitle>
         <Row>
          <Col md="4" xs="4">
           <FormGroup>
@@ -173,13 +190,7 @@ function Filters() {
               <td style={{ textAlign: "center" }}>{item.category === "L" ? "5 ⭐ L" : item.category === "A" ? "4 ⭐ A" : "4 ⭐ B"}</td>
               <td style={{ textAlign: "center" }}>{item.note}</td>
               <td style={{ textAlign: "center" }}>
-               <div onClick={() => {
-
-               }}
-                type="button"
-                className='text-success'>
-                <i className="fa fa-cog text-success"></i>
-               </div>
+               {getDetails(item)}
               </td>
              </tr>
             ))}

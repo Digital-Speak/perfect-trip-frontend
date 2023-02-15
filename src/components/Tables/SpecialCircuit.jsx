@@ -59,9 +59,12 @@ function SpecialCircuit({
         ...newCircuitRow,
         startedAt: newClient?.startDate,
         endedAt: new Date(new Date(newClient?.startDate).setDate(newClient?.startDate.getDate() + 1))
-      })
+      });
 
-      setFlights({ ...flights, flight_date_end: new Date(new Date(newClient?.startDate).setDate(newClient?.startDate.getDate() + 1)) })
+      setFlights({
+        ...flights,
+        flight_date_end: new Date(new Date(newClient?.startDate).setDate(newClient?.startDate.getDate() + 1))
+      })
     } else if (parseInt(specialCircuitsData?.length) !== 0) {
       const newData = [];
       specialCircuitsData.forEach((item, index) => {
@@ -71,10 +74,20 @@ function SpecialCircuit({
             startedAt: newClient?.startDate
           })
         }
-      })
+      });
       setSpecialCircuitsData(newData);
     }
   }, [newClient?.startDate])
+
+  useEffect(() => {
+    if (newClient?.startDate != null && parseInt(specialCircuitsData?.length) !== 0) {
+      setFlights({
+        ...flights,
+        flight_date_end: new Date(specialCircuitsData[specialCircuitsData?.length - 1]?.to)
+      });
+    }
+  }, [specialCircuitsData.length, specialCircuitsData[specialCircuitsData.length - 1]?.to]);
+
 
   const renderCities = (defaultValue = newCircuitRow.city.name, edit = false, id = -1) => {
     const data = []
@@ -103,10 +116,13 @@ function SpecialCircuit({
         const targetCity = cities.filter((city => city.name === newInputValue));
         if (parseInt(targetCity.length) !== 0) {
           const payload = await getHotels();
-          const listOfHotels = payload?.hotels?.filter((hotel) =>
-            hotel?.stars?.split("")[1] === newClient?.cat?.id && parseInt(hotel?.city_id) === parseInt(targetCity[0]?.id)
-          );
           if (!payload.success) return setHotels([]);
+          const listOfHotels = payload?.hotels?.filter((hotel) =>
+            newClient?.cat?.id !== "X" ?
+              hotel?.stars?.split("")[1] === newClient?.cat?.id &&
+              parseInt(hotel?.city_id) === parseInt(targetCity[0]?.id) : true &&
+              parseInt(hotel?.city_id) === parseInt(targetCity[0]?.id)
+          );
           setHotels(listOfHotels);
           if (edit === false) {
             if (payload.success) {
@@ -125,7 +141,6 @@ function SpecialCircuit({
             };
           } else {
             updateFeild(id, targetCity[0]?.name, "cityName");
-            
           }
         }
       }}
@@ -178,17 +193,17 @@ function SpecialCircuit({
     )
   }
 
-  const renderHotels = (defaultValue = newCircuitRow.hotel.name, edit = false, id = -1) => {
+  const renderHotels = (defaultValue = newCircuitRow.hotel.name, edit = false, id = -1, list = []) => {
     const data = []
     hotels.forEach(hotel => {
       data.push({
-        label: hotel.name
+        label: `${hotel.name} ${hotel?.stars}`
       })
     });
     return <Autocomplete
       freeSolo
       id="hotels"
-      options={data}
+      options={list.length !== 0 ? list : data}
       sx={{ width: "auto" }}
       inputValue={defaultValue}
       value={defaultValue}
@@ -201,7 +216,7 @@ function SpecialCircuit({
             ...params.InputProps,
           }} />}
       onInputChange={(event, newInputValue) => {
-        const targetHotel = hotels.filter((hotel => hotel.name === newInputValue));
+        const targetHotel = hotels.filter((hotel => `${hotel.name} ${hotel.stars}` === newInputValue));
         if (parseInt(targetHotel.length) !== 0) {
           if (edit === false) {
             setNewCircuitRow({
@@ -213,7 +228,6 @@ function SpecialCircuit({
             })
           }
           else {
-            updateFeild(id, targetHotel[0].id, "hotel_id");
             updateFeild(id, targetHotel[0].name, "hotel_name");
           }
         }
@@ -316,13 +330,34 @@ function SpecialCircuit({
     </tr>
   }
 
-  const updateFeild = (id, value, filed) => {
-    setSpecialCircuitsData((prev) => Object.assign([], {
-      ...prev, [id - 1]: {
-        ...specialCircuitsData[id - 1],
-        [filed]: value
-      }
-    }));
+  const updateFeild = async (id, value, filed) => {
+    if (filed === "cityName") {
+      const targetCity = cities.filter((city => city.name === value));
+      const payload = await getHotels();
+      if (!payload.success) return setHotels([]);
+      const listOfHotels = payload?.hotels?.filter((hotel) =>
+        newClient?.cat?.id !== "X" ?
+          hotel?.stars?.split("")[1] === newClient?.cat?.id &&
+          parseInt(hotel?.city_id) === parseInt(targetCity[0]?.id) : true &&
+          parseInt(hotel?.city_id) === parseInt(targetCity[0]?.id)
+      );
+      setHotels(listOfHotels);
+      setSpecialCircuitsData((prev) => Object.assign([], {
+        ...prev,
+        [id - 1]: {
+          ...specialCircuitsData[id - 1],
+          [filed]: value,
+          hotelList: listOfHotels
+        }
+      }));
+    } else {
+      setSpecialCircuitsData((prev) => Object.assign([], {
+        ...prev, [id - 1]: {
+          ...specialCircuitsData[id - 1],
+          [filed]: value
+        }
+      }));
+    }
   }
 
   return (
@@ -350,7 +385,7 @@ function SpecialCircuit({
                     {parseInt(specialCircuitsData.length) !== 0 && specialCircuitsData?.map((element) =>
                       <tr>
                         <td style={{ width: "20%" }}>{renderCities(element.cityName, true, element.id)}</td>
-                        <td style={{ width: "20%" }}>{renderHotels(element.hotel_name, true, element.id)}</td>
+                        <td style={{ width: "20%" }}>{renderHotels(element.hotel_name, true, element.id, element?.hotelList)}</td>
                         <td style={{ width: "20%" }}>{renderStartDate(element.from, true, element.id)}</td>
                         <td style={{ width: "20%" }}>{renderEndDate(element.to, true, element.id)}</td>
                         <td style={{ width: "20%" }}>{renderRegimes(element.regime, true, element.id)}</td>

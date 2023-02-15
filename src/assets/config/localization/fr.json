@@ -53,7 +53,7 @@
   "Add-Circuit": "Ajouter un nouveau circuit",
   "Add": "Ajouter",
   "The circuit has been added successfully": "Le circuit a été ajouté avec succès",
-  "Please fill all the inputs": "Veuillez< remplir toutes les entrées",
+  "Please fill all the inputs": "Veuillez remplir toutes les entrées",
   "An error has occurred, please try later": "Une erreur s'est produite, veuillez réessayer plus tard",
   "Add-city": "Ajouter Ville",
   "City-name": "Nom de Ville",
@@ -93,6 +93,7 @@
   "Upload File": "Choisissez un déposant",
   "Import": "Importer",
   "Details": "Détails",
-  "New": "Nouveau"
+  "New": "Nouveau",
+  "Filter Circuits": "Filtres Les Circuits"
  }
 }
