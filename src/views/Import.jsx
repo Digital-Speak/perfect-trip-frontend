@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -9,33 +9,39 @@ import {
   Button,
   Table
 } from "reactstrap";
+import { message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { getAgencies } from "api/agency";
 import { getlastId } from "../api/auth";
 import { FormGroup } from "@mui/material";
 import moment from "moment";
 import EditableInput from "components/Inputs/EditableInput";
+// import CustomEditableSelect from "components/Inputs/CustomEditableSelect";
 import { importDossierApi } from "api/dossier";
 const xlsx = require("xlsx");
 
 function ImportExcel() {
   const { t } = useTranslation();
-  const [importedJson, setImportedJson] = useState({});
+  const [messageApi, contextHolder] = message.useMessage();
+  // const [importedJson, setImportedJson] = useState({});
   const [excelData, setExcelData] = useState([]);
   const [folderId, setFolderId] = useState(null);
   const [agencies, setAgencies] = useState([]);
+  const [disableAdd, setDisableAdd] = useState(true)
   const [selectedAgency, setSelectedAgency] = useState(null);
   const cellsLetter = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
   const loadData = async () => {
     const payload = await getAgencies();
     const folderNumber = await getlastId();
-    setFolderId(folderNumber?.dossier_num + 1);
+    setFolderId(folderNumber?.dossier_num);
+    console.log(folderNumber?.dossier_num);
     setAgencies(payload?.agencies);
     setSelectedAgency(payload?.agencies[0]?.id);
   }
 
   const addNew = async () => {
+    setDisableAdd(true);
     excelData.forEach(async (dossier, index) => {
       const typeHAB = dossier?.E?.replace(' ', '')?.split('+')
       let HAB = [];
@@ -58,11 +64,12 @@ function ImportExcel() {
         }
       });
 
-      await importDossierApi({
+      const payload = await importDossierApi({
         dossier_num: folderId + index,
         ref_client: dossier?.B,
         name: dossier?.C,
         category: dossier?.category,
+        desert: dossier?.desert,
         starts_at: String(dossier?.A),
         agency_id: selectedAgency,
         circuit_id: dossier?.circuit_id,
@@ -84,6 +91,30 @@ function ImportExcel() {
         flight_time_start: "00:00",
         flight_time_end: "00:00",
       });
+
+      if (payload?.success) {
+        messageApi.open({
+          type: 'success',
+          content: `${t("The Folder")} ${dossier?.B} ${t("Has been added successfully")} `,
+          duration: 5 + (index * 2)
+        });
+      } else {
+        messageApi.open({
+          type: 'error',
+          content: `${t("The Folder")} ${dossier?.B} ${t("Has not been added successfully")} `,
+          duration: 5 + (index * 2)
+        });
+      }
+
+      if (index === parseInt(excelData.length) - 1) {
+        setTimeout(() => {
+          messageApi.open({
+            type: 'success',
+            content: t("The import has completed successfully"),
+          });
+        }, 2000);
+        setExcelData([]);
+      }
     })
   }
 
@@ -101,7 +132,14 @@ function ImportExcel() {
         json.forEach(row => {
           let dossier = {};
           for (let index = 0; index < row.length; index++) {
+
             const element = row[index];
+            if (index === 6) {
+              dossier = {
+                ...dossier,
+                "desert": row[6] !== undefined ? row[6] : null
+              }
+            }
             if (index === 0) {
               var date = moment(element.replace('.', '-'), 'DD-MM-YYYY')
               dossier = { ...dossier, [cellsLetter[index]]: moment(date).format("YYYY-MM-DD") }
@@ -120,14 +158,18 @@ function ImportExcel() {
               if (element) {
                 const typeHab = element.split('+');
                 typeHab.forEach(hab => {
-                  console.log(hab.match(/\d+/) && hab.match(/\d+/)[0])
+                  // console.log(hab.match(/\d+/) && hab.match(/\d+/)[0])
                 });
-                console.log(typeHab);
+                // console.log(typeHab);
               }
               dossier = { ...dossier, [cellsLetter[index]]: element }
             } else if (index === 5) {
               let circuitId = -1;
-              if (element?.toString().replaceAll(' ', '').toLowerCase() === "grt" || element?.toString().replaceAll(' ', '').toLowerCase() === "grantour+enrak") {
+              if (
+                element?.toString().replaceAll(' ', '').toLowerCase() === "grt" ||
+                element?.toString().replaceAll(' ', '').toLowerCase() === "grantour+enrak" ||
+                element?.toString().replaceAll(' ', '').toLowerCase() === "grantour+extranightrak"
+              ) {
                 circuitId = 1;
               }
               else if (element?.toString().replaceAll(' ', '').toLowerCase() === "grtpretourrak" || element?.toString().replaceAll(' ', '').toLowerCase() === "grantour") {
@@ -157,10 +199,11 @@ function ImportExcel() {
               dossier = { ...dossier, [cellsLetter[index]]: element }
             }
           }
+
           data_.push(dossier);
         });
-        setImportedJson(json);
         setExcelData(data_);
+        setDisableAdd(false)
       };
       reader.readAsArrayBuffer(e.target.files[0]);
     }
@@ -172,6 +215,7 @@ function ImportExcel() {
 
   return (
     <>
+      {contextHolder}
       <div className="content"
         style={{
           "width": "90%",
@@ -211,6 +255,7 @@ function ImportExcel() {
                     <form style={{ display: "flex", flexDirection: "column" }}>
                       <input
                         type="button"
+                        disabled={excelData.length !== 0 || !disableAdd}
                         value={t("Upload File")}
                         className="btn btn-border"
                         onClick={() => {
@@ -229,7 +274,7 @@ function ImportExcel() {
                     </form>
                   </Col>
                   <Col md="6">
-                    <Button disabled={excelData.length === 0} onClick={addNew} style={{ height: "40px", marginTop: "20px" }} className="btn btn-success btn-block">{t("Save")}</Button>
+                    <Button disabled={excelData.length === 0 || disableAdd} onClick={addNew} style={{ height: "40px", marginTop: "20px" }} className="btn btn-success btn-block">{t("Save")}</Button>
                   </Col>
                 </Row>
                 <Row>
@@ -248,6 +293,7 @@ function ImportExcel() {
                 >
                   <thead className="text-primary">
                     <tr>
+                      <th>{t("N°")}</th>
                       <th>{t("From")}</th>
                       <th>{t("Client-Ref")}</th>
                       <th>{t("FullName")}</th>
@@ -255,13 +301,16 @@ function ImportExcel() {
                       <th>{t("Type-HB")}</th>
                       <th>{t("Circuit")}</th>
                       <th>{t("Pax-Number")}</th>
+                      <th>{t("Desert")}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {
                       excelData?.length !== 0 &&
                       excelData.map((element, index) => (
-                        <tr key={index}><td>{element?.A}</td>
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td>{element?.A}</td>
                           <td>
                             <EditableInput
                               disabled={false}
@@ -327,6 +376,23 @@ function ImportExcel() {
                                 newData[index] = newRow;
                                 setExcelData(newData);
                               }} />
+                          </td>
+                          <td>
+                            {element?.desert !== null ? t(element?.desert) : ""}
+                            {/* <CustomEditableSelect
+                              disabled={false}
+                              data={[{
+                                id: 1,
+                                name: t("SI")
+                              }]}
+                              id={element?.desert !== null ? 1 : 0}
+                              text={element?.desert !== null ? t(element?.desert) : ""}
+                              cb={(newText, newValue) => {
+                                let newData = [...excelData];
+                                let newRow = { ...element, deset: newText }
+                                newData[index] = newRow;
+                                setExcelData(newData);
+                              }} /> */}
                           </td>
                         </tr>
                       ))

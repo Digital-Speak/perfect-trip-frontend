@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button, Card, CardHeader, CardBody, CardTitle, FormGroup, Form, Input, Row, Col } from "reactstrap";
 import { useTranslation } from 'react-i18next';
 import { getCircuit, postData } from "../../api/dashboard";
@@ -196,7 +196,7 @@ export default function Edit() {
             nbrType.push({
               label: item.typepax,
               plus: plus,
-              dispaly: parseInt(item.nbr) / parseInt(plus),
+              dispaly: parseInt(item.nbr),
               nbr: parseInt(item.nbr),
             })
           })
@@ -572,7 +572,8 @@ export default function Edit() {
                                   type: 'success',
                                   content: t("Folder has been edited successfully"),
                                 });
-                                getTargetDossier(targetFolder.refClient);
+                                await getTargetDossier(targetFolder.refClient);
+                                setEditeMode(false)
                                 window.scroll({
                                   top: 0,
                                   behavior: 'smooth'

@@ -92,6 +92,12 @@
   "Import": "Importar",
   "Details": "Detalles",
   "New": "Nuevo",
-  "Filter Circuits": "Filtros de circuito"
+  "Filter Circuits": "Filtros de circuito",
+  "desert": "Desierta",
+  "SI": "SI",
+  "The import has completed successfully": "La importación se ha completado.",
+  "The Folder": "Le dossier",
+  "Has been added successfully": "Le dossier",
+  "Has not been added successfully": "No se ha añadido con éxito"
  }
 }

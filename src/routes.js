@@ -52,6 +52,14 @@ var routes = [
     show: true,
   },
   {
+    path: "/import",
+    name: "Import Folders",
+    icon: "nc-icon nc-single-copy-04",
+    component: Import,
+    layout: "/admin",
+    show: true,
+  },
+  {
     path: "/config",
     name: "Configuration",
     icon: "nc-icon nc-settings",
@@ -83,14 +91,6 @@ var routes = [
     component: SetNewPassword,
     layout: "/auth",
     show: false,
-  },
-  {
-    path: "/import",
-    name: "Import Folders",
-    icon: "nc-icon nc-single-copy-04",
-    component: Import,
-    layout: "/admin",
-    show: true,
   }
 ];
 export default routes;

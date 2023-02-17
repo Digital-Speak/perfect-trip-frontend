@@ -94,6 +94,12 @@
   "Import": "Importer",
   "Details": "Détails",
   "New": "Nouveau",
-  "Filter Circuits": "Filtres Les Circuits"
+  "Filter Circuits": "Filtres Les Circuits",
+  "desert": "Déserte",
+  "SI": "OUI",
+  "The import has completed successfully": "L'import des données a ete terminée",
+  "The Folder": "Le dossier",
+  "Has been added successfully": "A été ajouté avec succès",
+  "Has not been added successfully": "N'a pas été ajouté avec succès"
  }
 }
