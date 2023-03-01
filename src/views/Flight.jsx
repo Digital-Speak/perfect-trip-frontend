@@ -1,15 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useHistory } from 'react-router-dom';
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  Table,
-  Row,
-  Col,
-  FormGroup
-} from "reactstrap";
+import { Card, CardHeader, CardBody, CardTitle, Table, Row, Col, FormGroup } from "reactstrap";
 import _ from "lodash";
 import { useTranslation } from 'react-i18next';
 import { getListFlights } from "api/flight";
@@ -22,7 +13,7 @@ import ReactHTMLTableToExcel from 'html-to-excel-react';
 
 const moment = require("moment");
 
-function Flight() {
+export default function Flight() {
   const { t } = useTranslation();
   const { push } = useHistory()
   const [list, setList] = useState([]);
@@ -32,7 +23,7 @@ function Flight() {
     type: 3,
     cityId: -1,
     from: moment(new Date()),
-    to: moment(new Date()).add(1, "month")
+    to: moment(new Date()).add(1, "days")
   });
 
   const loadData = async () => {
@@ -43,14 +34,14 @@ function Flight() {
     setFilterState({
       ...filterState,
       from: moment(),
-      to: moment().add(1, "month")
+      to: moment(new Date()).add(1, "days")
     })
     await filter();
   }
 
   const filter = () => {
     const filtered = [];
-    list?.forEach((flight, index) => {
+    list?.sort((a, b) => new Date(a?.flight_date_start) - new Date(b?.flight_date_start) || new Date(a?.flight_date_end) - new Date(b?.flight_date_end)).forEach((flight, index) => {
       if (parseInt(filterState.type) === 1) {
         const start_date = flight.flight_date_start;
         if (moment(start_date).isSameOrAfter(filterState.from, "day") && moment(start_date).isSameOrBefore(filterState.to, "day")) {
@@ -93,10 +84,9 @@ function Flight() {
       }
 
       if (parseInt(index) === parseInt(list.length) - 1) {
-        console.log(filtered);
         setFilteredList([...filtered]);
       }
-    })
+    });
   }
 
   const formatDate = (unformatted) => {
@@ -142,69 +132,67 @@ function Flight() {
         }}>
         <Row>
           <Col md="12">
-            <Card style={{
-              paddingTop: "15px",
-              paddingBottom: "15px",
-            }}>
+            <Card>
               <CardHeader>
                 <div className="row px-5">
                   <CardHeader>
                     <CardTitle tag="h5">{t("Filter-flights")}</CardTitle>
                   </CardHeader>
-
                   <ReactHTMLTableToExcel
                     id="test-table-xls-button"
                     className="download-table-xls-button btn btn-success ml-auto"
                     table="table-to-xls"
-                    filename={`Vols`}
+                    filename={`Vols_${new Date().getTime()}`}
                     sheet="tablexls"
                     buttonText={<i className="fa fa-file-excel fa-3x"></i>}
                   />
                 </div>
               </CardHeader>
-              <CardBody >
+              <CardBody>
                 <Row>
-                  <Col md="3"> <FormGroup>
+                  <Col md="3">
                     <FormGroup>
-                      <label>{t("Type")}</label>
-                      <select
-                        className="form-control"
-                        style={{ height: "55px" }}
-                        value={filterState?.type}
-                        onChange={(event) => {
-                          setFilterState({
-                            ...filterState,
-                            type: event.target.value
-                          })
-                        }}>
-                        <option value={3}>{"Tout"}</option>
-                        <option value={1}>{"APT / HOTEL"}</option>
-                        <option value={2}>{"HOTEL / APT"}</option>
-                      </select>
+                      <FormGroup>
+                        <label>{t("Type")}</label>
+                        <select
+                          className="form-control"
+                          style={{ height: "55px" }}
+                          value={filterState?.type}
+                          onChange={(event) => {
+                            setFilterState({
+                              ...filterState,
+                              type: event.target.value
+                            })
+                          }}>
+                          <option value={3}>{"Tout"}</option>
+                          <option value={1}>{"APT / HOTEL"}</option>
+                          <option value={2}>{"HOTEL / APT"}</option>
+                        </select>
+                      </FormGroup>
                     </FormGroup>
-                  </FormGroup>
                   </Col>
-                  <Col md="3"> <FormGroup>
+                  <Col md="3">
                     <FormGroup>
-                      <label>{t("City")}</label>
-                      <select
-                        className="form-control"
-                        style={{ height: "55px" }}
-                        onChange={(event) => {
-                          setFilterState({
-                            ...filterState,
-                            cityId: event.target.value
-                          })
-                        }} name="" id="">
-                        <option value={-1}>{t("All")}</option>
-                        {cities.length !== 0 && cities?.map((city) =>
-                        (
-                          <option value={city?.id}>{city?.name}</option>
-                        ))
-                        }
-                      </select>
+                      <FormGroup>
+                        <label>{t("City")}</label>
+                        <select
+                          className="form-control"
+                          style={{ height: "55px" }}
+                          onChange={(event) => {
+                            setFilterState({
+                              ...filterState,
+                              cityId: event.target.value
+                            })
+                          }} name="" id="">
+                          <option value={-1}>{t("All")}</option>
+                          {cities.length !== 0 && cities?.map((city) =>
+                          (
+                            <option value={city?.id}>{city?.name}</option>
+                          ))
+                          }
+                        </select>
+                      </FormGroup>
                     </FormGroup>
-                  </FormGroup>
                   </Col>
                   <Col md="3" xs="12">
                     <label>{t("From")}</label>
@@ -214,8 +202,7 @@ function Flight() {
                       >
                         <DatePicker
                           value={filterState?.from}
-                          maxDate={filterState.to}
-
+                          // maxDate={filterState.to}
                           InputProps={{
                             disabled: true,
                           }}
@@ -246,9 +233,8 @@ function Flight() {
                         dateAdapter={AdapterDayjs}>
                         <DatePicker
                           value={filterState?.to}
-                          minDate={filterState.from}
+                          // minDate={filterState.from}
                           inputFormat={"DD/MM/YYYY"}
-
                           InputProps={{
                             disabled: true,
                           }}
@@ -291,6 +277,7 @@ function Flight() {
                           <th style={{ textAlign: "center" }}>{t("From")}</th>
                           <th style={{ textAlign: "center" }}>{t("To")}</th>
                           <th style={{ textAlign: "center" }}>{t("Client-Name")}</th>
+                          <th style={{ textAlign: "center" }}>{t("Nbr Pax")}</th>
                           <th style={{ textAlign: "center" }}>{t("Flight")}</th>
                           <th style={{ textAlign: "center" }}>{t("Time")}</th>
                           <th style={{ textAlign: "center" }}>{t("Details")}</th>
@@ -306,6 +293,7 @@ function Flight() {
                                 <td style={{ textAlign: "center" }}>{item?.from_start}</td>
                                 <td style={{ textAlign: "center" }}>{item?.to_start}</td>
                                 <td style={{ textAlign: "center" }}>{item?.client_name}</td>
+                                <td style={{ textAlign: "center" }} colSpan={1}>{item?.pax_num}</td>
                                 <td style={{ textAlign: "center" }}>{item?.flight_start}</td>
                                 <td style={{ textAlign: "center" }}>{item?.flight_time_start}</td>
                                 {getDetails(item)}
@@ -318,6 +306,7 @@ function Flight() {
                                     <td style={{ textAlign: "center" }}>{item?.from_end}</td>
                                     <td style={{ textAlign: "center" }}>{item?.to_end}</td>
                                     <td style={{ textAlign: "center" }}>{item?.client_name}</td>
+                                    <td style={{ textAlign: "center" }} colSpan={1}>{item?.pax_num}</td>
                                     <td style={{ textAlign: "center" }}>{item?.flight_end}</td>
                                     <td style={{ textAlign: "center" }}>{item?.flight_time_end}</td>
                                     {getDetails(item)}
@@ -325,25 +314,27 @@ function Flight() {
                                 ) : (
                                   <>
                                     <tr className="rowHoverMode">
-                                      <td style={{ textAlign: "center" }}>{item?.from_to_end}</td>
-                                      <td style={{ textAlign: "center" }}>{moment(item?.flight_date_end).format("DD/MM/YYYY")}</td>
-                                      <td style={{ textAlign: "center" }}>{item?.cityName2}</td>
-                                      <td style={{ textAlign: "center" }}>{item?.from_end}</td>
-                                      <td style={{ textAlign: "center" }}>{item?.to_end}</td>
-                                      <td style={{ textAlign: "center" }}>{item?.client_name}</td>
-                                      <td style={{ textAlign: "center" }}>{item?.flight_end}</td>
-                                      <td style={{ textAlign: "center" }}>{item?.flight_time_end}</td>
-                                      {getDetails(item)}
-                                    </tr>
-                                    <tr className="rowHoverMode">
                                       <td style={{ textAlign: "center" }}>{item?.from_to_start}</td>
                                       <td style={{ textAlign: "center" }}>{moment(item?.flight_date_start).format("DD/MM/YYYY")}</td>
                                       <td style={{ textAlign: "center" }}>{item?.cityName1}</td>
                                       <td style={{ textAlign: "center" }}>{item?.from_start}</td>
                                       <td style={{ textAlign: "center" }}>{item?.to_start}</td>
                                       <td style={{ textAlign: "center" }}>{item?.client_name}</td>
+                                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.pax_num}</td>
                                       <td style={{ textAlign: "center" }}>{item?.flight_start}</td>
                                       <td style={{ textAlign: "center" }}>{item?.flight_time_start}</td>
+                                      {getDetails(item)}
+                                    </tr>
+                                    <tr className="rowHoverMode">
+                                      <td style={{ textAlign: "center" }}>{item?.from_to_end}</td>
+                                      <td style={{ textAlign: "center" }}>{moment(item?.flight_date_end).format("DD/MM/YYYY")}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.cityName2}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.from_end}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.to_end}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.client_name}</td>
+                                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.pax_num}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.flight_end}</td>
+                                      <td style={{ textAlign: "center" }}>{item?.flight_time_end}</td>
                                       {getDetails(item)}
                                     </tr>
                                   </>
@@ -360,96 +351,106 @@ function Flight() {
           </Col>
         </Row>
       </div>
-      {/* Export in xsls format */}
-      <table className='d-none' id="table-to-xls" style={{
-        "border": "1px solid black"
-      }}>
+      <table
+        className='d-none'
+        id="table-to-xls"
+        style={{
+          "border": "1px solid black",
+          fontSize: "14px"
+        }}>
         <thead className="text-primary">
           <tr></tr>
           <tr></tr>
           <tr>
-            <td colSpan={5} style={{ color: "red", fontSize: 30, fontWeight: "bold", textAlign: "center", border: 0 }}>{t("Flights")}</td>
+            <th style={{ border: "none" }}></th>
+            <td style={{ textAlign: "center", border: "none" }} colSpan={2}>Filtre les vols par date:</td>
+          </tr>
+          <tr style={{ border: "0.5px solid black", fontSize: "15px" }}>
+            <th style={{ border: "none" }}></th>
+            {(
+              <td style={{ border: "none", textAlign: "center" }} colSpan={2}>
+                {t("From")}:
+                <span style={{ fontWeight: "bold" }} >{t(` ${moment(new Date(filterState.from)).format("DD/MM/YYYY")}`)}</span>
+              </td>
+            )}
+            {(
+              <td style={{ border: "none", textAlign: "center" }} colSpan={2}>
+                {t("To")}:
+                <span style={{ fontWeight: "bold" }} >{t(` ${moment(new Date(filterState.to)).format("DD/MM/YYYY")}`)}</span>
+              </td>
+            )}
           </tr>
           <tr></tr>
-          <tr></tr>
-          <tr>
-            <td style={{ border: 0 }}>
-              {(<th style={{ textAlign: "center" }}>{t("From")}</th>)}
-              {(<td style={{ textAlign: "center" }}>{t(`${moment(new Date(filterState.from)).format("DD/MM/YYYY")}`)}</td>)}
-
-              {(<th style={{ textAlign: "center" }}>{t("To")}</th>)}
-              {(<td style={{ textAlign: "center" }}>{t(`${moment(new Date(filterState.to)).format("DD/MM/YYYY")}`)}</td>)}
-            </td>
-          </tr>
-          <tr></tr>
-          <tr></tr>
-          <tr></tr>
-          <tr>
+          <tr style={{
+            backgroundColor: "lightgray"
+          }}>
+            <th style={{ border: "none", backgroundColor: "white" }}></th>
             <th style={{ textAlign: "center" }} colSpan={1}>{t("Type")}</th>
             <th style={{ textAlign: "center" }} colSpan={1}>{t("Date")}</th>
-            <th style={{ textAlign: "center" }} colSpan={1}>{t("City")}</th>
+            <th style={{ textAlign: "center" }} colSpan={2}>{t("City")}</th>
             <th style={{ textAlign: "center" }} colSpan={2}>{t("From")}</th>
             <th style={{ textAlign: "center" }} colSpan={2}>{t("To")}</th>
             <th style={{ textAlign: "center" }} colSpan={2}>{t("Client-Name")}</th>
-            <th style={{ textAlign: "center" }} colSpan={2}>{t("Flight")}</th>
-            <th style={{ textAlign: "center" }} colSpan={2}>{t("Time")}</th>
+            <th style={{ textAlign: "center" }} colSpan={2}>{t("Nbr Pax")}</th>
+            <th style={{ textAlign: "center" }} colSpan={1}>{t("Flight")}</th>
+            <th style={{ textAlign: "center" }} colSpan={1}>{t("Time")}</th>
           </tr>
         </thead>
         <tbody>
           {filteredList && filteredList?.length !== 0 && filteredList?.map((item, index) => (
             <>
-              {filterState.type == 1 ?
-                (<tr style={{
-                  backgroundColor: index % 2 === 0 ? "lightgray" : "white"
-                }}>
+              {parseInt(filterState.type) === 1 ?
+                (<tr>
+                  <th style={{ border: "none" }}></th>
                   <td style={{ textAlign: "center" }} colSpan={1}>APT / HOTEL</td>
                   <td style={{ textAlign: "center" }} colSpan={1}>{moment(item?.flight_date_start).format("DD/MM/YYYY")}</td>
-                  <td style={{ textAlign: "center" }} colSpan={1}>{item?.cityName1}</td>
+                  <td style={{ textAlign: "center" }} colSpan={2}>{item?.cityName1}</td>
                   <td style={{ textAlign: "center" }} colSpan={2}>{item?.from_start}</td>
                   <td style={{ textAlign: "center" }} colSpan={2}>{item?.to_start}</td>
                   <td style={{ textAlign: "center" }} colSpan={2}>{item?.client_name}</td>
-                  <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_start}</td>
-                  <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_time_start}</td>
+                  <td style={{ textAlign: "center" }} colSpan={2}>{item?.client_name}</td>
+                  <td style={{ textAlign: "center" }} colSpan={1}>{item?.pax_num}</td>
+                  <td style={{ textAlign: "center" }} colSpan={1}>{item?.flight_time_start}</td>
                 </tr>)
-                : filterState.type == 2 ?
+                : parseInt(filterState.type) === 2 ?
                   (
-                    <tr style={{
-                      backgroundColor: index % 2 === 0 ? "lightgray" : "white"
-                    }}>
+                    <tr>
+                      <th style={{ border: "none" }}></th>
                       <td style={{ textAlign: "center" }} colSpan={1}>HOTEL / APT</td>
                       <td style={{ textAlign: "center" }} colSpan={1}>{moment(item?.flight_date_end).format("DD/MM/YYYY")}</td>
-                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.cityName2}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.cityName2}</td>
                       <td style={{ textAlign: "center" }} colSpan={2}>{item?.from_end}</td>
                       <td style={{ textAlign: "center" }} colSpan={2}>{item?.to_end}</td>
                       <td style={{ textAlign: "center" }} colSpan={2}>{item?.client_name}</td>
-                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_end}</td>
-                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_time_end}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.pax_num}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.flight_end}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.flight_time_end}</td>
                     </tr>
                   ) :
                   (<>
-                    <tr style={{
-                      backgroundColor: index % 2 === 0 ? "lightgray" : "white"
-                    }}>
+                    <tr>
+                      <th style={{ border: "none" }}></th>
                       <td style={{ textAlign: "center" }} colSpan={1}>{item?.from_to_end}</td>
                       <td style={{ textAlign: "center" }} colSpan={1}>{moment(item?.flight_date_end).format("DD/MM/YYYY")}</td>
-                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.cityName2}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.cityName2}</td>
                       <td style={{ textAlign: "center" }} colSpan={2}>{item?.from_end}</td>
                       <td style={{ textAlign: "center" }} colSpan={2}>{item?.to_end}</td>
                       <td style={{ textAlign: "center" }} colSpan={2}>{item?.client_name}</td>
-                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_end}</td>
-                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_time_end}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.pax_num}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.flight_end}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.flight_time_end}</td>
                     </tr>
-                    <tr style={{
-                      backgroundColor: index % 2 === 0 ? "lightgray" : "white"
-                    }}>
+                    <tr>
+                      <th style={{ border: "none" }}></th>
                       <td style={{ textAlign: "center" }} colSpan={1}>{item?.from_to_start}</td>
                       <td style={{ textAlign: "center" }} colSpan={1}>{moment(item?.flight_date_start).format("DD/MM/YYYY")}</td>
-                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.cityName1}</td>
+                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.cityName1}</td>
                       <td style={{ textAlign: "center" }} colSpan={2}>{item?.from_start}</td>
                       <td style={{ textAlign: "center" }} colSpan={2}>{item?.to_start}</td>
                       <td style={{ textAlign: "center" }} colSpan={2}>{item?.client_name}</td>
-                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_start}</td>
-                      <td style={{ textAlign: "center" }} colSpan={2}>{item?.flight_time_start}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.pax_num}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.flight_start}</td>
+                      <td style={{ textAlign: "center" }} colSpan={1}>{item?.flight_time_start}</td>
                     </tr>
                   </>)
               }
@@ -460,5 +461,3 @@ function Flight() {
     </>
   );
 }
-
-export default Flight;

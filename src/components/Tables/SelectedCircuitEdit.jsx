@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -9,10 +9,10 @@ import {
   Col
 } from "reactstrap";
 import EditableInput from "../Inputs/EditableInput"
-import _ from "lodash"
 import EditableSelect from "../Inputs/EditableSelect";
 import EditableDatePicker from "../Inputs/EditableDatePicker";
 import CustomEditableSelect from "components/Inputs/CustomEditableSelect";
+const _ = require('lodash');
 
 function SelectedCircuitEdit({
   t,
@@ -86,8 +86,8 @@ function SelectedCircuitEdit({
           }
         })
 
-        addNewHotel(data, hotels[0].cityId)
-        setCircuit(newCircuits)
+        addNewHotel(data, hotels[0].cityId);
+        setCircuit(newCircuits);
       }} />
   }
 
@@ -128,14 +128,11 @@ function SelectedCircuitEdit({
         })
       })
 
+      let grouped = _.mapValues(_.groupBy(cities, 'id'), clist => clist.map(city => _.omit(city, 'id')));
       setFlights({
         ...flights,
-        flight_date_end: newData[parseInt(newData.length - 1)]?.toForServer,
-        city_id_start: newData[0]?.id,
-        city_id_end: newData[newData.length - 1]?.id,
-        from_end: newData[parseInt(newData?.length - 1)]?.selectedHotel,
-        to_start: newData[0]?.selectedHotel,
-        flight_date_start: newData[0]?.fromForServer,
+        city_name_start: grouped[flights?.city_id_start][0]?.name,
+        city_name_end: grouped[flights?.city_id_end][0]?.name,
       })
 
       setCircuit(newData);
@@ -238,7 +235,7 @@ function SelectedCircuitEdit({
                         <CustomEditableSelect
                           data={cities?.length !== 0 ? cities : []}
                           disabled={disabled}
-                          text={cities?.filter(city => parseInt(city.id) === parseInt(flights?.city_id_start))[0]?.name}
+                          text={flights?.city_name_start}
                           id={flights.city_id_start}
                           cb={(name, id) => {
                             setFlights({
@@ -306,7 +303,7 @@ function SelectedCircuitEdit({
                       <td><CustomEditableSelect
                         data={cities?.length !== 0 ? cities : []}
                         disabled={disabled}
-                        text={cities?.filter(city => parseInt(city.id) === parseInt(flights?.city_id_end))[0]?.name}
+                        text={flights?.city_name_end}
                         id={flights?.city_id_end}
                         cb={(name, id) => {
                           if (name === "" || name === null) return;

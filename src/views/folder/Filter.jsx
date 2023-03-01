@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useHistory } from 'react-router-dom';
 import {
   Card,
@@ -17,33 +17,28 @@ import { TextField } from "@mui/material";
 import { useTranslation } from 'react-i18next';
 import { getListDossier } from "../../api/dossier";
 import { getCircuit } from "api/dashboard";
+import ReactHTMLTableToExcel from 'html-to-excel-react';
 
 const moment = require("moment");
 
 function Filters() {
   const { t } = useTranslation();
   const { push } = useHistory()
-
-  const [listBackup, setListBackup] = useState([])
   const [list, setList] = useState([])
   const [circuits, setCircuits] = useState([]);
   const [filterFolders, setFilterFolders] = useState({
     circuit: -1,
     from: new Date(),
-    to: new Date(),
+    to: new Date(new Date().setDate(new Date().getDate() + 1)),
   });
 
   const loadData = async () => {
     const payload = await getListDossier({});
     const circuitsData = await getCircuit(true);
-    setListBackup(payload.dossiers);
-    // setList(payload.dossiers)
     setCircuits(circuitsData?.circuits);
-  }
 
-  const filter = async () => {
     const newState = [];
-    listBackup.forEach((item, index) => {
+    payload?.dossiers?.forEach((item, index) => {
       if (
         moment(item.startAt).isSameOrAfter(filterFolders.from, "day")
         && moment(item.startAt).isSameOrBefore(filterFolders.to, "day")
@@ -55,17 +50,11 @@ function Filters() {
         }
       }
 
-      if (parseInt(index) === parseInt(listBackup.length-1)) {
-        setList(newState)
+      if (parseInt(index) === parseInt(payload?.dossiers?.length - 1)) {
+        setList(newState);
       }
     });
   }
-
-
-  useEffect(() => {
-    loadData();
-    filter();
-  }, [])
 
   const getDetails = (item) => (
     <td style={{ textAlign: "center" }} onClick={() => {
@@ -81,8 +70,13 @@ function Filters() {
   )
 
   useEffect(() => {
-    filter();
-  }, [filterFolders.circuit, filterFolders.from, filterFolders.to])
+    loadData();
+  }, [
+    filterFolders.circuit,
+    filterFolders.from,
+    filterFolders.to
+  ]);
+
   return (
     <>
       <div className="content"
@@ -94,12 +88,23 @@ function Filters() {
         }}>
         <Row>
           <Col md="12">
-            <Card style={{
-              paddingTop: "15px",
-              paddingBottom: "15px",
-            }}>
+            <Card>
               <CardHeader>
-                <CardTitle tag="h5">{t("Filter Circuits")}</CardTitle>
+                <div className="row px-5">
+                  <CardHeader>
+                    <CardTitle tag="h5">{t("Filter Circuits")}</CardTitle>
+                  </CardHeader>
+                  <ReactHTMLTableToExcel
+                    id="test-table-xls-button"
+                    className="download-table-xls-button btn btn-success ml-auto"
+                    table="table-to-xls"
+                    filename={`Circuits_${new Date().getTime()}`}
+                    sheet="tablexls"
+                    buttonText={<i className="fa fa-file-excel fa-3x"></i>}
+                  />
+                </div>
+              </CardHeader>
+              <CardBody>
                 <Row>
                   <Col md="4" xs="4">
                     <FormGroup>
@@ -115,7 +120,7 @@ function Filters() {
                         }} name="" id="">
                         <option value={-1}>{t("All")}</option>
                         {circuits?.map((item) => (
-                          <option value={item.id}>{item.name}</option>
+                          <option value={item.id} key={item.id}>{item.name}</option>
                         ))}
                       </select>
                     </FormGroup>
@@ -163,7 +168,7 @@ function Filters() {
                     </FormGroup>
                   </Col>
                 </Row>
-              </CardHeader>
+              </CardBody>
             </Card>
           </Col>
         </Row>
@@ -176,20 +181,20 @@ function Filters() {
                     <Table responsive striped>
                       <thead className="text-primary">
                         <tr>
-                          <th style={{ textAlign: "center" }}>{t("From")}{"-"}{t("To")}</th>
+                          <th style={{ textAlign: "center", width: "200px" }}>{t("From")}{"-"}{t("To")}</th>
+                          <th style={{ textAlign: "center" }}>{t("Circuit")}</th>
                           <th style={{ textAlign: "center" }}>{t("Client-Ref")}</th>
                           <th style={{ textAlign: "center" }}>{t("FullName")}</th>
                           <th style={{ textAlign: "center" }}>{t("N° Pax")}</th>
-                          <th style={{ textAlign: "center" }}>{t("Circuit")}</th>
                           <th style={{ textAlign: "center" }}>{t("Category")}</th>
                           <th style={{ textAlign: "center" }}>{t("Note")}</th>
                           <th style={{ textAlign: "center" }}>{t("Actions")}</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {list.map((item) => (
-                          <tr>
-                            <td style={{ textAlign: "center" }}>
+                        {list.map((item, index) => (
+                          <tr key={index}>
+                            <td style={{ textAlign: "center", width: "200px" }}>
                               {(new Date(item.startAt).getDate() < 10 ? "0" : "") + new Date(item.startAt).getDate()}
                               -
                               {new Date(item.startAt).toLocaleString('default', { month: 'long' }).substring(0, 4)}
@@ -198,15 +203,13 @@ function Filters() {
                               -
                               {new Date(item.endAt).toLocaleString('default', { month: 'long' }).substring(0, 4)}
                             </td>
+                            <td style={{ textAlign: "center" }}>{item.circuit}</td>
                             <td style={{ textAlign: "center" }}>{item.clientRef}</td>
                             <td style={{ textAlign: "center" }}>{item.client}</td>
                             <td style={{ textAlign: "center" }}>{item.paxNumber}</td>
-                            <td style={{ textAlign: "center" }}>{item.circuit}</td>
                             <td style={{ textAlign: "center" }}>{item.category === "L" ? "5 ⭐ L" : item.category === "A" ? "4 ⭐ A" : "4 ⭐ B"}</td>
                             <td style={{ textAlign: "center" }}>{item.note}</td>
-                            <td style={{ textAlign: "center" }}>
-                              {getDetails(item)}
-                            </td>
+                            {getDetails(item)}
                           </tr>
                         ))}
                       </tbody>
@@ -218,6 +221,72 @@ function Filters() {
           </Col>
         </Row>
       </div>
+      <table
+        className='d-none'
+        id="table-to-xls"
+        style={{
+          "border": "1px solid black",
+          fontSize: "14px"
+        }}>
+        <thead className="text-primary">
+          <tr></tr>
+          <tr></tr>
+          <tr>
+            <th style={{ border: "none" }}></th>
+            <td style={{ textAlign: "center", border: "none" }} colSpan={3}>Filtres: </td>
+          </tr>
+          <tr style={{ border: "0.5px solid black", fontSize: "15px" }}>
+            <th style={{ border: "none" }}></th>
+            {(
+              <td style={{ border: "none", textAlign: "center" }} colSpan={2}>
+                {t("From")}:
+                <span style={{ fontWeight: "bold" }} >{t(` ${moment(new Date(filterFolders.from)).format("DD/MM/YYYY")}`)}</span>
+              </td>
+            )}
+            {(
+              <td style={{ border: "none", textAlign: "center" }} colSpan={2}>
+                {t("To")}:
+                <span style={{ fontWeight: "bold" }} >{t(` ${moment(new Date(filterFolders.to)).format("DD/MM/YYYY")}`)}</span>
+              </td>
+            )}
+          </tr>
+          <tr></tr>
+          <tr style={{
+            backgroundColor: "lightgray"
+          }}>
+            <th style={{ border: "none", backgroundColor: "white" }}></th>
+            <th style={{ textAlign: "center", width: "200px" }} colSpan={2}>{t("From")}{"-"}{t("To")}</th>
+            <th style={{ textAlign: "center" }} colSpan={3}>{t("Circuit")}</th>
+            <th style={{ textAlign: "center" }} colSpan={2}>{t("Client-Ref")}</th>
+            <th style={{ textAlign: "center" }} colSpan={2}>{t("FullName")}</th>
+            <th style={{ textAlign: "center" }}>{t("N° Pax")}</th>
+            <th style={{ textAlign: "center" }}>{t("Category")}</th>
+            <th style={{ textAlign: "center" }} colSpan={3}>{t("Note")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {list && list?.length !== 0 && list?.map((item, index) => (
+            <tr key={index}>
+              <th style={{ border: "none" }}></th>
+              <td style={{ textAlign: "center", width: "200px" }} colSpan={2}>
+                {(new Date(item.startAt).getDate() < 10 ? "0" : "") + new Date(item.startAt).getDate()}
+                -
+                {new Date(item.startAt).toLocaleString('default', { month: 'long' }).substring(0, 4)}
+                {" / "}
+                {(new Date(item.endAt).getDate() < 10 ? "0" : "") + new Date(item.endAt).getDate()}
+                -
+                {new Date(item.endAt).toLocaleString('default', { month: 'long' }).substring(0, 4)}
+              </td>
+              <td style={{ textAlign: "center" }} colSpan={3}>{item.circuit}</td>
+              <td style={{ textAlign: "center" }} colSpan={2}>{item.clientRef}</td>
+              <td style={{ textAlign: "center" }} colSpan={2}>{item.client}</td>
+              <td style={{ textAlign: "center" }}>{item.paxNumber}</td>
+              <td style={{ textAlign: "center" }}>{item.category === "L" ? "5 ⭐ L" : item.category === "A" ? "4 ⭐ A" : "4 ⭐ B"}</td>
+              <td style={{ textAlign: "center" }} colSpan={3}>{item.note}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   );
 }

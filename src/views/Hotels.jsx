@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -28,7 +28,7 @@ function Hotels() {
   const [dataSource, setDataSource] = useState({ keys: [], data: [] });
   const [dates, setDates] = useState({
     start: new Date(),
-    end: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+    end: new Date(new Date().setDate(new Date().getDate() + 1)),
   })
 
   const [cities, setCities] = useState({
@@ -128,10 +128,7 @@ function Hotels() {
         }}>
         <Row>
           <Col md="12">
-            <Card style={{
-              paddingTop: "15px",
-              paddingBottom: "15px",
-            }}>
+            <Card>
               <div className="row px-5">
                 <CardHeader>
                   <CardTitle tag="h5">{t("Filter-Folder")}</CardTitle>
@@ -140,7 +137,7 @@ function Hotels() {
                   id="test-table-xls-button"
                   className={`download-table-xls-button btn btn-success ml-auto`}
                   table="table-to-xls"
-                  filename={`List des dossier pour la ville:${selectedCity.name} et hotel: ${selectedHotel.name} `}
+                  filename={`List des dossier pour la ville:${selectedCity.name} et hotel: ${selectedHotel.name}`}
                   sheet="tablexls"
                   buttonText={<i className="fa fa-file-excel fa-3x"></i>}
                 />
@@ -159,7 +156,6 @@ function Hotels() {
                       renderInput={(params) => <TextField fullWidth {...params} label={t("Select")} />}
                       onInputChange={async (event, newInputValue) => {
                         if (newInputValue === t("All")) return setSelectedCity({ id: -1, name: t("All") });
-
                         const targetItem = cities.dataSource.filter((city) => city.name === newInputValue);
                         if (targetItem.length === 0) return false;
                         const { id, name } = targetItem[0];
@@ -192,19 +188,20 @@ function Hotels() {
                   <Col md="3" xs="12">
                     <label>{t("From")}</label>
                     <FormGroup>
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <LocalizationProvider
+                        dateAdapter={AdapterDayjs}>
                         <DatePicker
                           value={dates.start}
-                          maxDate={dates.end}
+                          // maxDate={dates.end}
                           inputFormat={"DD/MM/YYYY"}
                           InputProps={{
                             disabled: true,
                           }}
                           onChange={(newValue) => {
                             const newDate = new Date(newValue.$d);
-                            if (moment(newDate).isSameOrBefore(moment(dates.start))) {
-                              setDates({ ...dates, start: newDate });
-                            }
+                            // if (moment(newDate).isSameOrBefore(moment(dates.start))) {
+                            setDates({ ...dates, start: newDate });
+                            // }
                           }}
                           renderInput={(params) =>
                             <TextField
@@ -223,16 +220,16 @@ function Hotels() {
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                           value={dates.end}
-                          minDate={dates.start}
+                          // minDate={dates.start}
                           InputProps={{
                             disabled: true,
                           }}
                           inputFormat={"DD/MM/YYYY"}
                           onChange={(newValue) => {
                             const newDate = new Date(newValue.$d);
-                            if (moment(newDate).isSameOrAfter(moment(dates.start))) {
-                              setDates({ ...dates, end: newDate });
-                            }
+                            // if (moment(newDate).isSameOrAfter(moment(dates.start))) {
+                            setDates({ ...dates, end: newDate });
+                            // }
                           }}
                           renderInput={(params) =>
                             <TextField
@@ -316,33 +313,67 @@ function Hotels() {
             </Card>
           </Col>
         </Row>
-        <table className='d-none' id="table-to-xls" style={{
-          "border": "1px solid black"
-        }}>
+        <table
+          className='d-none'
+          id="table-to-xls"
+          style={{
+            "border": "1px solid black"
+          }}>
           <thead className="text-primary">
             <tr></tr>
             <tr></tr>
             <tr>
-              <td colSpan={5} style={{ color: "red", fontSize: 30, fontWeight: "bold", textAlign: "center", border: 0 }}>{t("Hotels")}</td>
-            </tr>
-            <tr></tr>
-            <tr></tr>
-            <tr>
-              <td>
-                {(<th style={{ textAlign: "center" }}>{t("From")}</th>)}{(<td style={{ textAlign: "center" }}>{t(`${moment(dates.start).format("DD/MM/YYYY")}`)}</td>)}
-                {(<th style={{ textAlign: "center" }}>{t("To")}</th>)}{(<td style={{ textAlign: "center" }}>{t(`${moment(dates.end).format("DD/MM/YYYY")}`)}</td>)}
-              </td>
-            </tr>
-            <tr></tr>
-            <tr>
-              <td>
-                {(<th style={{ textAlign: "center" }}>{t("City")}</th>)}{(<td style={{ textAlign: "center" }}>{t(`${selectedCity.name}`)}</td>)}
-                {(<th style={{ textAlign: "center" }}>{t("Hotel")}</th>)}{(<td style={{ textAlign: "center" }}>{t(`${selectedHotel.name}`)}</td>)}
+              <th style={{ border: "none" }}></th>
+              <td
+                colSpan={5}
+                style={{
+                  color: "red",
+                  fontSize: 30,
+                  fontWeight: "bold",
+                  textAlign: "center",
+                  border: 0
+                }}>
+                {t("Hotels")}
               </td>
             </tr>
             <tr></tr>
             <tr></tr>
+            <tr style={{ border: "0.5px solid black", fontSize: "15px" }}>
+              <th style={{ border: "none" }}></th>
+              {(
+                <td style={{ border: "none", textAlign: "center" }} colSpan={2}>
+                  {t("From")}:
+                  <span style={{ fontWeight: "bold" }} >{t(` ${moment(new Date(dates.start)).format("DD/MM/YYYY")}`)}</span>
+                </td>
+              )}
+              {(
+                <td style={{ border: "none", textAlign: "center" }} colSpan={2}>
+                  {t("To")}:
+                  <span style={{ fontWeight: "bold" }} >{t(` ${moment(new Date(dates.end)).format("DD/MM/YYYY")}`)}</span>
+                </td>
+              )}
+            </tr>
+            <tr></tr>
             <tr>
+              <td>
+                {(<th style={{ textAlign: "center" }} colSpan={2}>{t("City")}</th>)}
+                {(<th style={{ textAlign: "center" }} colSpan={2}>{t("Hotel")}</th>)}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                {(<td style={{ textAlign: "center" }} colSpan={2}>{t(`${selectedCity.name}`)}
+                </td>)}
+                {(<td style={{ textAlign: "center" }} colSpan={2}>{t(`${selectedHotel.name}`)}
+                </td>)}
+              </td>
+            </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr style={{
+              backgroundColor: "lightgray"
+            }}>
+              <th style={{ border: "none", backgroundColor: "white" }}></th>
               <th style={{ textAlign: "center" }}>{t("From")}{"-"}{t("To")}</th>
               {selectedCity.id === -1 && (<th style={{ textAlign: "center" }}>{t("City")}</th>)}
               {selectedHotel.id === -1 && (<th style={{ textAlign: "center" }}>{t("Hotel")}</th>)}
@@ -353,11 +384,12 @@ function Hotels() {
             </tr>
           </thead>
           <tbody style={{
-            "marginBottom": "100px"
+            marginBottom: "100px"
           }}>
             {
               dataSource.data.map((item) => (
                 <tr>
+                  <th style={{ border: "none" }}></th>
                   <td style={{ justifyContent: "center", display: "flex", }}>
                     {new Date(item.startAt).toLocaleString('default', { month: 'long' }).substring(0, 3)}
                     -
@@ -369,12 +401,13 @@ function Hotels() {
                   </td>
                   {selectedCity.id === -1 && (<td style={{ textAlign: "center" }}>{item.city}</td>)}
                   {selectedHotel.id === -1 && (<td style={{ textAlign: "center" }}>{item.hotel}</td>)}
-                  < td style={{ textAlign: "center" }} colSpan={2}>{item.clientRef}</td>
+                  <td style={{ textAlign: "center" }} colSpan={2}>{item.clientRef}</td>
                   <td style={{ textAlign: "center" }} colSpan={2}>{item.client}</td>
                   <td style={{ textAlign: "center" }} colSpan={3}>
-                    {item.nbrpaxforhbtype.map(({ typepax, nbr }, index) => nbr != 0 && (
-                      <span style={{ "fontSize": "12px", }}> {nbr}{typepax}</span>
-                    ))}
+                    {item.nbrpaxforhbtype.map(({ typepax, nbr }) =>
+                      parseInt(nbr) !== 0 && (
+                        <span style={{ "fontSize": "12px", }}> {nbr}{typepax}</span>
+                      ))}
                   </td>
                   <td style={{ textAlign: "center" }} colSpan={3}>{item.note}</td>
                 </tr>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardHeader,
@@ -11,11 +11,10 @@ import {
 import EditableInput from "../Inputs/EditableInput"
 import _ from "lodash"
 import EditableSelect from "../Inputs/EditableSelect";
-import EditableDatePicker from "../Inputs/EditableDatePicker";
 import CustomEditableSelect from "components/Inputs/CustomEditableSelect";
 import { getHotels } from "api/hotel";
 
-function SelectedCircuit({
+function SelectedCircuitNew({
   t,
   selectedCircuit,
   setNewClient,
@@ -42,54 +41,54 @@ function SelectedCircuit({
     loadData();
   }, []);
 
-  const renderRegime = (cityId, regime = "DP") => <EditableSelect
+  const renderRegime = (index, regime = "DP") => <EditableSelect
     data={[{ label: "PC" }, { label: "DP" }, { label: "BB" }]}
     text={regime}
     disabled={disabled}
     t={t}
     onTextChange={(data) => {
-      updateData(cityId, "regime", data);
+      setCircuit((prev) => Object.assign([], {
+        ...prev,
+        [index]: {
+          ...prev[index],
+          regime: data
+        }
+      }));
     }} />
 
-  const renderHotel = (cityId, hotels, slectedHotel, targetCityName = "") => {
+  const renderHotel = (index, hotels, slectedHotel) => {
     const newHotels = [];
-    hotelData?.filter((hotel) =>
-      newClient?.cat?.id !== "X" ?
-        hotel?.stars?.split("")[1] === newClient?.cat?.id &&
-        parseInt(hotel?.city_id) === parseInt(cityId) : true &&
-        parseInt(hotel?.city_id) === parseInt(cityId)
-    ).forEach(element => {
+    hotels?.forEach(element => {
       newHotels.push({
         label: element.name
       });
     });
+
     return <EditableSelect
       data={newHotels}
       disabled={false}
       text={slectedHotel}
       t={t}
       onTextChange={(data) => {
-        const newCircuits = []
-        circuit.forEach(function (item) {
-          const target = item.hotels.filter((hot) => hot.cityId === cityId && hot.hotelName === data);
-          if (target.length !== 0 && item.hotels[0].cityId === cityId) {
-            newCircuits.push({
-              ...item,
-              selectedHotel: data,
-            })
-          } else if (target.length === 0 && item.hotels[0].cityId === cityId) {
-            newCircuits.push({
-              ...item,
-              selectedHotel: data,
-              hotels: [...hotels, { ...hotels[0], hotelName: data }]
-            })
-          } else {
-            newCircuits.push(item);
+        setCircuit((prev) => Object.assign([], {
+          ...prev,
+          [index]: {
+            ...prev[index],
+            selectedHotel: data,
           }
-        });
+        }));
 
-        addNewHotel(data, hotels[0].cityId);
-        setCircuit(newCircuits);
+        if (parseInt(index) === 0) {
+          setFlights({
+            ...flights,
+            to_start: data,
+          })
+        } else if (parseInt(circuit?.length) - 1 === parseInt(index)) {
+          setFlights({
+            ...flights,
+            from_end: data,
+          })
+        }
       }} />
   }
 
@@ -104,7 +103,7 @@ function SelectedCircuit({
     return yyyy + '-' + mm + '-' + dd;
   }
 
-  const renderCity = (city) => {
+  const renderCity = (index, city) => {
     const data = []
     cities.forEach(city => {
       data.push({
@@ -118,58 +117,44 @@ function SelectedCircuit({
       text={city}
       t={t}
       onTextChange={(data) => {
-        const newCircuits = []
-        circuit.forEach(function (item) {
-          const targetCity = cities.filter((city => city.name === data));
-          const target = item.hotels.filter((hot) => hot.cityId === targetCity[0]?.city_id && hot.hotelName === data);
-          if (target.length !== 0 && item.hotels[0].cityId === targetCity[0]?.city_id) {
-            newCircuits.push({
-              ...item,
-              selectedHotel: data,
-            })
-          } else if (target.length === 0 && item.hotels[0].cityId === targetCity[0]?.city_id) {
-            newCircuits.push({
-              ...item,
-              selectedHotel: data,
-              hotels: [...hotels, { ...hotels[0], hotelName: data }]
-            })
-          } else {
-            newCircuits.push(item);
-          }
-        });
-
-        addNewHotel(data, hotels[0].cityId);
-        setCircuit(newCircuits);
-      }} />
-  }
-
-  const updateData = (id, field, data) => {
-    if (field === "regime") {
-      const newData = [];
-      circuit.forEach((item, index) => {
-        if (item.id === id) {
-          newData.push({
-            ...item,
-            regime: <EditableSelect
-              disabled={disabled}
-              data={[{ label: "PC" }, { label: "DP" }, { label: "BB" }]}
-              text={data}
-              t={t}
-              onTextChange={(newText) => {
-                updateData(item.id, "regime", newText)
-              }} />
-          })
+        const targetCity = cities.filter((city => city.name === data));
+        let hotelsData = [];
+        if (newClient?.cat?.id !== "X") {
+          hotelsData = hotelData.filter((hot) =>
+            parseInt(hot.city_id) === parseInt(targetCity[0]?.id)
+            &&
+            hot?.stars?.split("")[1] === newClient?.cat?.id
+          );
         } else {
-          newData.push(item)
+          hotelsData = hotelData.filter((hot) =>
+            parseInt(hot.city_id) === parseInt(targetCity[0]?.id)
+          );
         }
 
-        if (index === circuit.length - 1) {
-          setCircuit(newData);
+        if (parseInt(index) === 0) {
+          setFlights({
+            ...flights,
+            city_id_start: targetCity[0]?.id,
+            to_start: hotelsData[0]?.name,
+          })
+        } else if (parseInt(circuit?.length) - 1 === parseInt(index)) {
+          setFlights({
+            ...flights,
+            city_id_end: targetCity[0]?.id,
+            from_end: hotelsData[0]?.name,
+          })
         }
-      })
 
-    }
-
+        setCircuit((prev) => Object.assign([], {
+          ...prev,
+          [index]: {
+            ...prev[index],
+            city: targetCity[0]?.name,
+            hotels: hotelsData,
+            selectedHotel: hotelsData[0]?.name,
+          }
+        }));
+      }} />
   }
 
   useEffect(() => {
@@ -177,28 +162,36 @@ function SelectedCircuit({
       const newData = [];
       let startDate = circuitDates.start;
       let grouped = _.mapValues(_.groupBy(hotels, 'circuit_city_id'), clist => clist.map(city => _.omit(city, 'circuit_city_id')));
+
       Object.keys(grouped).forEach((item, index) => {
+        let hotelsData = [];
         let endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + parseInt(grouped[item][0].numberOfNights)));
+        if (newClient?.cat?.id !== "X") {
+          hotelsData = hotelData.filter((hot) =>
+            parseInt(hot.city_id) === parseInt(grouped[item][0]?.cityId)
+            &&
+            hot?.stars?.split("")[1] === newClient?.cat?.id
+          );
+        } else {
+          hotelsData = hotelData.filter((hot) =>
+            parseInt(hot.city_id) === parseInt(grouped[item][0]?.cityId)
+          );
+        }
+
         newData.push({
           id: grouped[item][0].cityId,
           city: grouped[item][0].cityName,
-          hotels: grouped[item],
-          regimgeData: "DP",
-          regime: renderRegime(grouped[item][0].cityId),
-          selectedHotel: grouped[item][0].hotelName,
+          hotels: hotelsData,
+          regime: "DP",
+          selectedHotel: hotelsData[0]?.name,
           fromForServer: startDate,
           toForServer: endDate,
-          from:
-            `${(new Date(startDate).getDate() < 10 ? "0" : "") + new Date(startDate).getDate()}
-     - 
-     ${new Date(startDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`,
-          to:
-            `${(new Date(endDate).getDate() < 10 ? "0" : "") + new Date(endDate).getDate()} 
-    - 
-    ${new Date(endDate).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
-        })
+          from: startDate,
+          to: endDate
+        });
 
         startDate = endDate;
+
         if (index === parseInt(Object.keys(grouped).length - 1)) {
           setNewClient({ ...newClient, endDate: endDate })
           setFlights({
@@ -209,9 +202,9 @@ function SelectedCircuit({
             from_end: circuit[parseInt(circuit.length - 1)]?.selectedHotel,
             to_start: circuit[0]?.selectedHotel,
             flight_date_start: newClient?.startDate,
-          })
+          });
         }
-      })
+      });
 
       setFlights({
         ...flights,
@@ -238,8 +231,8 @@ function SelectedCircuit({
               <CardHeader>
                 <CardTitle tag="h4">{t("Hotels")}</CardTitle>
               </CardHeader>
-              <CardBody className={` ${className}`}>
-                <Table className={` ${className}`} responsive>
+              <CardBody className={`${className}`}>
+                <Table className={`${className}`} responsive>
                   <thead className="text-primary">
                     <tr>
                       <th>{t("City")}</th>
@@ -251,21 +244,24 @@ function SelectedCircuit({
                   </thead>
                   <tbody>
                     {selectedCircuit !== "" && circuit?.length !== 0 && circuit?.map((element, index) => (
-                      <tr>
-                        <td>{renderCity(element.city)}</td>
-                        <td>{renderHotel(element?.hotels[0]?.cityId, element.hotels, element.selectedHotel, element.city)}</td>
-                        <td>{index !== 0 ? (element.from) :
-                          <EditableDatePicker
-                            disabled={disabled}
-                            selectedDate={circuitDates.start} t onDateChange={(date) => {
-                            }} />} </td>
-                        <td>{index !== circuit.length - 1 ? (element.to) :
-                          <EditableDatePicker
-                            disabled={disabled}
-                            selectedDate={circuitDates.end}
-                            t onDateChange={(date) => {
-                            }} />} </td>
-                        <td>{element.regime}</td>
+                      <tr key={index}>
+                        <td>{renderCity(index, element.city)}</td>
+                        <td>{renderHotel(index, element.hotels, element.selectedHotel)}</td>
+                        <td>
+                          {(
+                            `${(new Date(element.from).getDate() < 10 ? "0" : "") + new Date(element.from).getDate()}
+                              - 
+                            ${new Date(element.from).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
+                          )}
+                        </td>
+                        <td>
+                          {(
+                            `${(new Date(element.to).getDate() < 10 ? "0" : "") + new Date(element.to).getDate()}
+                              - 
+                            ${new Date(element.to).toLocaleString('default', { month: 'long' }).substring(0, 3)}`
+                          )}
+                        </td>
+                        <td>{renderRegime(index, element.regime)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -435,4 +431,4 @@ function SelectedCircuit({
   );
 }
 
-export default SelectedCircuit;
+export default SelectedCircuitNew;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation,useHistory } from "react-router-dom";
+import { Link, useLocation, useHistory } from "react-router-dom";
 import {
   Collapse,
   Navbar,
@@ -14,16 +14,16 @@ import { useTranslation } from "react-i18next";
 import { logout } from "api/auth";
 
 function Header(props) {
-  const {push} = useHistory();
+  const { push } = useHistory();
   const [isOpen, setIsOpen] = React.useState(false);
   const [color, setColor] = React.useState("transparent");
   const { t, i18n } = useTranslation()
   const sidebarToggle = React.useRef();
   const location = useLocation();
 
-  const handlelogout = async() =>{
+  const handlelogout = async () => {
     const loggedOut = await logout();
-    if(loggedOut?.success){
+    if (loggedOut?.success) {
       sessionStorage.clear();
       push('/auth/login');
     }
@@ -113,7 +113,7 @@ function Header(props) {
         <Collapse isOpen={isOpen} navbar className="justify-content-end">
           <Nav navbar>
             <NavItem>
-              <Link onClick={() => {
+              <Link to={"#"} onClick={() => {
                 if (t("lang") === "Fr") {
                   i18n.changeLanguage("es")
                 } else {
@@ -127,14 +127,13 @@ function Header(props) {
               </Link>
             </NavItem>
             <NavItem>
-              <Link onClick={handlelogout} className="nav-link btn-rotate">
-                <i className="fa fa-solid fa-sign-out"/>
-                  <span className="d-lg-none d-md-block">{t("sign-out")}</span>
+              <Link to={"#"} onClick={handlelogout} className="nav-link btn-rotate">
+                <i className="fa fa-solid fa-sign-out" />
+                <span className="d-lg-none d-md-block">{t("sign-out")}</span>
               </Link>
-            </NavItem>         
+            </NavItem>
           </Nav>
         </Collapse>
-
       </Container>
     </Navbar>
   );

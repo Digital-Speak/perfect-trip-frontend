@@ -20,6 +20,7 @@ import '../../assets/css/views/folderDetails.css';
 
 export default function Edit() {
   const { t } = useTranslation();
+  const [messageApi, contextHolder] = message.useMessage();
   const [circuitsServerData, setCircuitsServerData] = useState([]);
   const [agencesServerData, setAgencesServerData] = useState([]);
   const [circuits, setCircuits] = useState([]);
@@ -29,6 +30,23 @@ export default function Edit() {
   const [circuit, setCircuit] = useState([]);
   const [circuitDetails, setCircuitDetails] = useState([]);
   const [newHotelToDb, setNewHotelToDb] = useState([]);
+  const [isInEditeMode, setEditeMode] = useState(false)
+  const [flights, setFlights] = useState({
+    from_to_start: null,
+    city_id_start: null,
+    from_start: null,
+    to_start: null,
+    flight_start: null,
+    flight_time_start: new Date(),
+    from_to_end: null,
+    city_id_end: 0,
+    from_end: null,
+    to_end: null,
+    flight_end: null,
+    flight_time_end: new Date(),
+    flight_date_start: null,
+    flight_date_end: null,
+  });
   const [typeOfHb, setTypeOfHb] = useState([
     {
       label: "DBL",
@@ -51,24 +69,6 @@ export default function Edit() {
       dispaly: 0,
       nbr: 0,
     }]);
-  const [isInEditeMode, setEditeMode] = useState(false)
-  const [flights, setFlights] = useState({
-    from_to_start: null,
-    city_id_start: null,
-    from_start: null,
-    to_start: null,
-    flight_start: null,
-    flight_time_start: new Date(),
-    from_to_end: null,
-    city_id_end: 0,
-    from_end: null,
-    to_end: null,
-    flight_end: null,
-    flight_time_end: new Date(),
-    flight_date_start: null,
-    flight_date_end: null,
-  });
-
   const [targetFolder, setTargetFolder] = useState({
     folderNumber: null,
     refClient: null,
@@ -91,7 +91,6 @@ export default function Edit() {
     extraNights: 0,
     deleted: false
   });
-  const [messageApi, contextHolder] = message.useMessage();
 
   const loadData = async () => {
     await clearInputs();
@@ -125,18 +124,6 @@ export default function Edit() {
         city_id_start: data_cities?.cities[0].id
       }
     ))
-  }
-
-  const nombreHAB = () => {
-    let text = "";
-    typeOfHb?.forEach((hab, index) => {
-      if (hab?.dispaly !== 0) {
-        text === "" ?
-          text = text + hab?.label + ' x' + hab?.dispaly + "   " :
-          text = text + '  &  ' + hab?.label + ' x' + hab?.dispaly;
-      }
-    })
-    return text;
   }
 
   const clearInputs = async () => {
@@ -183,20 +170,22 @@ export default function Edit() {
     const payload = await getOneDossier({
       ref_client: value
     });
+
     if (payload?.success) {
       if (payload?.data.length !== 0) {
         const nbrType = [];
-        if (payload?.nbrpaxforhbtype?.length != 0) {
+        if (parseInt(payload?.nbrpaxforhbtype?.length) !== 0) {
           payload?.nbrpaxforhbtype.forEach((item) => {
             let plus = 0;
             if (item?.typepax === "DBL") plus = 2;
             if (item?.typepax === "TWIN") plus = 2;
             if (item?.typepax === "TRPL") plus = 3;
             if (item?.typepax === "SGL") plus = 1;
+
             nbrType.push({
               label: item.typepax,
               plus: plus,
-              dispaly: parseInt(item.nbr),
+              dispaly: parseInt(item.nbr) / plus,
               nbr: parseInt(item.nbr),
             })
           })
@@ -207,7 +196,6 @@ export default function Edit() {
         }
 
         setCircuitDetails(payload?.circuits?.sort((a, b) => new Date(a.start_date) - new Date(b.start_date)));
-        console.log(targetFolder);
         setTargetFolder({
           ...targetFolder,
           refClient: value,
@@ -234,7 +222,6 @@ export default function Edit() {
           deleted: payload?.data[0]?.deleted,
           typeOfHb: payload?.nbrpaxforhbtype?.length != 0 ? nbrType : typeOfHb
         });
-
         setFlights({
           from_to_start: payload?.data[0]?.from_to_start,
           city_id_start: payload?.data[0]?.city_id_start,
@@ -273,10 +260,17 @@ export default function Edit() {
   }, [sessionStorage.getItem("TargetFolder")])
 
   useEffect(() => {
-    if (targetFolder?.circuit !== "" && targetFolder?.cat !== "") {
-      fetchHotels(targetFolder?.circuit?.id, targetFolder?.cat?.name);
+    if (
+      targetFolder?.circuit.id !== "" && targetFolder?.cat.name !== ""
+      &&
+      targetFolder?.circuit.id != null && targetFolder?.cat.name != null
+    ) {
+      // eslint-disable-next-line no-restricted-globals
+      // if (confirm(t("Are you sure you want to change the Category or the Circuit of this folder?")) === true) {
+        fetchHotels(targetFolder?.circuit?.id, targetFolder?.cat?.name);
+      // }
     }
-  }, [targetFolder?.circuit, targetFolder?.cat]);
+  }, [targetFolder?.circuit.id, targetFolder?.cat.name]);
 
   useEffect(() => {
     let totalNbrPax = 0;
@@ -393,7 +387,7 @@ export default function Edit() {
                           id="cat"
                           options={cats}
                           sx={{ width: "auto" }}
-                          value={targetFolder?.cat?.name}
+                          value={targetFolder?.cat?.name === "L" ? "5 ⭐ L" : targetFolder?.cat?.name === "A" ? "4 ⭐ A" : targetFolder?.cat?.name === "B" ? "4 ⭐ B" : "(5 ⭐ L) + (4 ⭐ A/B)"}
                           renderInput={(params) => <TextField {...params} label={t("Select")} />}
                           onInputChange={(event, newInputValue) => {
                             setTargetFolder({
@@ -598,8 +592,13 @@ export default function Edit() {
                         <Button
                           className="btn-round"
                           color="danger"
-                          onClick={() => {
+                          onClick={async () => {
+                            await getTargetDossier(targetFolder.refClient);
                             setEditeMode(false)
+                            window.scroll({
+                              top: 0,
+                              behavior: 'smooth'
+                            });
                           }}
                         >
                           {t("Cancel")}
@@ -664,88 +663,145 @@ export default function Edit() {
       </div>
       <div>
         <table className="d-none" id="table-to-xls">
-          <tr></tr>
-          <tr></tr>
-          <tr><th></th><th style={{ width: "150px", height: "50px" }}>logo</th></tr>
-          <tr></tr>
-          <tr><th></th><th style={{ width: "150px" }}></th><th style={{ width: "150px" }}></th><th colSpan={3} style={{ width: "250px", height: "50px" }}>CONFIRMATION DE RESERVATION</th></tr>
-          <tr></tr>
-          <tr></tr>
-          <tr></tr>
-
-          <tr ><th></th><th style={styles.td} >Agence</th><th style={styles.td} >pour</th><th style={styles.td} >date</th></tr>
-          <tr ><th></th><td style={styles.td} >{targetFolder?.agency?.name}</td><td style={styles.td} >toAskfor</td><td style={styles.td} >{moment(new Date(Date.now()).toLocaleDateString()).format('DD/MM/YYYY')}</td></tr>
+          <tr>
+            <th style={{ width: "200px", height: "150px" }}>
+              {/* <img alt='logo' style={{ width: "200px", height: "150px" }} src={logoBorder} /> */}
+            </th></tr>
           <tr></tr>
           <tr></tr>
           <tr></tr>
-
-          <tr><th></th><th style={styles.td} colSpan={3} >NOMBRE</th><th style={styles.td} >HAB</th><th style={styles.td} >PAX</th><th style={styles.td} colSpan={2} >TOUR</th><th style={styles.td} colSpan={2} >DATE</th></tr>
-          <tr><th></th><td style={styles.td} colSpan={3} >
-            {nombreHAB()}
-          </td>
-            <td style={styles.td} >
-              {
-                parseInt(typeOfHb[0]?.dispaly) + parseInt(typeOfHb[1]?.dispaly) + parseInt(typeOfHb[2]?.dispaly) + parseInt(typeOfHb[3]?.dispaly) + ' habitation'
-              }
-            </td>
-            <td style={styles.td} >{targetFolder?.nbrPax?.toString()}</td><td style={styles.td} colSpan={2} >{targetFolder?.circuit?.name}</td><td style={styles.td} colSpan={2} >{moment((targetFolder?.startDate)?.toString()).format('DD/MM/YYYY')}</td></tr>
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th colSpan={6} style={{ width: "100px" }}>
+              <h2 style={{
+                fontSize: "30px"
+              }}>Confirmation De Réservation</h2>
+            </th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
           <tr></tr>
           <tr></tr>
-          <tr></tr>
-
-          <tr><th></th><th style={styles.td} >HOTELS</th></tr>
-          <tr><th></th><th style={styles.td} colSpan={2} >VILLE</th><th style={styles.td} colSpan={2} >HOTEL</th><th style={styles.td} colSpan={2} >DU</th><th style={styles.td} colSpan={2} >AU</th><th style={styles.td} >REGIME</th><th style={styles.td} colSpan={4} >NOTE</th></tr>
-          {
-            circuit?.map((data) => (
-              <tr><th></th><td style={styles.td} colSpan={2} >{data?.city}</td><td style={styles.td} colSpan={2} >{data?.selectedHotel}</td><td style={styles.td} colSpan={2} >{data?.from}</td><td style={styles.td} colSpan={2} >{data?.to}</td><td style={styles.td} >{data?.regimgeData}</td><td style={styles.td} colSpan={4} >{targetFolder?.note}</td></tr>
-            ))
-          }
-          <tr></tr>
-          <tr></tr>
-          <tr></tr>
-          <tr></tr>
-
-          <tr><th></th><th style={styles.td} >DE/A</th><th style={styles.td} >DATE</th><th style={styles.td} >VILLE</th><th style={styles.td} colSpan={2}>DE</th><th style={styles.td} colSpan={2} >A</th><th style={styles.td} colSpan={2} >VOLS</th><th style={styles.td} colSpan={2} >HEURS</th></tr>
-          <tr><th></th>
-            <td style={styles.td} >{flights?.from_to_start}</td>
-            <td style={styles.td} >{moment(flights?.flight_date_start?.toString()).format('DD/MM/YYYY')}</td>
-            {flights && cities?.map((city) => (
-              city?.id == flights?.city_id_start &&
-              <td style={styles.td} >
-                {city?.name}
-              </td>
-            ))
-            }
-            <td style={styles.td} colSpan={2} >{flights?.from_start?.toString()}</td>
-            <td style={styles.td} colSpan={2} >{flights?.to_start?.toString()}</td>
-            <td style={styles.td} colSpan={2} >{flights?.flight_start}</td>
-            <td style={styles.td} colSpan={2} >{flights?.flight_time_start?.toString()}</td>
+          <tr>
+            <th></th>
+            <th style={styles.td} colSpan={2}>Agence</th>
+            <th style={styles.td} colSpan={2}>Date d'impression</th>
           </tr>
           <tr>
-            <th></th><td style={styles.td} >{flights?.from_to_end?.toString()}</td><td style={styles.td} >{moment(flights?.flight_date_end?.toString()).format('DD/MM/YYYY')}</td>
+            <th></th>
+            <td style={styles.td} colSpan={2}>{targetFolder?.agency?.name}</td>
+            <td style={styles.td} colSpan={2}>{moment(new Date(Date.now()).toLocaleDateString()).format('DD/MM/YYYY')}</td></tr>
+          <tr></tr>
+          <tr></tr>
+          <tr>
+            <th></th>
+            <th style={styles.td} colSpan={3}>Nom et prénom</th>
+            <th style={styles.td} colSpan={2}>Nombre de personnes</th>
+            <th style={styles.td} colSpan={3}>Type d'habitation</th>
+            <th style={styles.td} colSpan={3}>Circuit</th>
+            <th style={styles.td} colSpan={2}>Date</th>
+          </tr>
+          <tr>
+            <th></th>
+            <td style={styles.td} colSpan={3}>{targetFolder?.fullName}</td>
+            <td style={styles.td} colSpan={2}>{targetFolder?.nbrPax?.toString()}</td>
+            <td style={styles.td} colSpan={3}>{
+              typeOfHb.map((item, index) => <span key={index}>
+                {item.label}: {item.nbr / item.plus}{parseInt(index) !== parseInt(typeOfHb.length - 1) ? ", " : ""}
+              </span>)
+            }</td>
+            <td style={styles.td} colSpan={3}>{targetFolder?.circuit?.name}</td>
+            <td style={styles.td} colSpan={2}>{moment((targetFolder?.startDate)?.toString()).format('DD/MM/YYYY')}</td>
+          </tr>
+          <tr></tr>
+          <tr></tr>
+          <tr>
+            <th></th>
+            <th style={styles.td}>Les Tours</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th style={styles.td} colSpan={2}>Ville</th>
+            <th style={styles.td} colSpan={2}>Hotel</th>
+            <th style={styles.td} colSpan={2}>Du</th>
+            <th style={styles.td} colSpan={2}>Au</th>
+            <th style={styles.td} colSpan={2}>Regime</th>
+            <th style={styles.td} colSpan={3}>Note</th>
+          </tr>
+          {circuit?.map((data) =>
+            <tr>
+              <th></th>
+              <td style={styles.td} colSpan={2}>{data?.city}</td>
+              <td style={styles.td} colSpan={2}>{data?.selectedHotel}</td>
+              <td style={styles.td} colSpan={2}>{data?.from}</td>
+              <td style={styles.td} colSpan={2}>{data?.to}</td>
+              <td style={styles.td} colSpan={2}>{data?.regime}</td>
+              <td style={{ ...styles.td, textAlign: "start" }} colSpan={3}>{targetFolder?.note}</td>
+            </tr>
+          )}
+          <tr></tr>
+          <tr></tr>
+          <tr></tr>
+          <tr>
+            <th></th>
+            <th style={styles.td}>De/A</th>
+            <th style={styles.td}>Date</th>
+            <th style={styles.td} colSpan={2}>Ville</th>
+            <th style={styles.td} colSpan={3}>De</th>
+            <th style={styles.td} colSpan={3}>A</th>
+            <th style={styles.td} colSpan={1}>Vol</th>
+            <th style={styles.td} colSpan={2}>Heurs</th>
+          </tr>
+          <tr>
+            <th></th>
+            <td style={styles.td}>{flights?.from_to_start}</td>
+            <td style={styles.td}>{moment(flights?.flight_date_start?.toString()).format('DD/MM/YYYY')}</td>
             {flights && cities?.map((city) => (
-              city?.id == flights?.city_id_end &&
-              <td style={styles.td} >
+              parseInt(city?.id) === parseInt(flights?.city_id_start)
+              &&
+              <td style={styles.td} colSpan={2}>
                 {city?.name}
               </td>
-            ))
-            }
-            <td style={styles.td} colSpan={2} >{flights?.from_end?.toString()}</td>
-            <td style={styles.td} colSpan={2} >{flights?.to_end}</td>
-            <td style={styles.td} colSpan={2} >{flights?.flight_end}</td>
-            <td style={styles.td} colSpan={2} >{flights?.flight_time_end?.toString()}</td>
+            ))}
+            <td style={styles.td} colSpan={3}>{flights?.from_start?.toString()}</td>
+            <td style={styles.td} colSpan={3}>{flights?.to_start?.toString()}</td>
+            <td style={styles.td} colSpan={1}>{flights?.flight_start}</td>
+            <td style={styles.td} colSpan={2}>{flights?.flight_time_start?.toString()}</td>
           </tr>
-
+          <tr>
+            <th></th>
+            <td style={styles.td}>{flights?.from_to_end?.toString()}</td>
+            <td style={styles.td}>{moment(flights?.flight_date_end?.toString()).format('DD/MM/YYYY')}</td>
+            {flights && cities?.map((city) => (
+              parseInt(city?.id) === parseInt(flights?.city_id_end)
+              &&
+              <td style={styles.td} colSpan={2}>
+                {city?.name}
+              </td>
+            ))}
+            <td style={styles.td} colSpan={3}>{flights?.from_end?.toString()}</td>
+            <td style={styles.td} colSpan={3}>{flights?.to_end}</td>
+            <td style={styles.td} colSpan={1}>{flights?.flight_end}</td>
+            <td style={styles.td} colSpan={2}>{flights?.flight_time_end?.toString()}</td>
+          </tr>
         </table>
       </div>
     </>
   );
 }
+
 const styles = {
   td: {
     border: 1,
     borderColor: "black",
     borderStyle: "solid",
     height: '40px',
+    textAlign: "center"
   }
 }

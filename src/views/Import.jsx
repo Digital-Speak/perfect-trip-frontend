@@ -20,7 +20,7 @@ import EditableInput from "components/Inputs/EditableInput";
 import { importDossierApi } from "api/dossier";
 const xlsx = require("xlsx");
 
-function ImportExcel() {
+export default function ImportExcel() {
   const { t } = useTranslation();
   const [messageApi, contextHolder] = message.useMessage();
   // const [importedJson, setImportedJson] = useState({});
@@ -35,87 +35,117 @@ function ImportExcel() {
     const payload = await getAgencies();
     const folderNumber = await getlastId();
     setFolderId(folderNumber?.dossier_num);
-    console.log(folderNumber?.dossier_num);
     setAgencies(payload?.agencies);
     setSelectedAgency(payload?.agencies[0]?.id);
   }
 
   const addNew = async () => {
     setDisableAdd(true);
-    excelData.forEach(async (dossier, index) => {
-      const typeHAB = dossier?.E?.replace(' ', '')?.split('+')
-      let HAB = [];
-      let habArr = [];
-      typeHAB.forEach(hab => {
-        const res = hab?.match(/\d+/);
-        if (res) {
-          res.forEach(el => {
-            habArr.push({
-              "label": res['input'],
-              "nbr": res[0]
+    excelData.forEach((dossier, index) => {
+      setTimeout(async () => {
+        const typeHAB = dossier?.E?.replace(' ', '')?.split('+')
+        let HAB = [];
+        let habArr = [];
+        const tb = {
+          "DBL": {
+            label: "DBL",
+            plus: 2,
+            dispaly: 0,
+            nbr: 0,
+          },
+          "TWIN": {
+            label: "TWIN",
+            plus: 2,
+            dispaly: 0,
+            nbr: 0,
+          },
+          "TRPL": {
+            label: "TRPL",
+            dispaly: 0,
+            plus: 3,
+            nbr: 0,
+          },
+          "SGL": {
+            label: "SGL",
+            plus: 1,
+            dispaly: 0,
+            nbr: 0,
+          }
+        };
+
+        typeHAB.forEach(hab => {
+          const res = hab?.match(/\d+/);
+          const res2 = hab?.match(/\d+/);
+          if (res || res2) {
+            res.forEach(el => {
+              habArr.push({
+                "label": res['input'].substring(1),
+                "nbr": res[0] * tb[res['input'].substring(1)]?.plus
+              })
             })
-          })
-          HAB = habArr;
-        } else {
-          HAB.push({
-            "label": hab,
-            "nbr": 1
-          })
-        }
-      });
-
-      const payload = await importDossierApi({
-        dossier_num: folderId + index,
-        ref_client: dossier?.B,
-        name: dossier?.C,
-        category: dossier?.category,
-        desert: dossier?.desert,
-        starts_at: String(dossier?.A),
-        agency_id: selectedAgency,
-        circuit_id: dossier?.circuit_id,
-        circuit_name: dossier?.F,
-        typeOfHb: HAB,
-        nbrPax: dossier?.H,
-        note: '',
-        flight_date_start: String(dossier?.A),
-        from_to_start: "APT / HOTEL",
-        from_to_end: "HOTEL / APT",
-        city_id_start: 0,
-        city_id_end: 0,
-        from_start: "---",
-        from_end: "---",
-        to_start: "---",
-        to_end: "---",
-        flight_start: "---",
-        flight_end: "---",
-        flight_time_start: "00:00",
-        flight_time_end: "00:00",
-      });
-
-      if (payload?.success) {
-        messageApi.open({
-          type: 'success',
-          content: `${t("The Folder")} ${dossier?.B} ${t("Has been added successfully")} `,
-          duration: 5 + (index * 2)
+            HAB = habArr;
+          } else {
+            HAB.push({
+              "label": hab,
+              "nbr": 1 * tb[hab]?.plus
+            })
+          }
         });
-      } else {
-        messageApi.open({
-          type: 'error',
-          content: `${t("The Folder")} ${dossier?.B} ${t("Has not been added successfully")} `,
-          duration: 5 + (index * 2)
+        console.log(folderId + index);
+        const payload = await importDossierApi({
+          dossier_num: folderId + index,
+          ref_client: dossier?.B,
+          name: dossier?.C,
+          category: dossier?.category,
+          desert: dossier?.desert,
+          starts_at: String(dossier?.A),
+          agency_id: selectedAgency,
+          circuit_id: dossier?.circuit_id,
+          circuit_name: dossier?.F,
+          typeOfHb: HAB,
+          nbrPax: dossier?.H,
+          note: '',
+          flight_date_start: String(dossier?.A),
+          from_to_start: "APT / HOTEL",
+          from_to_end: "HOTEL / APT",
+          city_id_start: 0,
+          city_id_end: 0,
+          from_start: "---",
+          from_end: "---",
+          to_start: "---",
+          to_end: "---",
+          flight_start: "---",
+          flight_end: "---",
+          flight_time_start: "00:00",
+          flight_time_end: "00:00",
         });
-      }
 
-      if (index === parseInt(excelData.length) - 1) {
-        setTimeout(() => {
+        if (payload?.success) {
           messageApi.open({
             type: 'success',
-            content: t("The import has completed successfully"),
+            content: `${t("The Folder")} ${dossier?.B} ${t("Has been added successfully")} `,
+            duration: 2,
           });
-        }, 2000);
-        setExcelData([]);
-      }
-    })
+        } else {
+          messageApi.open({
+            type: 'error',
+            content: `${t("The Folder")} ${dossier?.B} ${t("Has not been added successfully")} `,
+            duration: 10
+          });
+        }
+
+        if (index === parseInt(excelData.length) - 1) {
+          setTimeout(() => {
+            messageApi.open({
+              type: 'success',
+              content: t("The import has completed successfully"),
+              duration: 5
+            });
+          }, 2000);
+          setExcelData([]);
+        }
+      }, 15 * (index * 10 + 10));
+    });
   }
 
   const readUploadFile = (e) => {
@@ -206,6 +236,7 @@ function ImportExcel() {
         setDisableAdd(false)
       };
       reader.readAsArrayBuffer(e.target.files[0]);
+      e.target.files = [];
     }
   }
 
@@ -407,4 +438,3 @@ function ImportExcel() {
     </>
   );
 }
-export default ImportExcel;

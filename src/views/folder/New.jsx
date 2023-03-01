@@ -10,11 +10,12 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { message } from 'antd';
+import { getHotels } from "api/hotel";
 import Autocomplete from '@mui/material/Autocomplete';
 import cats from "../../assets/data/cats.json";
 import ReactHTMLTableToExcel from 'html-to-excel-react';
 import PaxNumber from "../../components/Tables/Pax-Number";
-import SelectedCircuit from "../../components/Tables/SelectedCircuit";
+import SelectedCircuitNew from "../../components/Tables/SelectedCircuitNew";
 import SpecialCircuit from "../../components/Tables/SpecialCircuit";
 import TextField from '@mui/material/TextField';
 import moment from "moment/moment";
@@ -401,7 +402,7 @@ export default function New() {
                   <Row>
                     <Col md="12">
                       {parseInt(newClient.circuit.id) !== -99 ?
-                        <SelectedCircuit
+                        <SelectedCircuitNew
                           circuitDates={{ start: newClient?.startDate, end: newClient?.endDate }}
                           setNewClient={setNewClient}
                           newClient={newClient}
@@ -442,15 +443,24 @@ export default function New() {
                           try {
                             const hotels_dossier = [];
                             if (parseInt(newClient.circuit.id) !== -99) {
-                              circuit.forEach((item) => {
-                                const hotels_dossier_item = hotels.filter((hotel) => hotel.cityName === item.city && hotel.hotelName == item.selectedHotel);
+                              const payload = await getHotels();
+
+                              circuit.forEach(async (item) => {
+                                if (!payload.success) return;
+                                let hotelsData = [];
+                                hotelsData = payload.hotels;
+                                if (newClient?.cat?.id !== "X") {
+                                  hotelsData = payload.hotels.filter((hot) => hot?.stars?.split("")[1] === newClient?.cat?.id);
+                                }
+
+                                const hotels_dossier_item = hotelsData.filter((hotel) => hotel.name === item.selectedHotel);
                                 hotels_dossier.push({
                                   dossier_num: newClient.folderNumber,
-                                  hotel_id: hotels_dossier_item[0].hotelId,
+                                  hotel_id: hotels_dossier_item[0].id,
                                   extra_nights: newClient.extraNights,
                                   from: String(item.fromForServer),
                                   to: String(item.toForServer),
-                                  regime: item.regime.props.text,
+                                  regime: item.regime,
                                   cityName: item.city
                                 })
                               });
@@ -459,7 +469,6 @@ export default function New() {
                                 hotels_dossier.push(item);
                               })
                             }
-
                             if (
                               newClient?.folderNumber === "ERROR" ||
                               newClient?.refClient === null ||
@@ -478,6 +487,7 @@ export default function New() {
                                 content: t("Please fill all the inputs"),
                               });
                             }
+
                             const payload = await addNewDossier({
                               dossier_num: newClient.folderNumber,
                               ref_client: newClient.refClient,
@@ -497,7 +507,7 @@ export default function New() {
                               flight_date_start: String(flights.flight_date_start),
                               flight_date_end: String(flights.flight_date_end),
                             });
-                            console.log(payload)
+
                             if (payload?.success) {
                               messageApi.open({
                                 type: 'success',
@@ -515,6 +525,7 @@ export default function New() {
                               });
                             }
                           } catch (error) {
+                            console.log(error);
                             messageApi.open({
                               type: 'error',
                               content: t("An Error has accuired please try again"),
@@ -550,13 +561,10 @@ export default function New() {
             <tr></tr>
             <tr></tr>
             <tr></tr>
-
             <tr ><th></th><th style={styles.td} >Agence</th><th style={styles.td} >pour</th><th style={styles.td} >date</th></tr>
-            <tr ><th></th><td style={styles.td} >{newClient?.agency?.name}</td><td style={styles.td} >toAskfor</td><td style={styles.td} >{moment(new Date(Date.now()).toLocaleDateString()).format('DD/MM/YYYY')}</td></tr>
             <tr></tr>
             <tr></tr>
             <tr></tr>
-
             <tr><th></th><th style={styles.td} colSpan={3} >NOMBRE</th><th style={styles.td} >HAB</th><th style={styles.td} >PAX</th><th style={styles.td} colSpan={2} >TOUR</th><th style={styles.td} colSpan={2} >DATE</th></tr>
             <tr><th></th><td style={styles.td} colSpan={3} >
               {HabNumber()}
@@ -575,7 +583,15 @@ export default function New() {
             <tr><th></th><th style={styles.td} colSpan={2} >VILLE</th><th style={styles.td} colSpan={2} >HOTEL</th><th style={styles.td} colSpan={2} >DU</th><th style={styles.td} colSpan={2} >AU</th><th style={styles.td} >REGIME</th><th style={styles.td} colSpan={4} >NOTE</th></tr>
             {
               circuit?.map((data) => (
-                <tr><th></th><td style={styles.td} colSpan={2} >{data?.city}</td><td style={styles.td} colSpan={2} >{data?.selectedHotel}</td><td style={styles.td} colSpan={2} >{data?.from}</td><td style={styles.td} colSpan={2} >{data?.to}</td><td style={styles.td} >{data?.regimgeData}</td><td style={styles.td} colSpan={4} >{newClient?.note}</td></tr>
+                <tr>
+                  <th></th>
+                  <td style={styles.td} colSpan={2} >{data?.city}</td>
+                  <td style={styles.td} colSpan={2} >{data?.selectedHotel}</td>
+                  <td style={styles.td} colSpan={2} >{moment(data?.from).format("DD/MM/YYYY")}</td>
+                  <td style={styles.td} colSpan={2} >{moment(data?.to).format("DD/MM/YYYY")}</td>
+                  <td style={styles.td} >{data?.regime}</td>
+                  <td style={styles.td} colSpan={4} >{newClient?.note}</td>
+                </tr>
               ))
             }
             <tr></tr>
